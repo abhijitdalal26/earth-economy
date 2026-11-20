@@ -71,7 +71,6 @@
       <p class="src">Forbes view; countries with at least $100B GDP and 3+ firms.</p>
     </div>
   </div>
-  <div id="n-sc"></div>
   <div class="explainer" id="x-index"></div>
 
   <h2>Six regions</h2>
@@ -90,7 +89,6 @@
       <p class="src">Source: Forbes Global 2000 (2026).</p>
     </div>
   </div>
-  <div id="n-reg"></div>
 
   <h2>Head to head: US vs China vs Europe vs Japan vs India</h2>
   <p class="section-dek">Every measure is shown as a share of the world total, so very different measures can sit side by side. This compares shares only. Nothing is added across ledgers.</p>
@@ -107,7 +105,6 @@
       <p class="src">Sources: World Bank GDP 2024; Forbes Global 2000 (2026); CB Insights unicorns; CompaniesMarketCap listed universe (coverage-limited outside the US).</p>
     </div>
   </div>
-  <div id="n-h2h"></div>
 
   <h2 id="india">India deep-dive</h2>
   <p class="section-dek">India is the world's fifth-largest economy. It has the joint fifth-largest number of Global 2000 companies, but those companies are small for the list, and much of their weight comes from state-owned banks, oil firms and the LIC.</p>
@@ -152,8 +149,6 @@
       <p class="src">Source: CompaniesMarketCap (2026 scrape), on a different date from Forbes' May 2026 values, so the two will not match.</p>
     </div>
   </div>
-  <div id="n-india"></div>
-  <div id="n-india-ang"></div>
   <div id="n-cav"></div>
 </div>
 
@@ -349,13 +344,6 @@ const REGIONS = ['North America', 'Asia-Pacific', 'Europe', 'Middle East & Centr
 })();
 (function () {
   const zero = G.zero_forbes_big.map(z => z.name).join(', ');
-  ATLAS.notes('n-sc', { title: 'Who is over and under', items: [
-    '<b>Over-indexed</b> (Forbes view): Hong Kong 4.0×, Switzerland 2.4×, Luxembourg 2.2×, Japan 2.1×, South Korea 2.0×, United States 1.4×, Ireland 1.3×. These are headquarters economies: firms domicile there for tax, finance or history, and book revenue earned worldwide.',
-    `<b>Under-indexed</b>: China 0.87×, India 0.71×, and most of Latin America, Africa and Southeast Asia. Their economies run on small firms, state entities and informal work that big-company lists do not capture.`,
-    `<b>Off the chart entirely</b> (zero Global 2000 firms): ${zero}.`,
-    '<b>The fit is still strong:</b> across 61 countries, the rank correlation between GDP share and Global 2000 revenue share is ρ = 0.82. Big economies have big companies. The interesting part is the size of the deviations.',
-    '<b>Tax havens explode the index</b> in the reconciled view: Bermuda 26× and the Cayman Islands 33× (insurers and holding companies domiciled there).',
-  ] });
   ATLAS.notes('x-index', { title: 'Explainer: the over/under index', items: [
     'Index = (country\'s share of big-company revenue) ÷ (country\'s share of world GDP). A value of 2× means the country hosts twice as much big-company revenue as the size of its economy would predict.',
     'It is a measure of <b>where companies are headquartered</b>, not where they sell. Nestlé books Indian sales in Switzerland, and Apple books Indian sales in the US.',
@@ -392,12 +380,6 @@ const REGIONS = ['North America', 'Asia-Pacific', 'Europe', 'Middle East & Centr
     series: [{ type: 'bar', data: RM.map(r => +(r.g_margin * 100).toFixed(1)), color: PAL[0], label: { show: true, position: 'right', formatter: '{c}%', color: ATLAS.css('--text-2') } }],
   });
   const na = R.find(r => r.region === 'North America'), me = R.find(r => r.region === 'Middle East & Central Asia'), af = R.find(r => r.region === 'Africa'), la = R.find(r => r.region === 'Latin America');
-  ATLAS.notes('n-reg', { title: 'Regional numbers', items: [
-    `<b>North America</b>: ${P(na.gdp_share * 100, 0)} of world GDP, ${P(na.g_rev / W.g_rev * 100, 0)} of Global 2000 revenue, ${P(na.g_mv / W.g_mv * 100, 0)} of market value and ${P(na.u_val / totU * 100, 0)} of unicorn value. The gap between revenue and value is the US valuation premium.`,
-    `<b>Asia-Pacific</b> is the biggest region by GDP (32%) and nearly matches North America on revenue (34%), but holds only ${P(R[1].g_mv / W.g_mv * 100, 0)} of market value. Investors pay far less per dollar of Asian sales.`,
-    `<b>The Middle East</b> (Forbes' "Middle East & Central Asia", which includes North Africa) runs a ${P(me.g_margin * 100, 0)} net margin, double the world's 9%, because of Saudi Aramco and the Gulf banks.`,
-    `<b>Africa</b> has ${af.g_n} Global 2000 firms, ${P(af.g_rev / W.g_rev * 100, 1)} of revenue against ${P(af.gdp_share * 100, 1)} of world GDP. <b>Latin America</b> has ${la.g_n} firms and ${P(la.g_rev / W.g_rev * 100, 1)} of revenue against ${P(la.gdp_share * 100, 1)} of GDP.`,
-  ] });
 })();
 
 // ---------- head to head ----------
@@ -427,13 +409,6 @@ const REGIONS = ['North America', 'Asia-Pacific', 'Europe', 'Middle East & Centr
      { key: 'mv_rev', label: 'MV ÷ revenue', num: true, fmt: v => v.toFixed(2) + '×' }, { key: 'rev_gdp', label: 'Revenue ÷ GDP', num: true, fmt: v => P(v, 0) },
      { key: 'u_n', label: 'Unicorns', num: true }, { key: 'u_val', label: 'Unicorn value', num: true, fmt: v => F(v) }, { key: 'l_mv', label: 'Listed mkt cap', num: true, fmt: v => F(v) }]);
   const [U, C1, , E, , J, I] = H;
-  ATLAS.notes('n-h2h', { title: 'Head-to-head numbers', items: [
-    `<b>Valuation gap:</b> US giants are worth ${(U.g_mv / U.g_rev).toFixed(1)}× their revenue; China's ${(C1.g_mv / C1.g_rev).toFixed(2)}×, the EU's ${(E.g_mv / E.g_rev).toFixed(2)}×, Japan's ${(J.g_mv / J.g_rev).toFixed(2)}× and India's ${(I.g_mv / I.g_rev).toFixed(1)}×. Investors pay about twice as much for a dollar of Indian giant-company sales as for a dollar of Chinese or Japanese sales. Among the big blocs, only the US commands a higher multiple.`,
-    `<b>China vs US:</b> China has ${P(C1.gdp / W.gdp * 100, 0)} of world GDP and ${P(C1.g_rev / W.g_rev * 100, 0)} of Global 2000 revenue, but only ${P(C1.g_mv / W.g_mv * 100, 0)} of market value. Add Hong Kong and Taiwan and the revenue share rises to 18%.`,
-    `<b>EU-27</b>: ${P(E.gdp / W.gdp * 100, 0)} of GDP and ${E.g_n} giants, but only ${E.u_n} unicorns (${P(E.u_val / W.u_val * 100, 0)} of unicorn value). Europe builds big old companies, not new ones.`,
-    `<b>Japan</b> has ${J.g_n} giants, the third-largest count, and their revenue equals ${P(J.g_rev / J.gdp * 100, 0)} of Japan's GDP. But it has only ${J.u_n} unicorns.`,
-    `<b>India</b> matches its GDP share almost exactly on unicorn count (${P(I.u_n / W.u_n * 100, 1)} of the world's unicorns vs ${P(I.gdp / W.gdp * 100, 1)} of GDP), but lags on revenue (${P(I.g_rev / W.g_rev * 100, 1)}).`,
-  ] });
 })();
 
 // ---------- India ----------
@@ -537,23 +512,6 @@ const REGIONS = ['North America', 'Asia-Pacific', 'Europe', 'Middle East & Centr
 
   const top5rev = F70.slice(0, 5).reduce((s, f) => s + f.rev, 0);
   const psu = ['Life Insurance Corp. of India', 'Indian Oil', 'Oil & Natural Gas', 'State Bank of India', 'Bharat Petroleum'];
-  ATLAS.notes('n-india', { title: 'India: numbers to quote', items: [
-    `<b>${ind.g_n} Indian companies</b> are in the Forbes Global 2000, the joint fifth-largest contingent (level with Canada) after the US (595), China (300), Japan (178) and South Korea (66), and just ahead of the UK (63). By combined revenue (${F(ind.g_rev)}) India ranks only <b>#${R.g_rev}</b>.`,
-    `<b>Small giants:</b> the average Indian Global 2000 firm books ${F(ind.g_rev / ind.g_n)} of revenue, against ${F(W.g_rev / 2000)} for the list as a whole and ${F(us.g_rev / us.g_n)} for a US member.`,
-    `<b>The state is big in India Inc.:</b> three of India's top five by revenue (LIC, Indian Oil, SBI) are government-controlled, and ONGC is sixth. The top five together book ${F(top5rev)}, or ${P(top5rev / ind.g_rev * 100, 0)} of the revenue of all ${ind.g_n}.`,
-    `<b>Revenue vs value:</b> Reliance leads on revenue ($120B) and value ($188B). HDFC Bank (#7 by revenue) is #2 by value ($123B), and TCS ($30B revenue) is worth $85B. LIC books $108B of revenue but is valued at only $53B, and Indian Oil $88B but $20B.`,
-    `<b>Sector tilt:</b> finance is ${P(G.india_sectors[0].india * 100, 0)} of Indian giant revenue (world: ${P(G.india_sectors[0].world * 100, 0)}), and energy & utilities ${P(G.india_sectors[2].india * 100, 0)} (world: ${P(G.india_sectors[2].world * 100, 0)}). Healthcare, industrials and food are almost absent, although India is the "pharmacy of the world".`,
-    `<b>Market depth:</b> India's listed companies are worth ${F(ind.l_mv)}, ${P(ind.l_mv / ind.gdp * 100, 0)} of GDP. That is deeper than China (${P(byIso.CHN.l_mv / byIso.CHN.gdp * 100, 0)}), Germany (${P(byIso.DEU.l_mv / byIso.DEU.gdp * 100, 0)}) or Brazil (${P(byIso.BRA.l_mv / byIso.BRA.gdp * 100, 0)}), but far behind the US (${P(us.l_mv / us.gdp * 100, 0)}). NSE is the world's #${G.india_ex[0].rank} exchange in this dataset.`,
-    `<b>Unicorns:</b> ${ind.u_n} Indian unicorns worth ${F(ind.u_val)} (#${R.u_n} in the world after the US, China and UK). The largest are ${G.india_unicorns.slice(0, 4).map(u => u.company + ' (' + F(u.val) + ')').join(', ')}.`,
-    `<b>Reconciled view:</b> adding the listed universe, ${N(ind.x_n)} Indian firms carry ${F(ind.x_rev)} of measured revenue, ${P(ind.x_rev / ind.gdp * 100, 0)} of GDP.`,
-  ] });
-  ATLAS.notes('n-india-ang', { title: 'India story angles', items: [
-    '"Many giants, small giants": India ranks joint 5th by count but 9th by revenue. Why do Indian firms stay mid-sized? Fragmented markets, low per-capita spending, and a rupee that lost value against the dollar.',
-    '"Investors pay a premium for India": Indian giants trade at about 1.5× revenue, against 1.2× for Chinese and 1.3× for Japanese giants (US: 3.3×). Is that a growth bet or froth?',
-    '"PSU heavyweights": LIC, IOC, ONGC, SBI, BPCL and NTPC are revenue giants with modest valuations. What disinvestment would mean for India\'s rank.',
-    '"Missing sectors": almost no Indian manufacturer or pharma firm sits among the world\'s 2,000 largest by revenue. Compare with China and South Korea.',
-    '"The unicorn hangover": India has 63 unicorns today. Several have listed, and others have been marked down.',
-  ] });
   ATLAS.notes('n-cav', { title: 'Caveats', caveat: true, items: [
     'Country = headquarters/domicile in Forbes, not where revenue is earned or who owns the shares. Revenue booked in Switzerland or the US is often earned in India.',
     'Listed market cap by country comes from CompaniesMarketCap coverage (~10,000 firms). It is complete for large caps but misses many small listed firms, especially in India (NSE/BSE list 5,000+ firms) and China.',

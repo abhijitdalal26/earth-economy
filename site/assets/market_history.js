@@ -109,20 +109,6 @@ function drawRank() {
 function drawAll() { drawPerf(); drawRank(); }
 drawAll();
 
-// Writer's notes are computed from the data, so they stay true after a rebuild.
-(function () {
-  const g = (c, k, y) => { const i = IX.find(x => x.country === c); return i && stats(i, k, y); };
-  const us = g('United States', 'usd', 2000), inU = g('India', 'usd', 2000), inL = g('India', 'loc', 2000), cn = g('China', 'usd', 2000),
-    jp = g('Japan', 'loc', 1990), arL = g('Argentina', 'loc', 2002), arU = g('Argentina', 'usd', 2002), uk = g('United Kingdom', 'loc', 2000);
-  ATLAS.notes('n-perf', { items: [
-    us && inU && inL && `<b>India vs the US since 2000:</b> the Sensex grew ${times(inL.mult)} in rupees (${pct(inL.cagr)} a year) but ${times(inU.mult)} in dollars (${pct(inU.cagr)}), because the rupee lost value against the dollar. The S&P 500 grew ${times(us.mult)} (${pct(us.cagr)}). Always say which currency you mean.`,
-    cn && `<b>China's paradox:</b> the world's second-largest economy, yet the Shanghai Composite grew only ${times(cn.mult)} in dollars since 2000 (${pct(cn.cagr)} a year). Fast GDP growth did not turn into index growth.`,
-    jp && `<b>Japan's lost decades:</b> from the start of 1990 the Nikkei 225 is up ${times(jp.mult)} in yen (${pct(jp.cagr)} a year). It only passed its December 1989 peak in February 2024.`,
-    arL && arU && `<b>Inflation fools the local view:</b> Argentina's Merval rose ${times(arL.mult)} in pesos since 2002 but ${times(arU.mult)} in dollars. Use the US-dollar view for Argentina, Turkey and Brazil before 1995.`,
-    uk && `<b>Dividends are not counted.</b> These are price indexes. UK and European companies pay out more of their profit as dividends, so the FTSE 100's ${pct(uk.cagr)} a year since 2000 understates what investors earned by roughly 3–4 points a year.`,
-  ].filter(Boolean) });
-})();
-
 // ---------- market size (World Bank) ----------
 const WB = H.wb, byIso = Object.fromEntries(WB.map(c => [c.iso, c]));
 const SDEF = ['WLD', 'USA', 'CHN', 'JPN', 'IND', 'GBR', 'HKG', 'SAU'].filter(i => byIso[i]);

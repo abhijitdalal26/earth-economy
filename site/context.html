@@ -50,7 +50,7 @@
       <p class="src">Source: World Bank SL.EMP.SELF.ZS (ILO modelled estimates). Self-employed = employers + own-account + contributing family workers.</p>
     </div>
   </div>
-  <div id="n1"></div><div id="n1c"></div>
+<div id="n1c"></div>
 
   <!-- 2 -->
   <h2>2. Formal vs informal: most of the world's work happens outside the registers</h2>
@@ -72,7 +72,7 @@
       <p class="src">Source: ILOSTAT, informal employment rate (DF_EMP_NIFL_SEX_RT), national labour force surveys. The US and China report no harmonized data.</p>
     </div>
   </div>
-  <div id="n2"></div><div id="n2c"></div>
+<div id="n2c"></div>
 
   <!-- 3 -->
   <h2>3. Business creation: where new companies are born</h2>
@@ -95,7 +95,7 @@
       <p class="src">Source: World Bank IC.BUS.NDNS.ZS. "World" is the World Bank aggregate of reporting countries.</p>
     </div>
   </div>
-  <div id="n3"></div><div id="n3c"></div>
+<div id="n3c"></div>
 
   <!-- 4 -->
   <h2>4. Venture capital: the money behind the startups</h2>
@@ -115,7 +115,7 @@
       <p class="src">Source: Crunchbase News year-end 2024 and 2025 analyses, Q3 2026 report. Crunchbase totals differ from KPMG's because the two use different definitions.</p>
     </div>
   </div>
-  <div id="n4"></div><div id="n4c"></div>
+<div id="n4c"></div>
 
   <!-- 5 & 6 -->
   <h2>5. IPOs and 6. M&amp;A: how companies list and merge</h2>
@@ -142,7 +142,7 @@
       <p class="src">Source: XBMA Annual Review for 2025 (LSEG data, inflation-adjusted).</p>
     </div>
   </div>
-  <div id="n5"></div><div id="n5c"></div>
+<div id="n5c"></div>
 
   <!-- 7 -->
   <h2>7. The stock market: bigger, fewer, more American</h2>
@@ -162,7 +162,7 @@
       <p class="src">Source: World Bank CM.MKT.LDOM.NO (WFE data). Gaps are years with no data.</p>
     </div>
   </div>
-  <div id="n7"></div><div id="n7c"></div>
+<div id="n7c"></div>
 
   <!-- 8 -->
   <h2>8. The trillion-dollar club</h2>
@@ -175,7 +175,7 @@
       <p class="src">Source: Wikipedia, "List of public corporations by market capitalization", trillion-dollar table (retrieved 27 Oct 2026). Aramco's $1T date is set to its listing day.</p>
     </div>
   </div>
-  <div id="n8"></div><div id="n8c"></div>
+<div id="n8c"></div>
 
   <!-- 9 -->
   <h2>9. Other giant pools of capital</h2>
@@ -195,7 +195,7 @@
       <p class="src">Source: Global SWF ranking (last updated Oct 2026). Some funds (ADIA, GIC, SAFE) do not disclose AUM, so their figures are estimates.</p>
     </div>
   </div>
-  <div id="n9"></div><div id="n9c"></div>
+<div id="n9c"></div>
 
   <!-- 10 -->
   <h2>10. Co-operatives: the member-owned economy</h2>
@@ -215,7 +215,7 @@
       <p class="src">Source: ICA–Euricse World Cooperative Monitor 2025. The ratio adjusts for country size; it is not a share of GDP.</p>
     </div>
   </div>
-  <div id="n10"></div><div id="n10c"></div>
+<div id="n10c"></div>
 
   <!-- 11 -->
   <h2>11. Multinationals and globalization</h2>
@@ -236,7 +236,7 @@
       <p class="src">Source: World Bank NE.TRD.GNFS.ZS. The series stops at 2024; the 2025 world aggregate has a coverage break.</p>
     </div>
   </div>
-  <div id="n11"></div><div id="n11c"></div>
+<div id="n11c"></div>
 </div>
 
 <script>
@@ -302,12 +302,6 @@ drawSelf(); seSel.onchange = drawSelf;
 ATLAS.tableToggle('c-self-t', 'c-self-tbl', Object.keys(se).map(k => ({ c: seN[k], v2000: se[k][2000], v2010: se[k][2010], v2025: se[k][2025] })),
   [{ key: 'c', label: 'Country' }, { key: 'v2000', label: '2000 %', num: true, fmt: f1 }, { key: 'v2010', label: '2010 %', num: true, fmt: f1 }, { key: 'v2025', label: '2025 %', num: true, fmt: f1 }]);
 
-ATLAS.notes('n1', { items: [
-  `<b>The pyramid in one line:</b> roughly 400 million businesses (most of them informal), about 48,000 listed companies, 2,000 giants in the Forbes list, and 19 companies that have ever been worth $1 trillion.`,
-  `<b>Who employs the world:</b> MSMEs make up about 90% of businesses, 60–70% of employment and 50% of GDP (UNIDO / ICSB, ${a('https://www2.unido.org/node/7470681', 'UNIDO')}). Only ${es[0].pct}% of the world's workers are employees; ${es[1].pct}% work for themselves with no staff.`,
-  `<b>India angle:</b> ${f1(K.india_selfemp)}% of Indian workers are self-employed (World Bank/ILO 2025), against ${f1(K.world_selfemp)}% worldwide and about 6% in the US. India has an estimated 63.4 million MSMEs (NSS 73rd round, ${a('https://msme.gov.in/sites/default/files/MSMEENGLISHANNUALREPORT2022-23.pdf', 'MSME Ministry Annual Report')}).`,
-  `<b>Story angle:</b> "The economy you can't see." The Global 2000 makes headlines, but the median business on Earth is a one-person shop with no registration number.`,
-] });
 ATLAS.notes('n1c', { title: 'Caveats', caveat: true, items: [
   'No official global count of firms exists. The 375–450M figure is a 2010 McKinsey estimate for IFC; the 322M formal-MSME count covers only economies that report data. Treat both as orders of magnitude.',
   'The listed-company count (World Bank/WFE) counts domestic listings on WFE-member exchanges; WFE\'s own end-2024 member count is 49,054.',
@@ -344,12 +338,6 @@ function drawInf() {
 drawInf(); document.getElementById('inf-sel').onchange = drawInf;
 ATLAS.tableToggle('c-inf-cty-t', 'c-inf-cty-tbl', ic, [{ key: 'name', label: 'Country' }, { key: 'year', label: 'Year', num: true }, { key: 'pct', label: 'Informal %', num: true }, { key: 'region', label: 'Region' }, { key: 'survey', label: 'Survey' }]);
 
-ATLAS.notes('n2', { items: [
-  `<b>Key number:</b> ${K.world_informal}% of the world's jobs, about 2 billion workers, are informal (ILO). In low-income countries the share is 88%; in high-income countries it is 13%.`,
-  `<b>Most firms are informal too:</b> ILO estimates 84% of the world's economic units are informal, including 52% even in high-income countries, where most own-account workers are not registered as companies.`,
-  `<b>India angle:</b> ${f1(K.india_informal)}% of Indian employment is informal (ILOSTAT, PLFS ${K.india_informal_year}). Compare Brazil at about 35%, Mexico about 57% and South Africa about 41%. This is the main reason India's listed companies explain so little of its jobs.`,
-  `<b>Story angle:</b> Formalisation is India's quiet business story: GST, Udyam registration and UPI all pull small firms into the registers, but the ILO data show only slow change.`,
-] });
 ATLAS.notes('n2c', { title: 'Caveats', caveat: true, items: [
   'Country rates come from national surveys and differ by year and method. ILO harmonizes the definition but not every survey. The global and income-group figures are ILO modelled estimates.',
   '"Informal enterprises" counts own-account workers as units, which inflates the share for rich countries.',
@@ -396,11 +384,6 @@ ATLAS.tableToggle('c-nbt-t', 'c-nbt-tbl', nbYears.map(y => Object.assign({ year:
   [{ key: 'year', label: 'Year' }].concat(['WLD', 'GBR', 'IND', 'BRA', 'ZAF', 'JPN'].map(k => ({ key: k, label: NM[k] || k, num: true }))));
 
 const indReg = D.newbiz_reg.IND || {};
-ATLAS.notes('n3', { items: [
-  `<b>India angle:</b> India registered ${K.india_newbiz_regs ? Math.round(K.india_newbiz_regs).toLocaleString('en-US') : '—'} new companies in ${K.india_newbiz_year}, a density of ${K.india_newbiz_density.toFixed(2)} per 1,000 working-age adults. The UK's density is ${f1(K.uk_newbiz_density)} and the World Bank's world aggregate is ${f1(K.world_newbiz_density)}.`,
-  `India's registrations went from ${indReg[2014] ? Math.round(indReg[2014]).toLocaleString('en-US') : '—'} in 2014 to about 1.7 lakh a year in 2022–24. The count is high in absolute terms but low per head, because most Indian businesses never incorporate.`,
-  `<b>Story angle:</b> Tax havens (Cayman, Isle of Man) and hubs like Hong Kong lead on density, which is a reminder that "new companies" often means legal shells, not new shops or factories.`,
-] });
 ATLAS.notes('n3c', { title: 'Caveats', caveat: true, items: [
   'The data cover limited-liability companies only. Sole proprietorships and partnerships (most firms in India) are excluded. The US is not covered.',
   'Coverage falls in recent years (160 countries in 2024, against 219 in 2018).',
@@ -428,13 +411,6 @@ ATLAS.chart('c-ai', {
 ATLAS.tableToggle('c-ai-t', 'c-ai-tbl', ai, [{ key: 'period', label: 'Period' }, { key: 'total', label: 'Total $bn', num: true }, { key: 'ai', label: 'AI $bn', num: true }, { key: 'share', label: 'AI %', num: true }, { key: 'src', label: 'Source', fmt: (v, r) => a(r.url, v) }]);
 
 const v26 = D.vc_2026, last = vc[vc.length - 1];
-ATLAS.notes('n4', { items: [
-  `<b>Key number:</b> ${B(last.global_)} of VC in 2025 (KPMG/PitchBook), second only to 2021's ${B(vc[2].global_)}. The US took ${B(last.us)}, or ${(100 * last.us / last.global_).toFixed(0)}%, up from 45% in 2019.`,
-  `<b>2026 is already a record:</b> Crunchbase counts $${v26.ytd}B in Jan–Sep 2026 (Q1 $${v26.q1}B, Q2 $${v26.q2}B, Q3 $${v26.q3}B), more than any full year except 2021. Q3 had a record 27 rounds of $1B+. ${a(v26.url, 'Crunchbase')}`,
-  `<b>China's retreat:</b> China's VC fell from ${B(vc[2].china)} (2021) to ${B(last.china)} (2025).`,
-  `<b>India angle:</b> India's VC was ${B(last.india)} in 2025, flat for three years and well below 2021's ${B(vc[2].india)}. That is about ${(100 * last.india / last.global_).toFixed(1)}% of the global total. Indian money is going into IPOs rather than private rounds (see section 5).`,
-  `<b>Story angle:</b> AI is eating venture capital. Half of 2025's VC dollars went to AI, and 64% in Q3 2026, concentrated in a handful of labs (OpenAI, Anthropic, xAI).`,
-] });
 ATLAS.notes('n4c', { title: 'Caveats', caveat: true, items: [
   'KPMG/PitchBook and Crunchbase use different definitions. KPMG\'s 2025 total is $512B and Crunchbase\'s is $425–440B, so do not mix them in one comparison. Recent quarters get revised upward as seed deals are reported.',
   '"AI" classification is Crunchbase\'s own; other trackers (CB Insights, OECD, Stanford AI Index) report $226B–$345B for 2025.',
@@ -469,12 +445,6 @@ ATLAS.chart('c-ma', {
 });
 ATLAS.tableToggle('c-ma-t', 'c-ma-tbl', ma, [{ key: 'year', label: 'Year' }, { key: 'busd', label: 'US$ bn (2025 $)', num: true }]);
 
-ATLAS.notes('n5', { items: [
-  `<b>India angle:</b> India had the world's most IPOs in 2025 (379) and again in Jan–Sep 2026 (240), but raised only about $12B in 2026 against $164B in the US. Indian IPOs are many and small: SME listings, anchor investors and retail demand.`,
-  `<b>2026's mega listings:</b> EY's Jan–Sep 2026 total of $290B includes about $86B from a single June 2026 IPO (SpaceX; Crunchbase puts its raise at $75B at a $1.77T valuation). SK Hynix's $26.5B Nasdaq listing was Q3's largest. Fewer IPOs than 2025, but much bigger ones.`,
-  `<b>M&A:</b> ${T(ma[ma.length - 1].busd / 1000)} in 2025, with a record 68–70 deals above $10B; the largest was Netflix–Warner Bros. Discovery at $99B. For Jan–Sep 2026, LSEG counts $3.9T (up 28%) and Mergermarket $4.44T. ${a(D.ma_2026.url, 'Mergermarket')}`,
-  `<b>Story angle:</b> The exit market has reopened. Venture-backed giants are choosing IPOs over private rounds, and Indian retail investors fund more listings than any other country's.`,
-] });
 ATLAS.notes('n5c', { title: 'Caveats', caveat: true, items: [
   'EY revises its history: the 2021 figure comes from its Dec 2021 release (deals to 7 Dec plus expected deals) and is not strictly comparable with 2022–25. EY excludes SPACs.',
   'M&A totals differ by provider (LSEG, Dealogic, Mergermarket) by as much as $0.5T. The chart uses LSEG data, inflation-adjusted by XBMA.',
@@ -500,12 +470,6 @@ ATLAS.chart('c-listed', {
 });
 ATLAS.tableToggle('c-listed-t', 'c-listed-tbl', mc, [{ key: 'year', label: 'Year' }].concat(lS.map(([k, n]) => ({ key: k, label: n, num: true }))));
 const m2024 = mc[mc.length - 1];
-ATLAS.notes('n7', { items: [
-  `<b>Key number:</b> listed companies worldwide were worth ${T(m2024.world / 1e12)} at end-2024 (World Bank), and WFE puts end-2025 at $151.9T after $23T was added in a single year. ${a(D.wfe_2025.url, 'WFE')}`,
-  `<b>US share:</b> ${K.us_mcap_share_2024}% of world market value sits in about ${m2024.n_USA.toLocaleString('en-US')} US-listed domestic companies, against roughly 8,000 in 1996.`,
-  `<b>India angle:</b> India's market value was ${T(m2024.IND / 1e12)} at end-2024 with ${m2024.n_IND ? m2024.n_IND.toLocaleString('en-US') : '—'} companies in the World Bank count. India is now one of the five largest markets by value.`,
-  `<b>Story angle:</b> Fewer, bigger, more American. The listed universe is shrinking in the West while China and India keep adding companies.`,
-] });
 ATLAS.notes('n7c', { title: 'Caveats', caveat: true, items: [
   'The 2025 World Bank values show a break: India jumps to 8,510 listed companies and $10.6T (probably NSE and BSE counted together), which inflates the world total to 53,087. The charts stop at 2024.',
   'Counts are domestic listings on WFE-member exchanges; there are gaps for some countries and years (for example, UK after 2022).',
@@ -523,11 +487,6 @@ ATLAS.chart('c-tri', {
   series: MS.map((k, i) => ({ name: ML[i], type: 'scatter', symbolSize: 12, color: P[i], data: triRows.filter(r => r[k]).map(r => [r[k], r.company]) })),
 });
 ATLAS.tableToggle('c-tri-t', 'c-tri-tbl', tri, [{ key: 'company', label: 'Company' }].concat(MS.map((k, i) => ({ key: k, label: 'First ' + ML[i] }))).concat([{ key: 'peak_busd', label: 'Peak $bn', num: true }, { key: 'peak_date', label: 'Peak date' }, { key: 'note', label: 'Note' }]));
-ATLAS.notes('n8', { items: [
-  `<b>Timeline:</b> Apple was the first US company worth $1T (2 Aug 2018). Nvidia was the first worth $4T (9 Jul 2025) and $5T (29 Oct 2025); Apple became the second $5T company on 28 Jul 2026. Nvidia peaked at $5.72T (14 May 2026), and no company has reached $6T yet.`,
-  `<b>2026 newcomers:</b> Walmart, Samsung, Micron, SK Hynix, AMD and SpaceX, which listed in June 2026 and passed $1T and $2T on its first day. Amazon reached $3T on 3 Aug 2026.`,
-  `<b>Story angle:</b> Of the 19 companies ever worth $1T, 18 got there after 2018, and most are chipmakers or AI platforms. No Indian company is in the club; India's largest, Reliance, is worth a small fraction of $1T.`,
-] });
 ATLAS.notes('n8c', { title: 'Caveats', caveat: true, items: [
   'Dates are the first time a milestone was exceeded; Wikipedia mixes intraday and closing values. Eli Lilly and Samsung entries lack citations, so verify them against exchange data before quoting.',
   'Saudi Aramco: Wikipedia lists 12 Dec 2018 for $1T, before its Dec 2019 IPO. This page uses the listing day. PetroChina\'s 2007 $1T (on Shanghai debut) is in the table but not in the chart.',
@@ -551,12 +510,6 @@ ATLAS.chart('c-swf', {
     data: swf.map(r => r.type === t ? r.busd : null) })),
 });
 ATLAS.tableToggle('c-swf-t', 'c-swf-tbl', swf, [{ key: 'name', label: 'Fund' }, { key: 'type', label: 'Type' }, { key: 'country', label: 'Country' }, { key: 'busd', label: 'Assets $bn', num: true }]);
-ATLAS.notes('n9', { items: [
-  `<b>Key number:</b> BlackRock managed $15.5T on 30 Sep 2026, more than China's entire stock market at end-2024 and about one-tenth of world market value.`,
-  `<b>State capital:</b> Norway's NBIM manages $2.28T. The eight sovereign wealth funds in Global SWF's top 15 hold about $10.7T, and NBIM says it owns about 1.5% of all listed shares worldwide. Much of that money sits in the same Global 2000 companies.`,
-  `<b>India angle:</b> India has no sovereign wealth fund in the top 15. Its closest equivalents, NIIF and the EPFO/LIC pools, are much smaller, while Gulf funds (PIF, ADIA, QIA) are major investors in Indian companies such as Jio and Reliance Retail.`,
-  `<b>Story angle:</b> Who owns the giants? Index funds and state funds, more than individual investors.`,
-] });
 ATLAS.notes('n9c', { title: 'Caveats', caveat: true, items: [
   'Comparing stocks (assets) with flows (GDP, FDI, VC) is illustrative only.',
   'ADIA, GIC and SAFE do not publish AUM, so these figures are Global SWF estimates; other trackers differ by hundreds of billions.',
@@ -579,11 +532,6 @@ ATLAS.chart('c-coop2', {
 });
 ATLAS.tableToggle('c-coop2-t', 'c-coop2-tbl', cg, [{ key: 'rank', label: '#', num: true }, { key: 'name', label: 'Co-op' }, { key: 'country', label: 'Country' }, { key: 'ratio', label: 'Turnover / GDP per capita', num: true, fmt: v => v.toLocaleString('en-US') }]);
 const cf = D.coop_facts;
-ATLAS.notes('n10', { items: [
-  `<b>Key numbers:</b> about ${cf.n_coops} co-operatives, ${cf.members} members and ${cf.jobs} jobs (${a(cf.url, 'ICA')}). The top 300 had a combined turnover of $2.79T in 2023, up from $1.91T in 2017.`,
-  `<b>India angle:</b> Amul (GCMMF) had sales of ₹${cf.amul_fy26_crore.toLocaleString('en-IN')} crore in FY26, up from ₹${cf.amul_fy25_crore.toLocaleString('en-IN')} crore, and its brand turnover passed ₹1 lakh crore. It is owned by ${cf.amul_farmers} dairy farmers (${a(cf.amul_url, 'AgroSpectrum')}). Amul and IFFCO rank #1 and #2 in the world on turnover relative to GDP per capita.`,
-  `<b>Story angle:</b> The world's largest farmer-owned brand is Indian. Co-ops are a business model the stock-market lists don't capture: Crédit Agricole's $107B turnover is on the scale of a Fortune Global 500 company, but you can't buy its parent's shares.`,
-] });
 ATLAS.notes('n10c', { title: 'Caveats', caveat: true, items: [
   'ICA says no comprehensive global co-op database exists, so the 3 million and 1 billion figures are estimates. World Cooperative Monitor data lag by two years (2023 turnover).',
   'GCMMF\'s sales (₹73,450 crore) and the "Amul brand" turnover (₹1 lakh crore+, including member unions) are different measures.',
@@ -614,11 +562,6 @@ ATLAS.chart('c-trade', {
 ATLAS.tableToggle('c-trade-t', 'c-trade-tbl', trY.map(y => Object.assign({ year: y }, Object.fromEntries(trK.map(k => [k, tr[k][y] != null ? +tr[k][y].toFixed(1) : null])))),
   [{ key: 'year', label: 'Year' }].concat(trK.map(k => ({ key: k, label: k === 'WLD' ? 'World' : NM[k], num: true }))));
 const U = D.unctad;
-ATLAS.notes('n11', { items: [
-  `<b>Key number:</b> UNCTAD puts global FDI at $${U.global_fdi_2025_tusd}T in 2025 (${U.growth}), with more than 80% going to the top 20 host economies (${a(U.url, 'WIR 2026')}).`,
-  `<b>India angle:</b> India's FDI inflows rose to $${U.india_2025_busd}B in 2025 from $${U.india_2024_busd}B, making it the #${U.india_rank} host economy (UNCTAD). India's trade is about 46% of GDP, below the world average, against China's about 38% and the US's about 25%.`,
-  `<b>Story angle:</b> Globalization has stalled rather than reversed. Trade as a share of GDP has stayed between 52% and 62% since 2008, and FDI is now driven by AI data-centre megaprojects.`,
-] });
 ATLAS.notes('n11c', { title: 'Caveats', caveat: true, items: [
   'World Bank FDI (balance-of-payments net inflows) differs from UNCTAD\'s; flows through financial conduits (Netherlands, Luxembourg) cause big swings.',
   'The World Bank 2025 world trade-to-GDP value (68%) is a coverage artifact and is not shown.',

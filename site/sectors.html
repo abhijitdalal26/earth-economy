@@ -37,7 +37,6 @@
       <p class="src">Source: Forbes Global 2000 (2026); sector/industry taxonomy from data/industry_taxonomy.csv (13 sectors, 30 industries).</p>
     </div>
   </div>
-  <div id="n-tree"></div>
 
   <!-- 2. Shares -->
   <h2>Where money is made vs where value is priced</h2>
@@ -59,7 +58,6 @@
       <p class="src">Source: Forbes Global 2000 (2026). Matches data_analysis/output/data/capital__profit_pool.csv.</p>
     </div>
   </div>
-  <div id="n-share"></div>
   <div id="n-share-c"></div>
 
   <!-- 3. Margins -->
@@ -85,7 +83,6 @@
       <p class="src">Source: Forbes Global 2000 (2026). ROA identity checked: margin × turnover = profit ÷ assets.</p>
     </div>
   </div>
-  <div id="n-margin"></div>
   <div id="n-margin-c"></div>
 
   <!-- 4. Valuation -->
@@ -103,7 +100,6 @@
       <p class="src">Source: Forbes Global 2000 (2026); market value as of the list's April 2025 cut-off, financials FY2025.</p>
     </div>
   </div>
-  <div id="n-val"></div>
 
   <!-- 5. Concentration -->
   <h2>Concentration: which industries are clubs of a few</h2>
@@ -119,7 +115,6 @@
       <p class="src">Source: Forbes Global 2000 (2026); HHI and top-3 share computed on company revenue.</p>
     </div>
   </div>
-  <div id="n-hhi"></div>
 
   <!-- 6. Drilldown -->
   <h2>Drill into one sector</h2>
@@ -170,7 +165,6 @@
       <p class="src">Source: Forbes Global 2000 (2026) company descriptions.</p>
     </div>
   </div>
-  <div id="n-econ"></div>
   <div id="n-econ-c"></div>
 
   <!-- 8. Heatmap -->
@@ -199,7 +193,6 @@
       <p class="src">Source: Forbes Global 2000 (2026). Share of the country's Global 2000 revenue minus the Global 2000-wide share, percentage points.</p>
     </div>
   </div>
-  <div id="n-india"></div>
 
   <!-- 10. Industry table -->
   <h2>All 30 industries, sortable</h2>
@@ -329,11 +322,6 @@
   const treeTbl = liveTable('c-tree-t', 'c-tree-tbl', () => D.industries.map(r => ({ sector: r.sector, industry: r.industry, n: r.n, v: r[treeMetric], sh: r[treeMetric + '_sh'] ?? (r[treeMetric] / T[treeMetric] * 100) })),
     [{ key: 'sector', label: 'Sector' }, { key: 'industry', label: 'Industry' }, { key: 'n', label: 'Firms', num: true },
      { key: 'v', label: 'Value', num: true, fmt: v => fmtM(treeMetric, v) }, { key: 'sh', label: '% of total', num: true, fmt: v => pct(v, 2) }]);
-  ATLAS.notes('n-tree', { items: [
-    `<b>Banking alone</b> (327 firms) books ${pct(D.industries.find(i => i.industry === 'Banking').rev_sh)} of Global 2000 revenue and ${pct(D.industries.find(i => i.industry === 'Banking').profit_sh)} of its profit — the single biggest industry by both.`,
-    `The top 3 industries by revenue — Banking, Oil &amp; Gas, Retail &amp; Wholesale — are 28% of the list. None of them is what most readers think of when they hear "big business" (that's Apple, Amazon, Toyota).`,
-    `Story angle: <i>the world's biggest businesses are mostly in the business of money and energy</i>. Put the treemap's revenue view next to its market-value view: the shape of the corporate world changes depending on which ledger you trust.`,
-  ] });
 
   // ---------- 2. shares ----------
   const shareSeries = [['rev_sh', 'Revenue'], ['profit_sh', 'Profit'], ['mv_sh', 'Market value'], ['emp_sh', 'Employees']];
@@ -368,12 +356,6 @@
   buttons('gap-tools', [['pm', 'Profit vs market value'], ['rm', 'Revenue vs market value'], ['er', 'Jobs vs revenue']], gapK, k => { gapK = k; drawGap(); gapTbl.refresh(); });
   drawGap();
   const gapTbl = liveTable('c-gap-t', 'c-gap-tbl', gapRows, [{ key: 'sector', label: 'Sector' }, { key: 'a', label: 'Share A %', num: true, fmt: v => pct(v) }, { key: 'b', label: 'Share B %', num: true, fmt: v => pct(v) }, { key: 'g', label: 'Gap (pp)', num: true, fmt: pp }]);
-  ATLAS.notes('n-share', { items: [
-    `<b>Financials: ${pct(fin.rev_sh)} of revenue, ${pct(fin.profit_sh)} of profit, ${pct(fin.mv_sh)} of market value.</b> The market prices bank profit at ${fin.pe}× (aggregate P/E) vs ${tech.pe}× for tech — a dollar of tech profit is worth ~${(tech.pe / fin.pe).toFixed(1)} dollars of bank profit.`,
-    `<b>Technology</b> is the mirror image: ${pct(tech.rev_sh)} of revenue, ${pct(tech.profit_sh)} of profit, ${pct(tech.mv_sh)} of market value. The ${pp(tech.profit_sh - tech.mv_sh)} gap is the market's bet on future growth (and on AI).`,
-    `<b>Consumer &amp; Retail</b> employs ${pct(secByName['Consumer & Retail'].emp_sh)} of the 92.6M Global 2000 workforce on ${pct(secByName['Consumer & Retail'].rev_sh)} of revenue — the big labour-intensive sector. Energy is the opposite: ${pct(secByName['Energy & Utilities'].emp_sh)} of jobs, ${pct(secByName['Energy & Utilities'].rev_sh)} of revenue.`,
-    `Story angle: <i>"Where profit is made is not where value is priced."</i> Use the Jobs-vs-revenue toggle for the labour angle: who employs people vs who books sales.`,
-  ] });
   ATLAS.notes('n-share-c', { caveat: true, title: 'Caveats', items: [
     'Bank "revenue" in Forbes is gross (interest + fees), not net interest income — it inflates Financials\' revenue share relative to how analysts usually measure banks.',
     'Market value is a point-in-time snapshot (spring 2025, around the April tariff sell-off); tech\'s share moves several points with a single quarter of Nvidia/Microsoft prices.',
@@ -425,13 +407,6 @@
   const roaTbl = liveTable('c-roa-t', 'c-roa-tbl', roaRows, [{ key: 'label', label: 'Group' }, { key: 'agg_margin', label: 'Net margin %', num: true, fmt: v => pct(v) },
     { key: 'turnover', label: 'Asset turnover ×', num: true, fmt: v => v.toFixed(3) }, { key: 'roa', label: 'ROA %', num: true, fmt: v => pct(v, 2) }, { key: 'rev', label: 'Revenue', num: true, fmt: usd }, { key: 'assets', label: 'Assets', num: true, fmt: usd }]);
   const fr = D.industries.find(i => i.industry === 'Food Markets'), sw = D.industries.find(i => i.industry === 'Software & IT Services'), bk = D.industries.find(i => i.industry === 'Banking');
-  ATLAS.notes('n-margin', { items: [
-    `<b>Median Global 2000 firm: ${pct(T.med_margin)} net margin.</b> Financials have the highest sector median (${pct(fin.med_margin)}); Construction &amp; Real Estate the lowest (${pct(secByName['Construction & Real Estate'].med_margin)}).`,
-    `<b>Opposite business models:</b> grocers (Food Markets) earn a ${pct(fr.agg_margin)} margin but turn assets over ${fr.turnover.toFixed(2)}× a year; Software earns ${pct(sw.agg_margin)} on ${sw.turnover.toFixed(2)}× turnover — ROA ${pct(fr.roa)} vs ${pct(sw.roa)}.`,
-    `<b>Banks</b> have a healthy ${pct(bk.agg_margin)} margin but turn assets over only ${bk.turnover.toFixed(3)}× — ROA under 1% (${pct(bk.roa, 2)}). They make money through leverage: ~$12 of assets per $1 of equity is normal. That's why bank ROA ≠ bad business.`,
-    `Loss-makers: ${T.loss_makers} of 2,000 firms. Telecom &amp; Media (23%) and Materials &amp; Chemicals (15%) have the highest loss rates; Financials only 2%.`,
-    `Story angle: <i>"The 2-cent business"</i> — Walmart, Kroger, Glencore-type traders move trillions on razor-thin margins; contrast with Nvidia/TSMC-type 50%+ margins.`,
-  ] });
   ATLAS.notes('n-margin-c', { caveat: true, title: 'Caveats', items: [
     'Median and aggregate margins differ: aggregate margin is dominated by the biggest firms (e.g. Healthcare aggregate 8% is dragged down by low-margin US insurers/distributors filed under it; the median firm earns 12.5%).',
     'Forbes profits are net income, including one-offs (write-downs, asset sales). A single-year margin can mislead for cyclical sectors (oil, chemicals, shipping).',
@@ -465,13 +440,6 @@
   const valTbl = liveTable('c-val-t', 'c-val-tbl', valRows, [{ key: 'label', label: 'Group' }, { key: 'n', label: 'Firms', num: true }, { key: 'ps', label: 'P/S agg', num: true, fmt: x1 }, { key: 'med_ps', label: 'P/S median', num: true, fmt: x1 },
     { key: 'pe', label: 'P/E agg', num: true, fmt: x1 }, { key: 'med_pe', label: 'P/E median', num: true, fmt: x1 }, { key: 'mv', label: 'Market value', num: true, fmt: usd }]);
   const semi = D.industries.find(i => i.industry === 'Semiconductors'), trd = D.industries.find(i => i.industry === 'Trading Companies'), ad = D.industries.find(i => i.industry === 'Aerospace & Defense');
-  ATLAS.notes('n-val', { items: [
-    `<b>The whole Global 2000 trades at ${(T.mv / T.rev).toFixed(2)}× sales and ${(T.mv / T.profit).toFixed(1)}× profit.</b>`,
-    `<b>Semiconductors: ${x1(semi.ps)} sales</b> (aggregate) vs median chip firm ${x1(semi.med_ps)} — the gap is Nvidia, TSMC and Broadcom. <b>Trading Companies: ${x1(trd.ps)}</b>; the market values a $1 of trading revenue at 50 cents.`,
-    `<b>Aerospace &amp; Defense</b> has the highest aggregate P/E of any sizeable industry (${ad.pe}×): defence re-armament in Europe plus Boeing's depressed profits inflating the ratio.`,
-    `Explainer for readers: P/S of 5 means if the company paid out every rupee of revenue (not profit) as dividends, you'd get your money back in 5 years. P/E of 30 means 30 years at today's profit.`,
-    `Story angle: <i>"The market's price list"</i> — rank industries by P/E and you get a ranking of what investors believe will grow: AI chips and software at the top, banks, oil, airlines at the bottom.`,
-  ] });
 
   // ---------- 5. concentration ----------
   let hhiK = 'hhi', hhiTiny = false;
@@ -494,12 +462,6 @@
   drawHhi();
   const hhiTbl = liveTable('c-hhi-t', 'c-hhi-tbl', hhiRows, [{ key: 'label', label: 'Industry' }, { key: 'sector', label: 'Sector' }, { key: 'n', label: 'Firms', num: true }, { key: 'hhi', label: 'HHI', num: true }, { key: 'top3', label: 'Top-3 %', num: true, fmt: v => pct(v) }, { key: 'top3_names', label: 'Top 3', fmt: v => v.map(s => s.trim()).join(', ') }]);
   const media = D.industries.find(i => i.industry === 'Media'), hce = D.industries.find(i => i.industry === 'Health Care Equipment & Services'), ret = D.industries.find(i => i.industry === 'Retail & Wholesale');
-  ATLAS.notes('n-hhi', { items: [
-    `<b>Media</b> (HHI ${media.hhi.toLocaleString()}): Comcast, Disney and Charter hold ${pct(media.top3, 0)} of the industry's Global 2000 revenue. <b>Health care services</b> (HHI ${hce.hhi.toLocaleString()}): McKesson, Cencora, Cardinal Health — the three US drug wholesalers — ${pct(hce.top3, 0)}.`,
-    `<b>Retail &amp; Wholesale</b>: Walmart, Amazon, CVS hold ${pct(ret.top3, 0)} of the revenue of 80 listed retail giants. <b>Banking</b> is the least concentrated big industry (HHI ${bk.hhi}; top 3 = ${pct(bk.top3, 0)}) — even JPMorgan and ICBC are small slices of a 315-bank pie.`,
-    `Whole-list HHI is just ${T.hhi_all}: the corporate world as a whole is not concentrated; it's individual industries that are.`,
-    `Story angle: <i>"Clubs of three"</i> — drug wholesaling, cable/media, smartphones, chips: industries where 3 firms make 40–55% of the money. India parallel: telecom (Jio, Airtel, Vi), cement, airlines (IndiGo+Air India).`,
-  ] });
 
   // ---------- 6. drilldown ----------
   let dSec = 'Technology', dMet = 'rev';
@@ -592,13 +554,6 @@
     series: [{ type: 'bar', data: AG.map(r => ({ value: r.rev, itemStyle: { color: r.country === 'India' ? PAL[1] : PAL[3] } })), label: { show: true, position: 'right', fontSize: 10, color: TXT2, formatter: p => usd(p.value) } }] });
   ATLAS.tableToggle('c-agri-t', 'c-agri-tbl', E.agri_adjacent.map(r => ({ name: r[0].trim(), country: r[1], industry: r[2], rev: r[3] })), [{ key: 'name', label: 'Company' }, { key: 'country', label: 'Country' }, { key: 'industry', label: 'Forbes industry' }, { key: 'rev', label: 'Revenue', num: true, fmt: usd }]);
   const s0 = E.series['SL.AGR.EMPL.ZS'][0];
-  ATLAS.notes('n-econ', { items: [
-    `<b>Agriculture: ${pct(E.gdp_share_raw.Agriculture)} of world GDP, ${pct(E.emp_share.Agriculture)} of world employment (${E.emp_year})</b> — about ${(E.agri_workers / 1e6).toFixed(0)} million people. Not one Global 2000 industry is farming; the nearest are grain/oilseed traders (ADM, Bunge, Wilmar, Olam) and fertiliser makers (Nutrien).`,
-    `The farm share of jobs has fallen from ${pct(s0[1], 0)} in ${s0[0]} to ${pct(E.emp_share.Agriculture, 0)} — the biggest labour shift on earth, mostly China, India, Southeast Asia.`,
-    `<b>Industry is over-represented in big business:</b> ${pct(E.gdp_share_raw.Industry, 0)} of world GDP (manufacturing alone ${pct(E.manufacturing, 0)}), but ${pct(E.corp.Industry.rev, 0)} of Global 2000 revenue. Services: ${pct(E.gdp_share_raw.Services, 0)} of GDP, ${pct(E.corp.Services.rev, 0)} of revenue. Scale economics (oil, cars, chips, steel) favour giant firms; services like haircuts, clinics, schools and lawyers are fragmented into millions of small firms.`,
-    `<b>India angle:</b> roughly 45% of Indian workers are in agriculture (World Bank/PLFS ≈ 43–46%) vs ~16–18% of GDP — and India's 70 Global 2000 firms include no farmers either. The farm economy is the biggest invisible business on earth.`,
-    `Story angle: <i>"The economy Forbes can't see"</i> — the half of humanity's work that happens on farms, in informal shops and family firms never shows up in any market-cap ranking.`,
-  ] });
   ATLAS.notes('n-econ-c', { caveat: true, title: 'Caveats', items: [
     'Apples vs oranges: World Bank shares are <b>value added</b> (GDP); Global 2000 shares are <b>gross revenue</b>, which double-counts supply chains and is global (a US firm\'s foreign sales count). Use the comparison for direction, not precise ratios.',
     'The bucket mapping is ours (ISIC-style: oil &amp; gas, mining, utilities, construction and all manufacturing = Industry; everything else = Services). Conglomerates go to Industry. Food, Drink &amp; Tobacco is food processing = Industry, not Agriculture.',
@@ -662,12 +617,6 @@
   drawCmix();
   const cmixTbl = liveTable('c-cmix-t', 'c-cmix-tbl', cmixRows, [{ key: 'sector', label: 'Sector' }, { key: 'c', label: 'Country share %', num: true, fmt: v => pct(v) }, { key: 'w', label: 'Global 2000 share %', num: true, fmt: v => pct(v) }, { key: 'd', label: 'Difference', num: true, fmt: pp }]);
   const IN = D.cmix.India, inMix = i => IN.mix[SECT.indexOf(i)];
-  ATLAS.notes('n-india', { title: 'India angle', items: [
-    `<b>India has ${IN.n} Global 2000 companies with ${usd(IN.rev)} revenue</b> (${pct(IN.rev / T.rev * 100)} of the list). Financials are ${pct(inMix('Financials'), 0)} and Energy &amp; Utilities ${pct(inMix('Energy & Utilities'), 0)} of that revenue — together nearly two-thirds (Reliance, SBI, IOC, ONGC, HDFC Bank, LIC sit here).`,
-    `<b>Technology is just ${pct(inMix('Technology'), 0)}</b> of India's big-company revenue despite TCS, Infosys, HCL, Wipro — Indian IT is large in jobs and exports but small in dollar revenue next to Reliance or SBI. Healthcare (pharma) is under 1%.`,
-    `Compare: the US is overweight Technology and Healthcare; China is overweight Construction (China State Construction, China Railway) and Financials; Japan and Germany are overweight Consumer &amp; Retail, where Forbes files carmakers (Toyota, VW, Mercedes, BMW). Use the dropdown.`,
-    `Story angle: <i>"India Inc. is a bank with an oil refinery attached"</i> — what would it take for India's top-company list to look like America's?`,
-  ] });
 
   // ---------- 10. industry table ----------
   const IND_COLS = [{ key: 'industry', label: 'Industry' }, { key: 'sector', label: 'Sector' }, { key: 'n', label: 'Firms', num: true },

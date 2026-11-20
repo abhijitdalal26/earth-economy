@@ -73,7 +73,6 @@
       <p class="src">Source: CB Insights Unicorn Board. City names normalised (Gurgaon → Gurugram, Bangalore → Bengaluru).</p>
     </div>
   </div>
-  <div id="n-where"></div>
   <div class="grid">
     <div class="card">
       <h3 id="h-dens">Who punches above their weight</h3>
@@ -84,7 +83,6 @@
       <p class="src">Source: CB Insights Unicorn Board (count); World Bank population (SP.POP.TOTL) and GDP in current US$ (NY.GDP.MKTP.CD), 2025. Countries under 1 million people and offshore registration hubs (Seychelles, Cayman Islands) are left out of the chart because one company swings their ratio wildly; they are still in the table. Industry and year filters apply.</p>
     </div>
   </div>
-  <div id="n-dens"></div>
   <div class="explainer" id="x-check"></div>
 
   <!-- 2. what -->
@@ -108,7 +106,6 @@
       <p class="src">Source: CB Insights Unicorn Board. Year filter applies; country/industry filters do not.</p>
     </div>
   </div>
-  <div id="n-what"></div>
 
   <!-- 3. wave -->
   <h2>The unicorn wave</h2>
@@ -136,7 +133,6 @@
       <p class="src">Founding year from Forbes Cloud 100 / Next Billion-Dollar 2025 and the atlas AI registry, matched by name to CB Insights. Small, tech-heavy sample — not representative of all unicorns.</p>
     </div>
   </div>
-  <div id="n-wave"></div>
 
   <!-- 4. giants -->
   <h2>The biggest private companies on earth</h2>
@@ -158,7 +154,6 @@
       <p class="src">Source: CB Insights Unicorn Board.</p>
     </div>
   </div>
-  <div id="n-giants"></div>
 
   <!-- 5. distribution -->
   <h2>The power law</h2>
@@ -179,7 +174,6 @@
       <p class="src">Source: CB Insights Unicorn Board.</p>
     </div>
   </div>
-  <div id="n-power"></div>
 
   <!-- 6. investors -->
   <h2>Who backed them</h2>
@@ -194,7 +188,6 @@
       <p class="src">Source: CB Insights Unicorn Board, "select investors" field. Light name cleaning (e.g. Softbank → SoftBank Group, Google Ventures → GV).</p>
     </div>
   </div>
-  <div id="n-inv"></div>
 
   <!-- 7. Forbes lists -->
   <h2>The next layer: Forbes Cloud 100 and the Next Billion-Dollar Startups</h2>
@@ -215,7 +208,6 @@
       <p class="src">Source: Forbes Next Billion-Dollar Startups (2025).</p>
     </div>
   </div>
-  <div id="n-forbes"></div>
 
   <!-- 8. AI -->
   <h2>The AI race: where the money concentrated</h2>
@@ -258,7 +250,6 @@
       <p class="src">Source: Hugging Face Hub API via ai_labs/data/ai_labs.csv. Monthly downloads of the top model; a proxy for developer reach, not revenue or quality.</p>
     </div>
   </div>
-  <div id="n-ai"></div>
   <div class="card">
     <h3>Latest marks for the headline names (curated, outside the CB dataset)</h3>
     <p class="sub">Where a newer or primary-reported figure exists. Quote these with their date; do not mix them into the CB totals above.</p>
@@ -280,7 +271,6 @@
       <p class="src">Sources: CB Insights Unicorn Board; listed market caps from the atlas listed universe (CompaniesMarketCap / SEC, 2026 snapshot); country market caps from data_analysis capital__financial_depth.</p>
     </div>
   </div>
-  <div id="n-cmp"></div>
 
   <!-- 10. India -->
   <div class="india-band">
@@ -331,7 +321,6 @@
       <p class="src">Source: CB Insights Unicorn Board.</p>
     </div>
   </div>
-  <div id="n-india"></div>
   </div>
 
   <div id="n-caveat"></div>
@@ -529,13 +518,6 @@ function renderDensity() {
   const one = all.filter(x => x.n === 1).sort((a, b) => a.key.localeCompare(b.key));
   const two = all.filter(x => x.n === 2).sort((a, b) => a.key.localeCompare(b.key));
   const rk = (c, k) => all.filter(x => ok(x) && x[k] != null).sort((a, b) => b[k] - a[k]).findIndex(x => x.key === c) + 1;
-  ATLAS.notes('n-dens', { items: [
-    shown.length > 4 && `<b>Small, open economies punch above their weight.</b> ${unit[0].toUpperCase() + unit.slice(1)}, the leaders are ${shown.slice(0, 5).map(x => `${esc(x.key)} (${fmt(x[key])})`).join(', ')}.`,
-    inr && cn && `<b>India looks very different by each measure.</b> Per $1 trillion of GDP India ranks #${rk('India', 'per_gdp')} of ${shown.length} (${fmt(inr.per_gdp)}, ahead of China's ${fmt(cn.per_gdp)}); per person it drops to #${rk('India', 'per_pop')} (${fmt(inr.per_pop)} per 10M people) because of its population.`,
-    one.length && `<b>${one.length} countries have exactly one unicorn:</b> ${one.map(x => `${esc(x.key)} (${esc(x.items[0].company)}, ${fB(x.items[0].val)})`).join('; ')}.`,
-    two.length && `<b>${two.length} countries have two:</b> ${two.map(x => `${esc(x.key)} (${x.items.map(u => esc(u.company)).join(', ')})`).join('; ')}.`,
-    '<b>Caveat: the board misses companies, and that hits small countries hardest.</b> Estonia shows only Veriff. Skype (bought by eBay) and Wise (listed in London) grew there and left, and Bolt, the ride-hailing company last valued at about $8.4B in 2022, is not on CB Insights\' board at all. The "Bolt" on the board is a different, US payments company. One missing company can move a small country many places in this ranking.',
-  ].filter(Boolean) });
 }
 seg('t-city', [['n', 'Count'], ['v', 'Valuation']], 'n', k => { mCity = k; renderCity(); });
 
@@ -742,12 +724,6 @@ document.getElementById('inv-seq').onchange = renderInv;
   tbl('c-nbd', nbd, [{ key: 'company', label: 'Company' }, { key: 'city', label: 'City' }, { key: 'fund_m', label: 'Funding', num: true, fmt: fM }, { key: 'desc', label: 'Forbes note' }]);
   const vals = cloud.map(f => f.mult).sort((a, b) => a - b);
   const totVal = S.forbes.filter(f => f.list === 'Cloud 100' && f.val_m).reduce((s, f) => s + f.val_m, 0);
-  ATLAS.notes('n-forbes', { items: [
-    `The Cloud 100 was worth <b>${fM(totVal)}</b> combined on Forbes' 2025 marks; OpenAI ($300B) and Anthropic ($183B) alone were ${pct((300000 + 183000) / totVal)} of it. A year later CB marks those two at $840B and $965B — a reminder of how fast private marks move.`,
-    `Median Cloud 100 company is valued at <b>${median(vals).toFixed(1)}×</b> the money it has raised. Capital-light outliers (Canva, Stripe, Notion, Miro) sit far above the 30× line; capital-hungry AI labs sit near 10×, because compute eats the cash.`,
-    'Zapier is the extreme case: a $5B valuation on about $1M of outside funding — bootstrapped companies barely appear on venture lists at all, which is a story in itself (Zerodha is India\'s version, and is absent from the CB board).',
-    'The Next Billion-Dollar list is almost entirely AI-native and American: tomorrow\'s unicorn pipeline is even more concentrated than today\'s board. None are Indian.',
-  ] });
 })();
 
 // ---------- 8. AI ----------
@@ -814,14 +790,6 @@ function renderAIShare() {
   });
   tbl('c-hf', S.hf, [{ key: 'lab', label: 'Lab' }, { key: 'country', label: 'Country' }, { key: 'open', label: 'Open' }, { key: 'models', label: 'HF models', num: true }, { key: 'top_model', label: 'Top model' }, { key: 'downloads', label: 'Downloads', num: true, fmt: v => ATLAS.fmtNum(v) }]);
   const cn = A.filter(a => a.country === 'China'), us = A.filter(a => a.country === 'United States');
-  ATLAS.notes('n-ai', { items: [
-    `<b>AI concentrated capital like nothing before it.</b> ${aiU.length} AI-native companies — ${pct(aiU.length / U.length)} of unicorns — carry ${pct(aiV / TOTAL)} of the board's value. Anthropic and OpenAI alone (${fB(1805)}) are worth ${pct(1805 / U.filter(u => u.country !== 'United States').reduce((s, u) => s + u.val, 0))} as much as all ${U.filter(u => u.country !== 'United States').length.toLocaleString()} non-US unicorns combined (${fB(U.filter(u => u.country !== 'United States').reduce((s, u) => s + u.val, 0))}).`,
-    `<b>Open vs closed is geography.</b> ${pct(cn.filter(a => a.open === 'yes').length / cn.length)} of China's ${cn.length} tracked builders publish weights (DeepSeek, Qwen, Kimi/Moonshot, GLM/Zhipu, MiniMax) vs ${pct(us.filter(a => a.open === 'yes').length / us.length)} of the ${us.length} American ones. Open weights are China's distribution strategy under US chip controls.`,
-    'DeepSeek and Moonshot AI are each marked at $50B — the only non-US AI labs in the board\'s top 10, and they got there in one to three years.',
-    '<b>Why AI labs need so much money</b>: training and serving frontier models is a capital-goods business — data centres, NVIDIA chips, power contracts. Much of the money raised flows straight to cloud providers and chipmakers (often the same companies investing — "circular" deals worth questioning).',
-    '<b>India angle</b>: the registry has three Indian model builders (Sarvam AI, Krutrim, BharatGen); Sarvam joined the unicorn board in 2026 at $1.5B and Krutrim at $1B. India has no frontier lab — the gap between Sarvam\'s mark and DeepSeek\'s is ~33×.',
-    'Hugging Face downloads (top model per lab) rank BAAI (China, 58M) and Google (42M) ahead of OpenAI (18M) — openness buys reach, not necessarily revenue.',
-  ] });
   ATLAS.table('latest-tbl', S.latest, [{ key: 'company', label: 'Company' }, { key: 'mark_b', label: 'Mark', num: true, fmt: fB }, { key: 'date', label: 'As of' }, { key: 'event', label: 'Event' }, { key: 'source', label: 'Source' }]);
   ATLAS.notes('n-latest', { caveat: true, title: 'Caveat: latest marks', items: [
     'SpaceX and xAI are not on the CB board: xAI merged into SpaceX in Feb 2026 and SpaceX has since gone public — the largest venture-backed company in history left the private ledger. Compare it with the public companies, not with unicorns.',
@@ -859,12 +827,6 @@ function renderAIShare() {
     { v: (inU / lt['Reliance Industries']).toFixed(2) + '×', l: "India's 63 unicorns vs one Reliance Industries", s: `${fB(inU)} vs ${fB(lt['Reliance Industries'])}` },
     { v: ((965 + 840) / mk['India']).toFixed(2) + '×', l: "Anthropic + OpenAI vs India's stock market", s: 'two private marks' },
   ]);
-  ATLAS.notes('n-cmp', { items: [
-    `All the world's unicorns combined (${fB(TOTAL)}) are worth about ${(TOTAL / lt['Apple']).toFixed(1)} Apples or ${(TOTAL / lt['NVIDIA']).toFixed(1)} NVIDIAs — and only ${pct(TOTAL / S.meta.listed_total_b)} of the ${fB(S.meta.listed_total_b)} market value of the world's listed companies. The private layer is loud but small.`,
-    `The 1,442 unicorns are worth ${(TOTAL / mk['India']).toFixed(1)}× India's entire listed market (${fB(mk['India'])}, ~${S.markets.find(m => m.country === 'India').companies} companies in the atlas). Anthropic and OpenAI alone (${fB(1805)}) are ${pct(1805 / mk['India'])} of it.`,
-    `India's 63 unicorns (${fB(inU)}) are worth less than Reliance Industries alone (${fB(lt['Reliance Industries'])}) — partly because India's biggest startups listed (Zomato/Eternal, Swiggy, Paytm, Nykaa, Meesho, Groww, PhysicsWallah) and left the board.`,
-    'Why not add them up? A traded market cap is a price at which shares actually change hands daily; a unicorn mark is a price paid for a small, preferred slice in one negotiated round. Comparing scale is fair; summing is not.',
-  ] });
 })();
 
 // ---------- 10. India ----------
@@ -925,15 +887,6 @@ function renderAIShare() {
       ai: g.items.filter(u => u.ai).length }; });
   ATLAS.table('in-peer', peers, [{ key: 'rank', label: '#', num: true }, { key: 'key', label: 'Country' }, { key: 'n', label: 'Unicorns', num: true }, { key: 'v', label: 'Valuation', num: true, fmt: fB }, { key: 'share', label: 'Share of value', num: true, fmt: pct }, { key: 'med', label: 'Median', num: true, fmt: fB }, { key: 'top', label: 'Largest' }, { key: 'recent', label: 'Joined 2024+', num: true }, { key: 'y2122', label: 'Share joined 2021–22', num: true, fmt: pct }, { key: 'ai', label: 'AI-native', num: true }]);
   const ch = U.filter(u => u.country === 'China'), us = U.filter(u => u.country === 'United States');
-  ATLAS.notes('n-india', { title: "Writer's notes: India", items: [
-    `<b>India is the world's No. ${cRank} unicorn nation</b> with ${I.length} companies worth ${fB(iv)} — behind the US (${us.length}), China (${ch.length}) and the UK (${cnt('United Kingdom')}). By value, India's whole board is worth less than Databricks alone ($190B).`,
-    `<b>A 2021 country.</b> ${I.filter(u => u.year === 2021).length} of India's ${I.length} surviving unicorns joined in 2021 alone (${pct(I.filter(u => u.year === 2021).length / I.length)}, vs ${pct(U.filter(u => u.year === 2021).length / U.length)} globally). Since 2024 India added only ${I.filter(u => u.year >= 2024).length}; the US added ${us.filter(u => u.year >= 2024).length}. The "funding winter" of 2022–24 hit India harder than most.`,
-    `<b>Bengaluru</b> hosts ${blr.length} (${pct(blr.length / I.length)}) — Razorpay, CRED, ShareChat, VerSe (Dailyhunt), Zetwerk, Unacademy. Mumbai (Dream11, Zepto, Upstox) and Gurugram (OYO, OfBusiness, Cars24) follow. Hyderabad is the new entrant via CtrlS (data centres, $5.2B, 2026) and Rapido.`,
-    '<b>Sector DNA</b>: India\'s unicorns are consumer apps and fintech — built on cheap data and UPI — while America\'s are enterprise software and AI. Use the heatmap\'s "Row share %" view to show it.',
-    '<b>The investors</b>: Sequoia Capital India (rebranded Peak XV Partners in 2023) appears on a quarter of Indian unicorns; Tiger Global — the 2021 "growth at any price" fund — is second. Home-grown funds Kalaari, Blume, Nexus and Matrix (now Z47) round out the list.',
-    '<b>The IPO graduation story</b>: the absence of Flipkart (Walmart-owned), Zomato/Eternal, Swiggy, Paytm, Nykaa, PolicyBazaar, Ola Electric, FirstCry, Meesho, Groww and PhysicsWallah from the board is a feature, not a bug — India\'s public market has become an exit route, which few countries can claim. Zerodha (bootstrapped, profitable) never appears on venture lists.',
-    '<b>Story angle — the AI gap</b>: India has no AI lab in the board\'s top 100; Sarvam ($1.5B) and Krutrim ($1B) sit at the floor. China has DeepSeek and Moonshot at $50B each.',
-  ] });
 })();
 
 // ---------- cross-check: our CB Insights counts vs an independent tracker ----------
@@ -952,37 +905,6 @@ function renderAIShare() {
 })();
 
 // ---------- page notes (static) ----------
-ATLAS.notes('n-where', { items: [
-  'The US has 825 unicorns worth $5.0T — 57% of the count and 69% of the value. China has 170 ($1.0T); the UK 73 ($279B); India 63 ($144B). The top five countries hold ~90% of all value.',
-  'San Francisco (229) alone out-counts every country except the US; add Palo Alto, San Jose, Mountain View, Redwood City and San Mateo and the Bay Area is ~320. New York (138) and London (62) are next; Bengaluru has 27 (merging the Bangalore spelling), ahead of Paris and Austin (24).',
-  'Odd entries like the Seychelles (3 unicorns, $37B) are crypto exchanges (OKX) with offshore registrations — the board records legal domicile, not where the work happens.',
-] });
-ATLAS.notes('n-what', { items: [
-  'Enterprise Tech (558 companies, $4.0T) includes Anthropic, OpenAI and Databricks — strip the AI labs out and its lead shrinks dramatically.',
-  'Media & Entertainment has only 78 companies but $722B of value — that is almost entirely ByteDance ($480B).',
-  'Switch the heatmap to "Row share %": India and Brazil skew to consumer and fintech; Israel and the US to enterprise software; China to industrials (EVs, batteries, chips) and consumer.',
-] });
-ATLAS.notes('n-wave', { items: [
-  '433 of today\'s 1,442 unicorns (30%) first crossed $1B in 2021, when near-zero interest rates sent "tourist" investors (Tiger Global, SoftBank, hedge funds) into private markets. Many are now "zombie unicorns" still carried at 2021 marks.',
-  '2022 (231) began the slide; 2023 (61) was the trough. The AI boom revived the pipeline: 83 in 2024, 123 in 2025 and 180 so far in 2026.',
-  'Time-to-unicorn has collapsed for AI: Mistral and Physical Intelligence hit $1B within their founding year, Moonshot AI, Cognition and Sierra in about one year. The median for the matched sample is five years.',
-] });
-ATLAS.notes('n-giants', { items: [
-  'Only five hectocorns exist: Anthropic ($965B), OpenAI ($840B), ByteDance ($480B), Databricks ($190B) and Stripe ($159B). Together they are ~36% of all unicorn value.',
-  'The rest of the top 30 is a who\'s who of the AI supply chain: VAST Data (AI storage), Crusoe and Fluidstack (AI data centres), Cognition (AI coding), Figure (humanoid robots), Safe Superintelligence, Mistral, Perplexity, Etched (AI chips).',
-  'Non-AI giants: Revolut ($75B, UK fintech), Ramp, Ripple, Canva (Australia), Fanatics, Epic Games, Kalshi (prediction markets), Helsing (German defence AI).',
-] });
-ATLAS.notes('n-power', { items: [
-  'Median unicorn: $1.7B. 283 companies are carried at exactly the $1B floor, and 54% are under $2B — many of those marks date from 2021 and would not survive a fresh round.',
-  'Top 10 companies ≈ 40% of all value; top 2 ≈ 25%. This is the venture power law in action: returns (and paper value) come from a handful of outliers.',
-  'Use the filters: the power law holds within every country and industry — India\'s top 5 hold about a quarter of its value.',
-] });
-ATLAS.notes('n-inv', { items: [
-  'By count, Andreessen Horowitz (85), Accel (75) and Sequoia Capital (67) lead. Tick "Merge Sequoia family" and Sequoia — split since 2023 into Sequoia (US/Europe), HongShan (China) and Peak XV (India/SE Asia) — jumps to the top with 136.',
-  'Tiger Global (50) and SoftBank (30) are the 2021-era growth investors whose portfolios are most exposed to stale marks.',
-  'Corporate and strategic money matters at the top: Google is the listed investor in Anthropic; Tencent appears on 24 cap tables (14 Chinese). Hyperscaler and chipmaker money in AI labs is under-captured by the three-investor field CB publishes.',
-  'Caveat: CB lists only up to three "select investors" per company, so these counts understate everyone and favour lead investors.',
-] });
 ATLAS.notes('n-caveat', { caveat: true, title: 'Caveats before you quote anything on this page', items: [
   '<b>Vintage</b>: CB Insights Unicorn Board snapshot with joins up to September 2026. Forbes lists are mid-2025. Valuations are the latest private funding round known to CB — some are years old.',
   '<b>Marks, not prices</b>: a unicorn valuation is the price of the last, small, often preferred slice — not what the whole company would sell for. Down rounds, write-downs by fund managers and below-mark IPOs are common.',

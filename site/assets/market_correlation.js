@@ -145,10 +145,4 @@ rollTbl(RR.slice().reverse().map(d => ({ m: '3 years to ' + d.m, r: d.r, n: d.pa
 
 const S = draw();
 // notes from the default view (last 10 years, US$), computed so they stay true after a data update
-ATLAS.notes('n-corr', { items: [
-  `<b>Neighbours move together.</b> Over the last 10 years the most closely linked pair is ${S.top.a} and ${S.top.b} (${fmt(S.top.r)}). Markets in the same region average ${fmt(S.inReg)}, against ${fmt(S.cross)} across regions.`,
-  S.chn && S.ind && `<b>China is the great diversifier.</b> Its correlation with the US is only ${fmt(S.chn.x.r)}, because foreign money in Chinese shares is limited and its market is driven by local savers and policy. India sits at ${fmt(S.ind.x.r)}.`,
-  `<b>Diversification fails when you need it most.</b> The rolling average jumps in crises (2008, 2020) when everything is sold at once. The peak was ${fmt(peak.r)} in the 3 years to ${peak.m}.`,
-  '<b>Caveat:</b> correlation measures whether markets move in the same direction in the same month, not whether they grow at the same pace. Two markets can be highly correlated while one triples and the other stays flat. Use the US-dollar view for cross-country comparison: in local currency, exchange-rate moves are hidden.',
-].filter(Boolean) });
 })();

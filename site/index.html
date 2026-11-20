@@ -21,7 +21,6 @@
   </header>
 
   <div id="tiles"></div>
-  <div id="n-tiles"></div>
 
   <h2>How big is "big business"?</h2>
   <p class="section-dek">The world's GDP is the yardstick. Against it we set what the Forbes Global 2000 sold, earned and was worth in 2025.</p>
@@ -71,8 +70,6 @@
       <p class="src">Source: Forbes Global 2000 (2026). Country is where the company is headquartered. Forbes lists Hong Kong and Taiwan separately from China. The <a href="geography.html">Geography</a> page has the full map.</p>
     </div>
   </div>
-  <div id="n-head"></div>
-  <div id="n-angles"></div>
 
   <h2>Explore the pack</h2>
   <p class="section-dek">Each page takes one question. Every chart has hover detail, a data table and a source line.</p>
@@ -137,12 +134,6 @@ ATLAS.tiles('tiles', [
   { v: T.exchanges, l: 'Stock exchanges tracked', s: F(T.exchange_mcap) + ' across ' + N(T.exchange_cos) + ' listings' },
   { v: N(T.listed_universe), l: 'Listed firms with a market cap', s: F(T.listed_mcap) + ' combined' },
 ]);
-ATLAS.notes('n-tiles', { title: 'Numbers to quote', items: [
-  `<b>${F(T.g_rev)}</b> is what the Forbes Global 2000 took in. That equals <b>${P(T.g_rev / T.world_gdp * 100, 0)}</b> of 2024 world GDP (${F(T.world_gdp)}). It is a scale comparison, not a share of GDP (see the explainer below).`,
-  `They employ <b>${(T.g_emp / 1e6).toFixed(1)} million</b> people, about <b>${P(T.g_emp / T.labor_force * 100, 1)}</b> of the world's 3.7 billion workers. So roughly 1 worker in ${Math.round(T.labor_force / T.g_emp)} produces revenue equal to half the world's output.`,
-  `Of the roughly <b>48,000</b> listed companies on earth, just 2,000 (about 4%) make the Forbes list. Then add <b>${N(T.unicorns)}</b> private unicorns worth ${F(T.unicorn_val)} on paper.`,
-  `<b>${T.g_loss}</b> of the 2,000 lost money in their latest year. The blended net margin is <b>${P(T.g_margin * 100)}</b>, so ${Math.round(T.g_margin * 100)} cents of every dollar of sales is profit.`,
-] });
 
 // ---------- yardstick ----------
 (function () {
@@ -299,19 +290,6 @@ document.getElementById('x-ledgers').className = 'explainer';
      { key: 'mv_musd', label: 'Market value', num: true, fmt: v => F(v, 'musd') }, { key: 'ms', label: 'MV share', num: true, fmt: v => P(v) }]);
 })();
 
-ATLAS.notes('n-head', { title: 'What the charts say', items: [
-  `<b>Concentration is steep.</b> The top 10 firms hold ${P(D.concentration.revenue.marks['10'] * 100, 1)} of revenue, the top 100 hold ${P(D.concentration.revenue.marks['100'] * 100, 0)} and the top 500 hold ${P(D.concentration.revenue.marks['500'] * 100, 0)}. Half of all revenue sits with just <b>${D.concentration.revenue.half}</b> firms.`,
-  `<b>Profit and value are even more concentrated.</b> The top 10 by profit earn ${P(D.concentration.profit.marks['10'] * 100, 0)} of all profit. The top 10 by market value hold ${P(D.concentration.mv.marks['10'] * 100, 0)} of all market value, and only <b>${D.concentration.mv.half}</b> firms make up half of it. That is the AI and big-tech premium.`,
-  `<b>Financials are the biggest sector</b> by revenue (about 21%), ahead of Consumer & Retail (16%), Energy & Utilities (12%) and Technology (11%). Technology's share of market value is several times its share of revenue.`,
-  `<b>The US has 595 of the 2,000 firms</b> but books 37% of revenue and 56% of market value. China has 300 firms. India has 64, joint fifth by count, but only about 2.4% of the revenue.`,
-] });
-ATLAS.notes('n-angles', { title: 'Story angles', items: [
-  '"Half the world\'s output, 2.2% of its workers": use the revenue-to-GDP and employees-to-labour-force ratios together.',
-  '"2,000 out of 48,000": the Forbes list is the top 4% of listed firms, and listed firms are a tiny fraction of the hundreds of millions of businesses on earth. The tail of small and informal businesses is invisible in every company list.',
-  '"The 103 companies worth half of everything": market value is far more concentrated than sales.',
-  '"India: joint 5th by number of giants, 9th by their revenue." India has many big firms, but they are smaller than the global average. The <a href="geography.html#india">India deep-dive</a> has the detail.',
-  '"The invisible giants": 128 state-owned, private and mutual companies with $9.8T of revenue have no listed shares, so they never appear in Forbes. See <a href="ownership.html">Ownership</a>.',
-] });
 
 // ---------- hub ----------
 const HUB = {

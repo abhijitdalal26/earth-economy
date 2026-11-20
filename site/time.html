@@ -49,7 +49,6 @@
       <p class="src">Source: Forbes Global 2000 (2026) history.</p>
     </div>
   </div>
-  <div id="n-idx"></div>
 
   <h2>Who grew fastest: countries, regions, sectors</h2>
   <div class="grid">
@@ -68,7 +67,6 @@
       <button class="tbl-toggle" id="c-cagr-t"></button><div id="c-cagr-tbl"></div>
     </div>
   </div>
-  <div id="n-grp"></div>
 
   <h2>Fastest growers and biggest decliners</h2>
   <div class="grid">
@@ -82,7 +80,6 @@
       <p class="src">Source: Forbes Global 2000 history. Growth is nominal US$; currency moves (yen, rupee, real) affect non-US firms.</p>
     </div>
   </div>
-  <div id="n-mv"></div>
 
   <h2>Rank mobility at the top</h2>
   <div class="grid">
@@ -117,7 +114,6 @@
       <p class="src">No historical market value in the source, so the tech share of market value can only be shown for 2025 (tile above).</p>
     </div>
   </div>
-  <div id="n-pool"></div>
 
   <h2>More revenue per worker</h2>
   <div class="grid">
@@ -133,7 +129,6 @@
       <div class="chart" id="c-rpe"></div>
     </div>
   </div>
-  <div id="n-prod"></div>
 
   <h2>The big frame: world GDP, stock markets, number of listed companies</h2>
   <div class="grid">
@@ -153,7 +148,6 @@
       <p class="src">Source: World Bank / WFE. Country coverage gaps show as breaks.</p>
     </div>
   </div>
-  <div id="n-macro"></div>
   <div id="n-cav"></div>
 </div>
 <script>
@@ -203,12 +197,6 @@
              { name: 'Everyone reporting (index)', type: 'line', data: idx(D.panel.rev), lineStyle: { width: 3 }, itemStyle: { color: P[3] } },
              { name: 'Firms reporting ÷ 10', type: 'bar', data: D.panel.n.map(n => n / 10), itemStyle: { color: ATLAS.css('--grid') }, tooltip: { valueFormatter: v => (v * 10).toFixed(0) + ' firms' } }],
   });
-  ATLAS.notes('n-idx', { items: [
-    `Cohort revenue: <b>${B(T.rev[0])} → ${B(T.rev.at(-1))}</b> (×${H.rev_x}, ${H.rev_cagr}%/yr). Profit: <b>${B(T.profit[0])} → ${B(T.profit.at(-1))}</b> (×${H.prof_x}, ${H.prof_cagr}%/yr).`,
-    `World GDP rose ×${H.gdp_x} in current dollars, so the biggest firms grew a bit faster than the economy, and their profits grew much faster.`,
-    `2020 is the only real dent: revenue fell and the margin dropped to ${H.m20}%. 2021 was the rebound peak (margin ${T.margin[6]}%), helped by stimulus and commodity prices.`,
-    `If you sum everyone reporting each year, revenue looks like ×${H.panel_x}. The gap with ×${H.rev_x} is newcomers joining the dataset, not growth.`,
-  ]});
 
   // groups
   const gd = document.getElementById('grp-dim'), gm = document.getElementById('grp-m');
@@ -238,11 +226,6 @@
   });
   tbl('c-cagr', D.cagr_country, [{ key: 'country', label: 'Country' }, { key: 'n', label: 'Firms', num: true }, { key: 'rev15', label: 'Rev 2015', num: true, fmt: B }, { key: 'rev24', label: 'Rev 2024', num: true, fmt: B }, { key: 'cagr', label: 'Rev CAGR %', num: true }, { key: 'pcagr', label: 'Profit CAGR %', num: true }]);
   const ind = D.cagr_country.find(r => r.country === 'India'), jp = D.cagr_country.find(r => r.country === 'Japan'), us = D.cagr_country.find(r => r.country === 'United States'), cn = D.cagr_country.find(r => r.country === 'China');
-  ATLAS.notes('n-grp', { items: [
-    `<b>India:</b> ${ind.n} cohort firms grew revenue ${B(ind.rev15)} → ${B(ind.rev24)} (${pct(ind.cagr)}/yr; profit ${pct(ind.pcagr)}/yr), even after the rupee lost ~20% against the dollar.`,
-    `<b>US</b> ${pct(us.cagr)}/yr, <b>China</b> ${pct(cn.cagr)}/yr, <b>Japan</b> ${pct(jp.cagr)}/yr. Japan's dollar figures are dragged down by the yen's slide.`,
-    'Switch the metric to profit to see how lumpy profit is: energy, materials and telecom swing hard with commodity cycles and write-downs.',
-  ]});
 
   // movers
   const secSel = document.getElementById('mv-sec'), view = document.getElementById('mv-view');
@@ -265,12 +248,6 @@
   secSel.onchange = view.onchange = drawMv; drawMv();
   tbl('c-mv', D.movers.all, [{ key: 'company', label: 'Company' }, { key: 'country', label: 'Country' }, { key: 'sector', label: 'Sector' }, { key: 'rev15', label: 'Rev 2015', num: true, fmt: B }, { key: 'rev24', label: 'Rev 2024', num: true, fmt: B }, { key: 'growth', label: 'Growth %', num: true }, { key: 'abs', label: '$ change', num: true, fmt: B }]);
   const indM = D.movers.all.filter(r => r.country === 'India').sort((a, b) => b.growth - a.growth).slice(0, 3);
-  ATLAS.notes('n-mv', { items: [
-    `Of all ${H.n} cohort firms, <b>${pct(D.movers.shrank_pct, 0)}</b> had lower revenue in 2024 than in 2015 (median growth +${pct(D.movers.median_growth, 0)}). Among the ${D.movers.n_big} that already had ≥$5B revenue in 2015, ${pct(D.movers.shrank_big_pct, 0)} shrank.`,
-    'The fastest growers tell the decade\'s story: AI chips (Nvidia, Broadcom), platforms (Meta, Alibaba), EVs (BYD, Tesla) and US health insurers (Centene, Cigna, partly through acquisitions).',
-    'The decliners are mostly telecoms, European and Japanese industrials hit by currency, and firms that sold or spun off large divisions. Check each one before calling it a "decline".',
-    `<b>India's fastest (≥$5B in 2015):</b> ${indM.map(r => `${r.company} (+${pct(r.growth, 0)})`).join(', ')}.`,
-  ]});
 
   // bump
   let bc;
@@ -324,12 +301,6 @@
   tbl('c-share', S.sectors.map(s => Object.assign({ s, mv: D.mv_share_now[s] }, Object.fromEntries(Y.map((y, i) => ['p' + y, S.profit[s][i]])))),
     [{ key: 's', label: 'Sector' }, { key: 'mv', label: 'Mkt value share 2025 %', num: true }].concat(Y.map(y => ({ key: 'p' + y, label: 'Profit % ' + y, num: true }))));
   const pl = D.pools.sector, en = pl.find(r => r.name === 'Energy & Utilities'), te = pl.find(r => r.name === 'Technology'), fi = pl.find(r => r.name === 'Financials'), tm = pl.find(r => r.name === 'Telecom & Media');
-  ATLAS.notes('n-pool', { items: [
-    `<b>Energy & Utilities</b> profit share ${pct(en.ps_start)} → ${pct(en.ps_end)} (+${en.pp} pp). 2015–16 was the oil-price trough and 2022–24 the post-Ukraine price spike, so this is a cycle, not a trend.`,
-    `<b>Technology</b> ${pct(te.ps_start)} → ${pct(te.ps_end)} (+${te.pp} pp) is the structural shift: about 9% of the cohort's revenue now produces close to a fifth of its profit, and ${H.tech_mv_share}% of Global 2000 market value (2025).`,
-    `<b>Financials</b> are still the biggest profit pool (${pct(fi.ps_end)}) but lost ${Math.abs(fi.pp)} pp. <b>Telecom & Media</b> halved its share (${pct(tm.ps_start)} → ${pct(tm.ps_end)}).`,
-    'Start and end points are 2-year averages to blunt one-off years. The industry view inherits the study pack\'s profit-pool finding (Oil & Gas, IT software and semiconductors gain; banking, durables, pharma and telecom lose).',
-  ]});
 
   // productivity
   const pr = D.prod;
@@ -350,11 +321,6 @@
     series: [{ type: 'bar', data: T.rev_per_emp.filter(v => v != null).map(v => Math.round(v / 1000)), itemStyle: { color: P[1] }, label: { show: true, position: 'top', formatter: '${c}K', fontSize: 10 } }],
   });
   const tech = pr.find(r => r.sector === 'Technology'), ind2 = pr.find(r => r.sector === 'Industrials & Defense');
-  ATLAS.notes('n-prod', { items: [
-    `Among ${T.n_emp} cohort firms with headcount every year 2017–24, revenue per employee went from $${Math.round(T.rev_per_emp[2] / 1000)}K to $${Math.round(T.rev_per_emp.at(-1) / 1000)}K in nominal terms.`,
-    `<b>Tech</b> grew headcount the most (+${pct(tech.emp_g, 0)}) and revenue faster still (+${pct(tech.rev_g, 0)}). <b>Industrials & Defense</b> is the one sector where staff grew faster than revenue (+${pct(ind2.emp_g, 0)} vs +${pct(ind2.rev_g, 0)}).`,
-    'Headcount is the patchiest field in the source (many firms skip it in early years), so treat sector numbers as indicative.',
-  ]});
 
   // macro
   const my = M.year;
@@ -385,12 +351,6 @@
   document.getElementById('ld-v').onchange = drawLd; drawLd();
   const LB = M.listed_by, lyr = M.listed_years, at = (k, y) => LB[k] ? LB[k][lyr.indexOf(y)] : null;
   tbl('c-ld', lyr.map(y => Object.assign({ y }, Object.fromEntries(Object.keys(LB).map(k => [k, at(k, y)])))), [{ key: 'y', label: 'Year' }].concat(Object.keys(LB).map(k => ({ key: k, label: k, num: true }))));
-  ATLAS.notes('n-macro', { items: [
-    `World GDP: <b>${ATLAS.fmtUSD(M.gdp[0])} (2000) → ${ATLAS.fmtUSD(M.gdp.at(-1))} (2024)</b>. World market cap: ${ATLAS.fmtUSD(M.mcap[0])} → ${ATLAS.fmtUSD(M.mcap.at(-1))}; ratio to GDP ${pct(M.mcap_gdp[0], 0)} → ${pct(M.mcap_gdp.at(-1), 0)}. The 2008 crash halved it to ${pct(M.mcap_gdp[8], 0)}.`,
-    `Listed companies worldwide: ${M.listed[0].toLocaleString()} (2000) → ${M.listed.at(-1).toLocaleString()} (2024), peaking at ${Math.max(...M.listed).toLocaleString()} in 2021, the SPAC/IPO boom year.`,
-    `<b>US:</b> ${at('United States', 1996)?.toLocaleString()} listed domestic companies in 1996 → ${at('United States', 2024)?.toLocaleString() ?? '—'} in 2024, roughly half. Private equity and venture capital now keep firms private for longer. Country series for China, India and others show coverage breaks in the World Bank/WFE data (e.g. India's count falls as exchanges drop out of coverage), so check them before quoting.`,
-    '<b>Story angle:</b> fewer, bigger, more valuable. Market cap is outrunning GDP while the number of listed firms in the US shrinks, and the decade\'s profit growth is concentrated in tech.',
-  ]});
   ATLAS.notes('n-cav', { title: 'Caveats', caveat: true, items: [
     'Survivorship: the cohort is today\'s Global 2000 members with full histories. Failures, takeovers and dropouts are absent, so growth is biased upward.',
     'Nominal US dollars throughout: no inflation adjustment (US CPI rose ~32% from 2016 to 2025), and currency swings move non-US firms.',

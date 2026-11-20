@@ -55,7 +55,6 @@
       <p class="src">Source: as above. Diagonal guide lines mark an average company value of $1B, $10B and $100B.</p>
     </div>
   </div>
-  <div id="n-ex"></div>
   <div class="explainer" id="ex-ex"></div>
 
   <!-- ============ 2. Treemap ============ -->
@@ -76,7 +75,6 @@
       <p class="src">Source: CompaniesMarketCap (Oct 2026), stock_market/data/exchange_companies.csv. 9,780 companies on 60 exchanges.</p>
     </div>
   </div>
-  <div id="n-tree"></div>
 
   <!-- ============ 3. Financial depth ============ -->
   <h2>How big is each stock market compared with its economy?</h2>
@@ -112,7 +110,6 @@
       <p class="src">Source: World Bank WDI 2024 (world market cap $115.1T; world GDP $111.7T). Countries without 2024 data use the latest year to 2019.</p>
     </div>
   </div>
-  <div id="n-depth"></div>
   <div class="explainer" id="ex-buffett"></div>
 
   <!-- ============ 4. Top companies ============ -->
@@ -136,7 +133,6 @@
       <p class="src">Source: CompaniesMarketCap (Oct 2026). Sector: Forbes Global 2000 sector where the name matches, otherwise a manual label or a keyword read of the company's Wikipedia description.</p>
     </div>
   </div>
-  <div id="n-top"></div>
 
   <!-- ============ 5. Distribution ============ -->
   <h2>Giants and the long tail</h2>
@@ -170,7 +166,6 @@
       <p class="src">Source: listed universe, Oct 2026. The left edge is a cut-off in the source list, not where listed companies actually stop.</p>
     </div>
   </div>
-  <div id="n-dist"></div>
 
   <!-- ============ 6. Valuation ============ -->
   <h2>What investors pay per dollar of sales</h2>
@@ -202,7 +197,6 @@
       <p class="src">Source: listed universe (market cap Oct 2026; revenue SEC CY2025 or CompaniesMarketCap TTM). Forbes Global 2000 (2026) for P/E: countries with ≥20 companies. India is highlighted.</p>
     </div>
   </div>
-  <div id="n-val"></div>
 
   <!-- ============ 7. Drilldown ============ -->
   <h2>Explore one exchange</h2>
@@ -230,7 +224,6 @@
       <p class="src">Sector: Forbes match, manual label or keyword read of the description. Uncertain for small exchanges.</p>
     </div>
   </div>
-  <div id="n-dd"></div>
 
   <!-- ============ 8. Over time ============ -->
   <h2>Listed companies and market value over time</h2>
@@ -251,7 +244,6 @@
       <p class="src">Source: World Bank WDI (CM.MKT.LDOM.NO, CM.MKT.LCAP.CD, CM.MKT.LCAP.GD.ZS), originally from the World Federation of Exchanges. Gaps are years with no data.</p>
     </div>
   </div>
-  <div id="n-ts"></div>
 
   <!-- ============ 8b. Each country's market over time ============ -->
   <h2>How each country's stock market has performed</h2>
@@ -274,7 +266,6 @@
       <p class="src">Annual growth = compound yearly change in the index from the start month to the latest close. Lighter bars began later than the chosen start year, so they cover a shorter period: compare them with care.</p>
     </div>
   </div>
-  <div id="n-perf"></div>
   <h3 style="margin:28px 0 6px;font:700 21px/1.25 var(--serif)">Do the world's markets move together?</h3>
   <p class="section-dek">Correlation of monthly returns between each pair of markets: 1 means they rise and fall together, 0 means no link. High correlation means owning many markets protects you less than you think.</p>
   <div class="grid">
@@ -299,7 +290,6 @@
       <button class="tbl-toggle" id="c-croll-t"></button><div id="c-croll-tbl"></div>
     </div>
   </div>
-  <div id="n-corr"></div>
   <div class="grid">
     <div class="card">
       <h3 id="c-size-h">How big each country's stock market has become</h3>
@@ -326,7 +316,6 @@
       <p class="src">Source: CompaniesMarketCap (Oct 2026), NSE tickers. Revenue: CompaniesMarketCap TTM.</p>
     </div>
   </div>
-  <div id="n-india"></div>
   <div id="n-cav"></div>
 </div>
 
@@ -434,13 +423,6 @@ drawEx();
 
 const top2 = EX[0].mcap + EX[1].mcap, totEx = EX.reduce((a, e) => a + e.mcap, 0);
 const nse = EX.find(e => e.name.startsWith('National Stock'));
-ATLAS.notes('n-ex', { items: [
-  `<b>Nasdaq (${U(EX[0].mcap)}) + NYSE (${U(EX[1].mcap)}) = ${PC(top2 / totEx * 100, 0)}</b> of all tracked value on 60 exchanges. Tokyo, the #3, is about one-sixth the size of Nasdaq.`,
-  `<b>Nasdaq is top-heavy:</b> its 10 largest companies (NVIDIA, Apple, Alphabet, Microsoft, Amazon…) are ${PC(EX[0].top10_share * 100, 0)} of its value. NYSE's top 10 are only ${PC(EX[1].top10_share * 100, 0)}, so it is the broader market.`,
-  `<b>India:</b> NSE is #${ind.nse_rank_mcap} by value (${U(nse.mcap)}) and #${ind.nse_rank_n} by number of tracked companies (${nse.n}). Its largest company, Reliance (${U(nse.top_mcap)}), is about a thirtieth the size of NVIDIA.`,
-  `<b>Story angle, "wide vs deep":</b> Tokyo has ${EX.find(e => e.name.startsWith('Tokyo')).n} tracked companies with an average value of ${U(EX.find(e => e.name.startsWith('Tokyo')).avg)}. Taiwan has ${EX.find(e => e.name.startsWith('Taiwan')).n}, and TSMC alone is over half its value. One kind of market is many mid-sized companies; the other is a few national champions.`,
-  `<b>Saudi Arabia's Tadawul</b> is in the global top 15 mainly because of one company: Saudi Aramco is about ${PC(1.663e12 / EX.find(e => e.name.startsWith('Saudi')).mcap * 100, 0)} of the exchange.`,
-] });
 document.getElementById('ex-ex').innerHTML = `<b>Exchange, index, cross-listing: three terms people mix up.</b> An <b>exchange</b> is the marketplace where shares trade (NSE, BSE, NYSE, Nasdaq). An <b>index</b> is a basket chosen from it (Nifty 50, Sensex, S&amp;P 500). The index is a measuring stick, not a market.
   A company can <b>cross-list</b>, i.e. trade on more than one exchange. Foreign companies often reach US investors through <b>ADRs</b> (American Depositary Receipts): certificates traded in New York that stand for shares held at home. Examples are TSMC (TSM), Infosys (INFY) and HDFC Bank (HDB).
   Here each company is counted once, on its home exchange. That is why TSMC sits in Taipei and Toyota in Tokyo, not New York. <b>Market capitalisation</b> = share price × all shares outstanding. <b>Free float</b> is only the part the public can actually trade. Index providers weight by float, so Saudi Aramco (about 2% floated) counts for much less in global indices than its $1.7T market cap would suggest.`;
@@ -481,12 +463,6 @@ T('c-tree', D.treemap.map(c => ({ country: c.name, region: c.region, value: c.va
   [{ key: 'country', label: 'Country' }, { key: 'region', label: 'Region' }, { key: 'value', label: 'Market value', num: true, fmt: v => U(v) },
    { key: 'share', label: '% of tracked', num: true, fmt: v => PC(v, 1) }, { key: 'n', label: 'Companies', num: true }, { key: 'ex', label: 'Exchanges', num: true }]);
 const tm = D.treemap, usShare = tm[0].value / M.assigned_total * 100;
-ATLAS.notes('n-tree', { items: [
-  `<b>United States: ${PC(usShare, 0)} of tracked world market value</b> (${U(tm[0].value)}), with about a quarter of world GDP. The country after it, ${tm[1].name}, has ${PC(tm[1].value / M.assigned_total * 100, 0)}.`,
-  `<b>India is #${ind.country_rank} by country</b> in this snapshot (${U(ind.country_mcap)}, ${PC(ind.share_cov, 1)} of tracked value), behind ${tm.slice(0, ind.country_rank - 1).map(c => c.name).join(', ')}.`,
-  `<b>Switch to "Company sector"</b> to see that much of the US block is technology. In China and India the biggest blocks are banks; in the Gulf they are energy and banks.`,
-  `<b>Caveat:</b> Chinese and Hong Kong values are split. Many mainland companies list in Hong Kong (Tencent, Alibaba, Meituan), so "China" here understates Chinese companies and "Hong Kong" overstates Hong Kong's own economy.`,
-] });
 
 // ---------------------------------------------------------------- 3. financial depth
 const DEP = D.depth;
@@ -564,13 +540,6 @@ drawDepth();
     { key: 'mcap', label: 'Market value', num: true, fmt: v => U(v) }, { key: 'yr', label: 'Year', num: true }]);
 })();
 const dep = c => DEP.find(d => d.country === c) || {};
-ATLAS.notes('n-depth', { items: [
-  `<b>India: ${PC(ind.wb_gdp_pct_2024, 0)} of GDP</b> (World Bank 2024; ${U(ind.wb_mcap_2024)}). That is up from ${PC(D.ts.India.gdp_pct[2019], 0)} in 2019. India now has <b>${PC(ind.wb_share_2024, 1)} of world market value but ${PC(ind.gdp_share, 1)} of world GDP</b>, a reversal for an economy long called "under-capitalised".`,
-  `<b>China is the opposite case:</b> the world's second-largest economy, but its listed market is only ${PC(dep('China').wb_ratio, 0)} of GDP. Much Chinese business value sits in unlisted state and private firms, and many big Chinese companies list in Hong Kong or New York instead.`,
-  `<b>The US: ${PC(dep('United States').wb_ratio, 0)} of GDP</b>, ${U(dep('United States').wb_mcap)}. It is about ${PC(dep('United States').wb_mcap / M.wb_mcap_2024 * 100, 0)} of world market value with ${PC(dep('United States').gdp / M.world_gdp * 100, 0)} of world GDP. Part of the reason is that US companies earn their profits worldwide.`,
-  `<b>Story angle:</b> "Is the market too expensive?" Buffett called market cap / GDP "the best single measure". The world as a whole is at ${PC(M.wb_gdp_pct_2024, 0)}, close to its 2020–21 peak (${PC(D.ts.World.gdp_pct[2020], 0)}).`,
-  `<b>Caveat:</b> the ratio compares a stock (value) with a flow (one year of output). It also rewards countries that host foreign companies: Switzerland (Nestlé, Roche, Novartis sell worldwide), Hong Kong (mainland firms) and tax domiciles like Bermuda. It is not a like-for-like measure of a "domestic" market.`,
-] });
 document.getElementById('ex-buffett').innerHTML = `<b>The Buffett indicator, in one line:</b> total stock-market value ÷ GDP. Above 100% means the market prices listed companies at more than one year of the whole economy's output.
   It goes up when share prices rise, when more companies list (India's IPO wave), and when local companies earn abroad (the US, Switzerland). It goes down where big companies stay state-owned or private (China, Germany's Mittelstand).
   Read it as a measure of <i>how much of a country's business is on the stock market and how richly it is priced</i>. It is not a reliable timing signal.`;
@@ -606,13 +575,6 @@ btnGroup(null, 'data-xus', v => { xus = v === '1'; drawTop(); });
 drawTop();
 const tc = D.trillion, tcSum = tc.reduce((a, t) => a + t.mcap, 0);
 const t50 = D.top.slice(0, 50), t50us = t50.filter(t => t.country === 'United States').length, t50tech = t50.filter(t => t.sector === 'Technology').length;
-ATLAS.notes('n-top', { items: [
-  `<b>The $1T club: ${tc.length} companies, ${U(tcSum)} combined</b>. That is ${PC(tcSum / M.wb_mcap_2024 * 100, 0)} of the whole world market's end-2024 value, and more than India, Japan and the UK's markets put together.`,
-  `<b>NVIDIA (${U(tc[0].mcap)})</b> alone is worth more than every company on NSE combined (${U(ind.nse_mcap)}). It is also larger than the 2024 GDP of every country except the US and China.`,
-  `<b>Top 50:</b> ${t50us} are American and ${t50tech} are technology companies. The ${50 - t50us} non-US entrants are chipmakers (TSMC, Samsung, SK Hynix, ASML, CXMT), four Chinese state banks, Saudi Aramco, Roche, HSBC and Shell. There is no Indian company; Reliance ranks about #${ind.top[0].rank}.`,
-  `<b>SpaceX (${U(D.top.find(t => t.name === 'SpaceX').mcap)})</b> appears as listed on Nasdaq in this October 2026 snapshot. Check its listing status and valuation basis before quoting.`,
-  `<b>Story angle:</b> AI chips. NVIDIA, Broadcom, TSMC, Micron, SK Hynix, Samsung and AMD are all in or near the club. Much of the 2025–26 rise in world market value rides on AI data-centre spending; ask what happens to the club if that spending slows.`,
-] });
 
 // ---------------------------------------------------------------- 5. distribution
 const BL = D.dist.band_labels, BC = D.dist.countries, BD = D.dist.bands;
@@ -667,13 +629,6 @@ document.getElementById('c-bands-title').textContent = `${N(W['1B'])} tracked co
   });
   T('c-hist', h.map(d => ({ lo: d[0], hi: d[1], n: d[2] })), [{ key: 'lo', label: 'From', num: true, fmt: v => U(v) }, { key: 'hi', label: 'To', num: true, fmt: v => U(v) }, { key: 'n', label: 'Companies', num: true }]);
 })();
-ATLAS.notes('n-dist', { items: [
-  `<b>Top 10 companies = ${PC(kp.top10, 0)}</b> of the value of all ${N(kp.n)} tracked companies. <b>Top 100 = ${PC(kp.top100, 0)}</b>. The top 10% hold ${PC(kp.top10pct, 0)}. The bottom half of the list holds just ${PC(kp.bottom50pct, 1)}.`,
-  `<b>Median tracked company: ${U(kp.median)}</b>. The source list ends at ${U(kp.min)}. If you added the ~38,000 untracked listings, which are almost all smaller, the true median listed company would be worth well under $100M.`,
-  `<b>India:</b> ${ind.over['1B']} tracked Indian companies are worth over $1B, ${ind.over['10B']} over $10B and ${ind.over['100B']} over $100B (Reliance, Bharti Airtel, HDFC Bank, ICICI Bank), with none at $1T. For comparison, the US has ${BD['United States'].over['100B']} companies over $100B.`,
-  `<b>Story angle:</b> "The stock market is a few companies plus a crowd." That concentration is why index funds, which buy in proportion to size, put a large share of savers' money into a handful of names.`,
-  `<b>Caveat:</b> band counts by country reflect what the source list tracks. Countries with many small listings (India, Japan, China, Korea) have their sub-$1B bands heavily undercounted.`,
-] });
 
 // ---------------------------------------------------------------- 6. valuation
 const vmMeta = { median_ps: ['Median P/S', 'Median market value ÷ revenue', 'Technology and healthcare companies are valued at about 4 times sales. Retail, transport and real estate, at under 1'],
@@ -731,12 +686,6 @@ btnGroup(null, 'data-vc', v => { vc = v; drawVC(); });
 drawVC();
 const fI = D.val.fcountry.find(d => d.k === 'India') || {}, fC = D.val.fcountry.find(d => d.k === 'China') || {}, fU = D.val.fcountry.find(d => d.k === 'United States') || {}, fJ = D.val.fcountry.find(d => d.k === 'Japan') || {};
 const sT = D.val.sector.find(d => d.k === 'Technology') || {}, sF = D.val.sector.find(d => d.k === 'Financials') || {};
-ATLAS.notes('n-val', { items: [
-  `<b>Technology: median ${sT.median_ps?.toFixed(1)}× sales and ${sT.median_pe?.toFixed(0)}× profit</b>, against ${sF.median_ps?.toFixed(1)}× and ${sF.median_pe?.toFixed(0)}× for financials (Forbes 2000). Investors pay several times more per dollar of tech revenue than per dollar of bank revenue.`,
-  `<b>India's large companies are expensive:</b> median P/E ${fI.median_pe?.toFixed(0)}× among India's ${fI.n} Forbes 2000 companies. The US is at ${fU.median_pe?.toFixed(0)}×, Japan ${fJ.median_pe?.toFixed(0)}× and China ${fC.median_pe?.toFixed(0)}×. The "India premium" is the market pricing in faster growth, plus steady inflows from domestic SIP investors.`,
-  `<b>Story angle:</b> the same dollar of profit is worth very different amounts in Mumbai, New York, Shanghai and Tokyo. Ask what explains the gap: growth expectations, governance, state ownership, or how much local savers can invest abroad.`,
-  `<b>Caveat:</b> P/S is not comparable across sectors with different margins (a 3% margin retailer vs a 50% margin chip designer). Use it within a sector. P/E leaves out loss-makers, and one-off gains distort it. Forbes market values are from May 2026; the listed-universe ratios use Oct 2026 prices with CY2025/TTM revenue.`,
-] });
 
 // ---------------------------------------------------------------- 7. drilldown
 const sel = document.getElementById('dd-sel');
@@ -780,11 +729,6 @@ function drawDD() {
 sel.onchange = drawDD;
 sel.value = String(EX.indexOf(nse));
 drawDD();
-ATLAS.notes('n-dd', { items: [
-  `<b>Try:</b> NSE India (banks, IT services and Reliance), Tokyo (cars, banks, chip equipment), Tadawul (Aramco plus banks), Taiwan (TSMC and its suppliers), SIX Swiss (drugs and food), Euronext Paris (luxury).`,
-  `<b>Thin exchanges</b> (Bombay 5, Budapest 2, Prague 4) look empty because the source tracks only companies large enough for the global list, and uses the NSE ticker for Indian dual-listed stocks. A small count here does not mean a small market.`,
-  `<b>Sector labels</b> come from a Forbes 2000 name match (${PC(M.sector_basis.forbes * 100, 0)} of tracked value), manual labels for big names (${PC(M.sector_basis.manual * 100, 0)}) and a keyword read of the Wikipedia description (${PC(M.sector_basis.keyword * 100, 0)}). ${PC(M.sector_basis.none * 100, 0)} of value is unclassified. Spot-check before quoting a sector share for a small exchange.`,
-] });
 
 // ---------------------------------------------------------------- 8. time series
 const TSD = D.ts, TCS = ['World', 'United States', 'China', 'India', 'Japan', 'United Kingdom', 'Hong Kong', 'South Korea'];
@@ -817,13 +761,6 @@ function drawTS() {
 btnGroup(null, 'data-tm', v => { tm2 = v; drawTS(); });
 drawTS();
 const wn = TSD.World.n, wc = TSD.World.mcap, inn = TSD.India.n;
-ATLAS.notes('n-ts', { items: [
-  `<b>Listed companies worldwide: ${N(wn[2000])} in 2000, a peak of ${N(wn[2021])} in 2021, and ${N(wn[2024])} in 2024</b>. Their value went from ${U(wc[2003])} in 2003 (after the dot-com bust) to ${U(wc[2024])} in 2024. There are about as many listed companies as 25 years ago, and they are worth far more.`,
-  `<b>The US story is delisting:</b> about ${N(TSD['United States'].n[1996] || TSD['United States'].n[1997])} listed domestic companies in the late 1990s, ${N(TSD['United States'].n[2024])} in 2024, because of mergers, private equity buyouts and companies staying private longer (see the Startups page). China went the other way, to ${N(TSD.China.n[2024])}.`,
-  `<b>Series break in 2019, so read with care:</b> India falls from ${N(inn[2018])} (2018) to ${N(inn[2019])} (2019) and China jumps from ${N(TSD.China.n[2018])} to ${N(TSD.China.n[2019])}. These look like changes in which exchanges are counted (BSE-based to NSE-based for India), not real events. The world total's jump to ~50,000 in 2019 and its 2021 peak are partly caused by this. India's ${N(inn[2024])} for 2024 is close to NSE's count; BSE says it has 5,000+ listed companies, so say which count you are quoting.`,
-  `<b>Tip:</b> switch to "% of GDP" and select India + China + United States. India's market has been deeper than China's (as % of GDP) every year since 2008, and the gap has widened since 2020 (${PC(TSD.India.gdp_pct[2024], 0)} vs ${PC(TSD.China.gdp_pct[2024], 0)} in 2024).`,
-  `<b>Caveat:</b> World Bank market value is end-of-year and in current dollars, so currency moves and inflation are mixed in. Some country series have gaps (the UK stops in 2022) and breaks when the exchanges reporting to WFE change.`,
-] });
 
 // ---------------------------------------------------------------- 9. India
 ATLAS.tiles('india-tiles', [
@@ -848,13 +785,6 @@ ATLAS.tiles('india-tiles', [
   T('c-india', t, [{ key: 'name', label: 'Company' }, { key: 'sector', label: 'Sector' }, { key: 'mcap', label: 'Market value', num: true, fmt: v => U(v) },
     { key: 'rev', label: 'Revenue', num: true, fmt: v => U(v) }, { key: 'rank', label: 'World rank', num: true }]);
 })();
-ATLAS.notes('n-india', { items: [
-  `<b>India's market is bigger than its economy:</b> ${U(ind.wb_mcap_2024)}, ${PC(ind.wb_gdp_pct_2024, 0)} of GDP (World Bank 2024), up from ${PC(D.ts.India.gdp_pct[2019], 0)} in 2019. India has ${PC(ind.wb_share_2024, 1)} of world market value and ${PC(ind.gdp_share, 1)} of world GDP. China has ${PC(dep('China').wb_mcap / M.wb_mcap_2024 * 100, 0)} of market value with ${PC(dep('China').gdp / M.world_gdp * 100, 0)} of GDP.`,
-  `<b>Wide, not deep:</b> India has one of the largest numbers of listed companies in the world (NSE is #${ind.nse_rank_n} here by count, and BSE has 5,000+). But its most valuable company, Reliance (${U(ind.top[0].mcap)}), ranks about #${ind.top[0].rank} in the world. India has ${ind.over['100B']} companies above $100B; the US has ${BD['United States'].over['100B']}.`,
-  `<b>Banks dominate the top:</b> HDFC Bank, ICICI, SBI, Kotak and Bajaj Finance make up a third of India's top 15. Add Reliance, Airtel, TCS and Infosys and you have the Nifty heavyweights. India's market value is mostly banks, IT services and conglomerates, not product technology.`,
-  `<b>Story angles:</b> (1) Will India get a $1T company, and who will it be? Reliance would need to grow about 6× to get there; NVIDIA is about 30× its size. (2) Domestic SIP inflows now steady the market when foreign funds sell. (3) Is India expensive (high P/E) or just early (strong growth)? (4) Why is there no Indian chip or platform company among the world's top 100?`,
-  `<b>Caveat:</b> the tracked set has 564 Indian companies via NSE tickers. Most of India's ~5,000 BSE-only listings are small and not in it. For India-wide totals, use the World Bank/WFE figures above or NSE/BSE's own market-cap releases, and say which exchange and date you are quoting.`,
-] });
 ATLAS.notes('n-cav', { caveat: true, title: 'Caveats for this whole page', items: [
   `<b>Two snapshots, two dates.</b> Company and exchange figures are CompaniesMarketCap prices from <b>October 2026</b>. Country totals and history are World Bank/WFE <b>end-2024</b> figures. Do not divide one by the other without saying so.`,
   `<b>Tracked ≠ total.</b> ${N(M.n_assigned)} companies on 60 exchanges (~$148T) against ~48,000 listings worldwide. The tracked value is close to the world total because the untracked companies are small. Company counts per exchange are much lower than the real number of listings.`,

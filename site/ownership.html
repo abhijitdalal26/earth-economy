@@ -44,7 +44,6 @@
       <div id="legend-explain" style="font-size:14px"></div>
     </div>
   </div>
-  <div id="n-mix"></div>
 
   <!-- 2. Invisible giants -->
   <h2>The invisible giants: big, but not on any stock exchange</h2>
@@ -64,7 +63,6 @@
       <p class="src">Sources: Fortune Global 500 (2026); Forbes America's Largest Private Companies (2025); curated additions (Vitol, Schwarz, Aldi, ByteDance, Big Four, Ineos, CMA CGM) from company disclosures and press reports — approximate, check before quoting.</p>
     </div>
   </div>
-  <div id="n-inv"></div>
 
   <!-- 3. By country -->
   <h2>Ownership mix by country</h2>
@@ -96,7 +94,6 @@
       <p class="src">Source: Forbes Global 2000 (2026) financials; state-control flags curated by this atlas from public shareholding information (2025). China: firms with revenue ≥$10B assessed (≈93% of China's Global 2000 revenue); smaller Chinese firms counted as not state-controlled, so China's share is a floor.</p>
     </div>
   </div>
-  <div id="n-st"></div>
 
   <!-- 5. India -->
   <h2>India: the PSU half of corporate India</h2>
@@ -117,7 +114,6 @@
       <div id="ind-stats-tbl"></div>
     </div>
   </div>
-  <div id="n-ind"></div>
 
   <!-- 6. Margins -->
   <h2>Does the owner change the margin?</h2>
@@ -140,7 +136,6 @@
       <p class="src">Source: Fortune Global 500 (2026). Ownership labels by this atlas.</p>
     </div>
   </div>
-  <div id="n-mg"></div>
 
   <!-- 7. US private -->
   <h2>America's largest private companies</h2>
@@ -156,7 +151,6 @@
       <p class="src">Source: Forbes America's Largest Private Companies (2025). Revenue for private firms is often a Forbes estimate.</p>
     </div>
   </div>
-  <div id="n-pv"></div>
 
   <!-- 8. Why private -->
   <h2>Why do some giants stay private (or stay controlled)?</h2>
@@ -170,7 +164,6 @@
       <p class="src">Revenue/market value joined from Forbes Global 2000 (2026) where the company is listed; otherwise from the invisible-giants table above.</p>
     </div>
   </div>
-  <div id="n-why"></div>
   <div id="n-cav"></div>
 </div>
 
@@ -235,12 +228,6 @@
     { key: 'profit', label: 'Profit', num: true, fmt: B }, { key: 'agg_margin', label: 'Agg. margin', num: true, fmt: v => pct(v) },
     { key: 'med_margin', label: 'Median margin', num: true, fmt: v => pct(v) }, { key: 'loss_makers', label: 'Loss-makers', num: true }]);
   const fm = Object.fromEntries(D.fortune_mix.map(r => [r.owner, r]));
-  ATLAS.notes('n-mix', { title: "Writer's notes — the ownership mix", items: [
-    `<b>${pct(H.state_ctrl_pct)}</b> of the Fortune 500's ${B(D.fortune_tot.rev)} revenue is in companies a government controls: <b>${fm['State-owned, unlisted'].n}</b> unlisted state groups (${B(fm['State-owned, unlisted'].rev)}) plus <b>${fm['Listed, state-controlled'].n}</b> listed but state-controlled (${B(fm['Listed, state-controlled'].rev)}). Add minority state stakes and it is <b>${pct(H.state_any_pct)}</b>.`,
-    `Profit tells a different story. Unlisted state groups bring in ${pct(fm['State-owned, unlisted'].rev / D.fortune_tot.rev * 100)} of revenue but only ${pct(fm['State-owned, unlisted'].profit / D.fortune_tot.profit * 100)} of profit. Listed state champions (Aramco, the big Chinese banks) are the opposite: ${pct(fm['Listed, state-controlled'].rev / D.fortune_tot.rev * 100)} of revenue, ${pct(fm['Listed, state-controlled'].profit / D.fortune_tot.profit * 100)} of profit.`,
-    `Mutuals and co-ops (${fm['Mutual / co-operative'].n} firms, ${B(fm['Mutual / co-operative'].rev)}) are the forgotten third model: US and Japanese life insurers, Dutch and French co-op banks, German grocery co-ops.`,
-    `<b>Story angle:</b> "The stock market is not the economy" — a quarter of the world's biggest business answers to ministries and party committees, not shareholders.`,
-  ]});
 
   // ---------- 2. invisible giants ----------
   const invTypes = [...new Set(D.invisible.map(r => r.owner))];
@@ -268,14 +255,6 @@
     { key: 'rev', label: 'Revenue', num: true, fmt: B }, { key: 'profit', label: 'Profit', num: true, fmt: B }, { key: 'note', label: 'Note' }, { key: 'src', label: 'Source' }]);
   const inv = D.invisible, top = inv[0];
   const over100 = inv.filter(r => r.rev >= 100000).length;
-  ATLAS.notes('n-inv', { title: "Writer's notes — invisible giants", items: [
-    `The largest company on earth without listed shares is <b>${top.company}</b> (${B(top.rev)} revenue), a Chinese central SOE that runs the grid for about 1.1 billion people. Only Amazon and Walmart sell more.`,
-    `<b>${over100}</b> unlisted groups have revenue above $100 billion. Each would rank inside the top ~70 listed companies on earth.`,
-    `Commodity traders are the most invisible of all: <b>Vitol</b> (~$331B), <b>Trafigura</b> ($240B), <b>Louis Dreyfus</b> ($53B) are owned by their partners and employees and disclose little. Cargill (US) is the agricultural counterpart.`,
-    `The <b>Big Four</b> accounting firms (Deloitte, PwC, EY, KPMG; ~$212B combined) are partnerships, so they never appear on equity lists.`,
-    `<b>India angle:</b> India's state giants are mostly <i>listed</i> PSUs (see below), unlike China's unlisted parent groups. The big unlisted Indian names are smaller: Tata Sons, the holding company, has kept itself off the market.`,
-    `<b>Overlap warning:</b> CNPC, Sinopec Group, China Mobile Communications and other parent groups <i>consolidate</i> listed subsidiaries. Their revenue is not extra on top of PetroChina, Sinopec Corp or China Mobile.`,
-  ]});
 
   // ---------- 3. country mix ----------
   let ctyChart;
@@ -325,13 +304,6 @@
     { key: 'n_s', label: 'Sig. stake firms', num: true }, { key: 'pct_s', label: 'Sig. stake % rev', num: true, fmt: v => pct(v) },
     { key: 'mv_pct_m', label: 'State-ctrl % mkt value', num: true, fmt: v => pct(v) }]);
   const sc = Object.fromEntries(D.state_by_country.map(r => [r.country, r]));
-  ATLAS.notes('n-st', { title: "Writer's notes — the state inside the market", items: [
-    `Across the whole Forbes Global 2000, <b>${H.forbes_state_n}</b> listed companies have a government as controlling or major shareholder. They bring in <b>${pct(H.forbes_state_rev_pct)}</b> of revenue (${pct(H.forbes_state_m_rev_pct)} in outright state-controlled firms) but only <b>${pct(H.forbes_state_mv_pct)}</b> of market value: investors pay less per dollar of state-company sales.`,
-    `<b>China:</b> at least ${pct(sc.China.pct_m, 0)} of its listed giants' revenue is in state-controlled firms (${sc.China.n_m} companies), ${pct(sc.China.pct_m + sc.China.pct_s, 0)} including minority-state ones. Add Hong Kong-listed mainland SOEs (China Mobile, CNOOC, CITIC) and the picture barely changes.`,
-    `<b>Saudi Arabia</b> ${pct(sc['Saudi Arabia'].pct_m, 0)} and <b>Qatar</b> ${pct(sc.Qatar.pct_m, 0)}: one company (Aramco, QNB) dominates the country's list.`,
-    `<b>Norway</b> is the rich-world outlier: Equinor, Telenor and Kongsberg are state-controlled and DNB, Hydro and Yara have big state stakes, so ~${pct(sc.Norway.pct_m + sc.Norway.pct_s, 0)} of its listed revenue is state-linked.`,
-    `In the <b>US, UK, Australia, Canada</b> the share is near zero. The notable US exceptions are Fannie Mae and Freddie Mac, in government conservatorship since 2008.`,
-  ]});
 
   // ---------- 5. India ----------
   const IC = { true: P[2], false: P[0] };
@@ -376,14 +348,6 @@
     { m: 'Market value ÷ revenue', a: ps.mv_to_rev + '×', b: pr.mv_to_rev + '×' },
     { m: 'Market value ÷ profit (P/E-like)', a: ps.mv_to_profit + '×', b: pr.mv_to_profit + '×' },
   ], [{ key: 'm', label: 'Measure' }, { key: 'a', label: 'PSUs', num: true }, { key: 'b', label: 'Private', num: true }]);
-  ATLAS.notes('n-ind', { title: "Writer's notes — India's PSUs", items: [
-    `<b>23 of India's 70</b> Global 2000 companies are government-controlled. Together they bring in <b>${B(ps.rev)}</b> (${pct(H.india_psu_rev_pct, 0)} of the Indian total) and <b>${pct(H.india_psu_profit_pct, 0)}</b> of profit, but the market values them at only <b>${pct(H.india_psu_mv_pct, 0)}</b> of India's Global 2000 market value.`,
-    `The valuation gap is the headline: private Indian giants trade at <b>${pr.mv_to_profit}×</b> profit, PSUs at <b>${ps.mv_to_profit}×</b>. That is the "PSU discount" in one number, and it persists even after the 2023-24 PSU stock rally.`,
-    `Margins are close: aggregate ${pct(ps.agg_margin)} for PSUs vs ${pct(pr.agg_margin)} private; the medians are nearly identical (${pct(ps.med_margin)} vs ${pct(pr.med_margin)}). The discount is about governance, dividends-to-the-state, pricing control (fuel, power) and growth, not about current profitability.`,
-    `<b>LIC</b> (${B(D.india.find(r => r.company.startsWith('Life Insurance')).rev)} revenue) is India's second-largest company by revenue after Reliance and its largest PSU. SBI is the largest bank; Indian Oil, ONGC and BPCL make up the energy block.`,
-    `PSUs employ <b>${ATLAS.fmtNum(ps.emp)}</b> people across these 23 firms, versus ${ATLAS.fmtNum(pr.emp)} at the 47 private ones. Most of the private headcount is in the IT-services firms (TCS, Infosys, HCLTech, Wipro).`,
-    `<b>Story angle:</b> India is closer to China than to the US in how much big business the state owns, but India listed its PSUs (often with only 5–25% float). China kept the parents unlisted.`,
-  ]});
 
   // ---------- 6. margins ----------
   let mgChart;
@@ -429,14 +393,6 @@
     { key: 'company', label: 'Company' }, { key: 'owner', label: 'Ownership' }, { key: 'country', label: 'Country' },
     { key: 'rev', label: 'Revenue', num: true, fmt: B }, { key: 'margin', label: 'Margin', num: true, fmt: v => pct(v) }]);
   const t = D.margin_tests.find(x => x.comparison === 'state vs listed') || {};
-  ATLAS.notes('n-mg', { title: "Writer's notes — margins by owner", items: [
-    `<b>Unlisted state giants:</b> aggregate margin <b>${pct(fm['State-owned, unlisted'].agg_margin)}</b>, median ${pct(fm['State-owned, unlisted'].med_margin)}; ${fm['State-owned, unlisted'].loss_makers} of ${fm['State-owned, unlisted'].n} lost money. Listed firms with no big state stake: ${pct(fm['Listed, no major state stake'].agg_margin)} aggregate, ${pct(fm['Listed, no major state stake'].med_margin)} median.`,
-    `The study pack's formal test (state vs listed, mixed universe): median ${pct(t.median_a * 100)} vs ${pct(t.median_b * 100)}; difference in means ${(t.diff * 100).toFixed(1)} pp, 95% bootstrap CI [${(t.ci_low * 100).toFixed(1)}, ${(t.ci_high * 100).toFixed(1)}] pp. It is not noise.`,
-    `But <b>listed state-controlled</b> firms post the <i>highest</i> aggregate margin (${pct(fm['Listed, state-controlled'].agg_margin)}), driven by Saudi Aramco and the Big Four Chinese banks. State ownership on its own doesn't mean low profit. Grids, posts, railways and steel mills do.`,
-    `Private (family/foundation) giants look thin (${pct(fm['Private (family / founder / foundation)'].agg_margin)}) because the list is heavy with Chinese private refiners and steelmakers and commodity traders. Private firms are not less efficient: their mix is different.`,
-    `<b>Mutuals</b> (${pct(fm['Mutual / co-operative'].agg_margin)}) return surplus to members as dividends or lower premiums. A low "profit" is partly the business model.`,
-    `<b>Caveat:</b> SOEs often carry social mandates (price caps on fuel and power, rural service), so margin comparisons mix efficiency with policy.`,
-  ]});
 
   // ---------- 7. US private ----------
   let pvChart;
@@ -458,13 +414,6 @@
     { key: 'rev', label: 'Revenue', num: true, fmt: B }, { key: 'chg', label: 'Rev. chg %', num: true }, { key: 'emp', label: 'Employees', num: true, fmt: v => ATLAS.fmtNum(v) },
     { key: 'founded', label: 'Founded', num: true }]);
   const PS = D.pv_stats;
-  ATLAS.notes('n-pv', { title: "Writer's notes — America's private giants", items: [
-    `Forbes' 200 largest US private companies: <b>${B(PS.rev)}</b> revenue, <b>${ATLAS.fmtNum(PS.emp)}</b> employees. That equals ${pct(PS.rev / PS.us_g2000_rev * 100, 0)} of the revenue of the ${'US'} companies in the Global 2000 (${B(PS.us_g2000_rev)}).`,
-    `The top 10 alone are ${B(PS.top10)}. <b>Cargill</b> ($154B) would rank among the 40 largest US listed companies by revenue.`,
-    `The private list is mostly groceries, convenience stores, food distribution, construction and trading. These are low-margin, cash-generative businesses that don't need equity markets. Publix and H-E-B employ more people than most listed tech giants.`,
-    `Many are employee-owned (Publix, WinCo) or partnerships (Bechtel, McKinsey, Edward Jones), so "private" doesn't mean "one family".`,
-    `<b>Caveat:</b> private-company revenue is often a Forbes estimate; profit is almost never disclosed.`,
-  ]});
 
   // ---------- 8. why private ----------
   document.getElementById('why').innerHTML = `
@@ -485,12 +434,6 @@
     { key: 'rev', label: 'Revenue', num: true, fmt: B }, { key: 'mv', label: 'Market value', num: true, fmt: B }];
   const famT = ATLAS.table('fam-tbl', D.family, famCols);
   ft.onchange = () => famT.update(D.family.filter(r => !ft.value || r.type === ft.value));
-  ATLAS.notes('n-why', { title: 'Story angles', items: [
-    `<b>"The quarter of business that doesn't answer to shareholders"</b>: state, family, foundation and mutual owners, with Bosch, State Grid, State Farm and Cargill as the four archetypes.`,
-    `<b>India's ownership story in one table:</b> the state (LIC, SBI, ONGC), the promoter families (Ambani, Adani, Premji, Bajaj, Birla) and a charitable trust (Tata Trusts). Widely held, professionally run firms like Infosys, HDFC Bank and ICICI are the minority among India's giants.`,
-    `<b>The Danish foundation model:</b> Novo Nordisk, Carlsberg and Maersk are among Denmark's biggest companies, and foundations control all three. Is it a model for keeping national champions at home?`,
-    `<b>The disclosure gap:</b> Vitol, Cargill, Schwarz and Aldi together sell roughly $800B a year with a fraction of the disclosure of a mid-cap listed firm.`,
-  ]});
   ATLAS.notes('n-cav', { title: 'Caveats before you quote', caveat: true, items: [
     'Ownership labels (state-controlled / significant stake / private / mutual) are this atlas\'s curation from public shareholding information as of 2025. Stakes change (NatWest and AIB were fully re-privatised in 2025). Check any single company before quoting.',
     'Fortune ranks parent groups; Forbes ranks listed entities. CNPC ⊃ PetroChina, Sinopec Group ⊃ Sinopec Corp, China Mobile Communications ⊃ China Mobile. Never add the two lists together.',
