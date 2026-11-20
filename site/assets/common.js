@@ -17,6 +17,15 @@ window.ATLAS = window.ATLAS || {};
     ['directory.html', 'Company finder'],
     ['notebook.html', "Writer's notebook"],
   ];
+  // Top bar: a few items, with the rest in dropdowns. [href, label] is a link, [label, [[href, label], ...]] a group.
+  const NAV = [
+    ['index.html', 'Overview'],
+    ['Companies', [['scale.html', 'Scale'], ['sectors.html', 'Sectors'], ['ownership.html', 'Ownership'], ['directory.html', 'Company finder']]],
+    ['World', [['geography.html', 'Geography'], ['markets.html', 'Stock markets'], ['context.html', 'Big picture']]],
+    ['startups.html', 'Startups & AI'],
+    ['Over time', [['time.html', 'Last 10 years'], ['flow.html', '25 years']]],
+    ['notebook.html', 'Notebook'],
+  ];
 
   // ---------- theme ----------
   const saved = (() => { try { return localStorage.getItem('atlas-theme'); } catch (e) { return null; } })();
@@ -34,14 +43,42 @@ window.ATLAS = window.ATLAS || {};
     const here = location.pathname.split('/').pop() || 'index.html';
     const bar = document.createElement('div');
     bar.className = 'topbar';
+    const link = (h, t) => `<a href="${h}"${h === here ? ' class="active" aria-current="page"' : ''}>${t}</a>`;
+    const items = NAV.map(([a, b]) => {
+      if (!Array.isArray(b)) return link(a, b);
+      const on = b.some(([h]) => h === here);
+      return `<div class="dd${on ? ' active' : ''}"><button type="button" class="dd-btn" aria-expanded="false">${a}</button>
+        <div class="dd-menu">${b.map(([h, t]) => link(h, t)).join('')}</div></div>`;
+    }).join('');
     bar.innerHTML = `<div class="inner">
       <a class="brand" href="index.html">Earth <b>Economy</b></a>
-      <div class="nav-wrap"><nav class="nav">${PAGES.map(([h, t]) => `<a href="${h}" class="${h === here ? 'active' : ''}">${t}</a>`).join('')}</nav></div>
+      <nav class="nav" aria-label="Pages">${items}</nav>
+      <button class="menu-btn" type="button" aria-expanded="false">Menu</button>
       <button class="theme-btn" type="button" title="Toggle theme">${isDark() ? 'Light' : 'Dark'}</button></div>`;
     document.body.prepend(bar);
-    // On a phone the nav is a sideways strip: start it at the current page.
-    const nav = bar.querySelector('.nav'), act = nav.querySelector('a.active');
-    if (act) nav.scrollLeft = act.offsetLeft - (nav.clientWidth - act.offsetWidth) / 2;
+    // Dropdowns open on hover with a mouse (CSS) and on click or tap (here); one open at a time.
+    const dds = [...bar.querySelectorAll('.dd')];
+    const closeAll = except => dds.forEach(d => { if (d !== except) { d.classList.remove('open'); d.querySelector('.dd-btn').setAttribute('aria-expanded', 'false'); } });
+    dds.forEach(d => d.querySelector('.dd-btn').addEventListener('click', () => {
+      const open = !d.classList.contains('open');
+      closeAll(d); d.classList.toggle('open', open);
+      d.querySelector('.dd-btn').setAttribute('aria-expanded', String(open));
+    }));
+    // On a phone the whole nav sits behind the Menu button.
+    const menuBtn = bar.querySelector('.menu-btn');
+    menuBtn.onclick = () => {
+      const open = !bar.classList.contains('menu-open');
+      bar.classList.toggle('menu-open', open); menuBtn.setAttribute('aria-expanded', String(open));
+      menuBtn.textContent = open ? 'Close' : 'Menu';
+    };
+    // keyboard: a group closes once focus leaves it
+    dds.forEach(d => d.addEventListener('focusout', e => { if (!d.contains(e.relatedTarget)) closeAll(); }));
+    document.addEventListener('click', e => { if (!bar.contains(e.target)) closeAll(); });
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      closeAll();
+      if (bar.classList.contains('menu-open')) menuBtn.click();
+    });
     bar.querySelector('.theme-btn').onclick = () => {
       const next = isDark() ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', next);
