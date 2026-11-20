@@ -13,6 +13,7 @@ Open `index.html` in a browser. No server is needed, but you do need internet fo
 | `markets.html` | 60 exchanges, market cap vs GDP, trillion-dollar club, exchange drilldown, each country's index and market size over time |
 | `startups.html` | 1,440 unicorns in all 55 countries, per-person and per-GDP ranking, investors, AI labs, India panel |
 | `time.html` | A decade of change: cohort growth, rank mobility, profit-pool migration |
+| `flow.html` | 25 years (2001–2025): every company that reached the top as a rising and falling line, and each business idea's share |
 | `directory.html` | Search and filter ~15,000 companies, with CSV export |
 | `notebook.html` | **Every quotable fact, caveat and story angle in one searchable page** |
 

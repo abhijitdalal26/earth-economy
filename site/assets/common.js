@@ -12,6 +12,7 @@ window.ATLAS = window.ATLAS || {};
     ['markets.html', 'Stock markets'],
     ['startups.html', 'Startups & AI'],
     ['time.html', 'Change over time'],
+    ['flow.html', '25 years'],
     ['context.html', 'Big picture'],
     ['directory.html', 'Company finder'],
     ['notebook.html', "Writer's notebook"],

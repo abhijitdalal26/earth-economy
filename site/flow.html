@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>25 years — Earth Economy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Source+Serif+4:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/common.js"></script>
+<script src="data/flow.js"></script>
+<style>
+  /* hand-drawn SVG charts: wide enough to read, scroll sideways on a phone instead of shrinking */
+  .svg-scroll { overflow-x: auto; }
+  .svg-scroll svg { display: block; width: 100%; min-width: 760px; height: auto; }
+  .gridline { stroke: var(--grid); stroke-width: 1; }
+  .axis { fill: var(--text-3); font-size: 11px; font-family: var(--font); }
+  .flowline { transition: opacity .15s; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+  .flowhit { fill: none; stroke: transparent; stroke-width: 12; cursor: pointer; }
+  .seg button { font: inherit; font-size: 13px; padding: 5px 10px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; }
+  .seg button + button { border-left: 0; }
+  .seg button:first-child { border-radius: 6px 0 0 6px; }
+  .seg button:last-child { border-radius: 0 6px 6px 0; }
+  .seg button.on { background: var(--text); color: var(--surface); }
+  .seg { display: inline-flex; align-items: center; }
+  .seg .lab { font-size: 12px; color: var(--text-3); margin-right: 6px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 8px 0 0; font-size: 12.5px; color: var(--text-2); }
+  .legend button { display: inline-flex; align-items: center; gap: 6px; border: 0; background: none; padding: 2px 0; font: inherit; color: inherit; cursor: pointer; }
+  .legend button.off { opacity: .35; }
+  .legend i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  #tip { position: fixed; z-index: 60; pointer-events: none; opacity: 0; transition: opacity .1s; max-width: 340px;
+    background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.15); padding: 8px 10px; font-size: 13px; line-height: 1.45; }
+  .pill { font-size: 11.5px; font-weight: 600; padding: 1px 8px; border-radius: 999px; background: var(--surface-2); color: var(--text-3); }
+  .pill.up { color: var(--s3); } .pill.down { color: var(--s8); }
+  table.data td.wrap { white-space: normal; min-width: 260px; }
+  @media (max-width: 640px) { .seg button { font-size: 14px; min-height: 36px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="page-head">
+    <p class="kicker">25 years</p>
+    <h1>Twenty-five years of the world's biggest companies, in one picture</h1>
+    <p class="dek">Every company is a line. Time runs left to right, rank runs up the side. Lines climb into the top of the map,
+      sink out of the bottom edge, and new lines appear when a company first reports. Below it, the same years by business idea:
+      which kinds of business took a bigger share, and which faded.</p>
+  </header>
+
+  <div class="explainer"><b>How to read it.</b> The vertical axis is rank among all firms that reported that measure that year
+    (1 at the top, on a log scale). A line stops at the bottom edge when the company drops out of view and climbs back in when it returns;
+    an open circle marks a company's first reported year. Hover any line to see what the company does, when it grew and when it fell.
+    For the same story over ten years and a fixed set of firms, see <a href="time.html">Change over time</a>.</div>
+
+  <div id="tiles"></div>
+
+  <h2>Who rose, who fell, who arrived</h2>
+  <p class="section-dek">Every company that has ever been in the top 25, 50 or 100 between 2001 and 2025.</p>
+  <div class="grid">
+    <div class="card">
+      <div class="card-tools">
+        <div class="seg" id="metricBtns"><span class="lab">Measure</span><button data-v="r" class="on">Revenue</button><button data-v="p">Profit</button><button data-v="e">Employees</button></div>
+        <div class="seg" id="colourBtns"><span class="lab">Colour by</span><button data-v="sector" class="on">Business idea</button><button data-v="growth">Growth</button></div>
+        <div class="seg" id="cutoffBtns"><span class="lab">Show</span><button data-v="25">Top 25 ever</button><button data-v="50" class="on">Top 50</button><button data-v="100">Top 100</button></div>
+      </div>
+      <p class="sub" id="flowSub"></p>
+      <div class="svg-scroll" id="flowChart"></div>
+      <div class="legend" id="flowLegend"></div>
+      <p class="src" id="flowSrc"></p>
+    </div>
+  </div>
+
+  <h2>The ideas behind the lines</h2>
+  <p class="section-dek">Each line is a business idea, a kind of business many companies share. It shows that idea's share of the
+    year's tracked total: lines that climb are the ideas in trend, lines that sink are the ones that faded.</p>
+  <div class="grid">
+    <div class="card">
+      <p class="sub" id="ideaSub"></p>
+      <div class="svg-scroll" id="ideaChart"></div>
+      <p class="src" id="ideaSrc"></p>
+    </div>
+    <div class="card">
+      <h3>The ideas, in words</h3>
+      <p class="sub">What each idea is, and what happened to its share over the quarter century.</p>
+      <div id="ideaTbl"></div>
+    </div>
+  </div>
+
+  <div id="n-cav"></div>
+</div>
+
+<script>
+(function () {
+  const D = ATLAS.flow, YEARS = D.years, NY = YEARS.length;
+  const css = ATLAS.css;
+  const METRICS = {
+    r: { label: 'Revenue', fmt: v => ATLAS.fmtUSD(v, 'musd') },
+    p: { label: 'Profit', fmt: v => ATLAS.fmtUSD(v, 'musd') },
+    e: { label: 'Employees', fmt: v => ATLAS.fmtNum(v) },
+  };
+  const state = { metric: 'r', colour: 'sector', cutoff: 50, sector: null };
+  const esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const colour = si => D.colours[si] || '#9AA5B1';
+  const signed = (v, d = 1) => (v > 0 ? '+' : '') + v.toFixed(d);
+
+  function svg(tag, attrs, kids) {
+    const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const k in attrs || {}) if (attrs[k] != null) e.setAttribute(k, attrs[k]);
+    (kids || []).forEach(k => e.appendChild(typeof k === 'string' ? document.createTextNode(k) : k));
+    return e;
+  }
+  const tip = document.createElement('div'); tip.id = 'tip'; document.body.appendChild(tip);
+  function showTip(html, x, y) {
+    tip.innerHTML = html; tip.style.opacity = '1';
+    const r = tip.getBoundingClientRect();
+    let left = x + 16, top = y + 16;
+    if (left + r.width > innerWidth - 10) left = x - r.width - 14;
+    if (top + r.height > innerHeight - 10) top = y - r.height - 14;
+    tip.style.left = Math.max(6, left) + 'px'; tip.style.top = Math.max(6, top) + 'px';
+  }
+  const hideTip = () => { tip.style.opacity = '0'; };
+
+  // ---- data access ----
+  const val = (row, m, yi) => (row[m] ? row[m][yi] : null);
+  // a profit above revenue cannot be right; keep those rows out of the ranking
+  function plausible(row, m, yi) {
+    const v = val(row, m, yi);
+    if (v == null) return false;
+    if (m === 'p') { const rev = val(row, 'r', yi); if (rev != null && rev > 0 && v > rev) return false; }
+    return true;
+  }
+  function rankMap(m, yi) {
+    const out = D.rows.filter(row => plausible(row, m, yi)).sort((a, b) => val(b, m, yi) - val(a, m, yi));
+    const map = new Map(); out.forEach((row, i) => map.set(row, i + 1)); return map;
+  }
+  function coverage(m, yi) { return D.rows.reduce((n, row) => n + (val(row, m, yi) != null ? 1 : 0), 0); }
+
+  // ---- growth colours ----
+  const RAMP = () => [
+    { min: -Infinity, col: css('--s8'), name: 'shrinking' },
+    { min: 0, col: css('--s2'), name: '0–5% a year' },
+    { min: 5, col: css('--s4'), name: '5–15%' },
+    { min: 15, col: css('--s3'), name: '15–30%' },
+    { min: 30, col: css('--s1'), name: '30%+' },
+  ];
+  function rampColour(g) {
+    if (g == null) return css('--text-3');
+    let c; for (const b of RAMP()) if (g >= b.min) c = b.col; return c;
+  }
+
+  // ---- series: every firm ever inside the chosen band ----
+  function series() {
+    const m = state.metric, cutoff = state.cutoff;
+    const maps = YEARS.map((_, yi) => rankMap(m, yi));
+    const out = [];
+    for (const row of D.rows) {
+      const pts = []; let best = Infinity, bestYi = -1;
+      for (let yi = 0; yi < NY; yi++) {
+        const rk = maps[yi].get(row);
+        if (rk == null) continue;
+        pts.push({ yi, rank: rk });
+        if (rk < best) { best = rk; bestYi = yi; }
+      }
+      if (!pts.length || best > cutoff) continue;
+      const a = pts[0], z = pts[pts.length - 1];
+      const v0 = val(row, m, a.yi), v1 = val(row, m, z.yi), span = z.yi - a.yi;
+      const g = v0 > 0 && v1 > 0 && span > 0 ? (Math.pow(v1 / v0, 1 / span) - 1) * 100 : null;
+      let fv = -1, lv = -1;
+      pts.forEach((p, i) => { if (p.rank <= cutoff * 4) { if (fv < 0) fv = i; lv = i; } });
+      out.push({ row, pts, best, bestYi, g, v0, v1, first: a.yi, last: z.yi, fv, lv,
+        roseIn: fv > 0, fellOut: lv >= 0 && lv < pts.length - 1 });
+    }
+    return out.sort((a, b) => b.best - a.best); // best rank drawn last, on top
+  }
+
+  // ---- the rank chart ----
+  function render() {
+    const W = 1160, H = 680, ml = 46, mr = 170, mt = 18, mb = 38;
+    const plotW = W - ml - mr, plotH = H - mt - mb, bottom = mt + plotH;
+    const scaleMax = state.cutoff * 4, L = Math.log(scaleMax);
+    const X = yi => ml + (yi / (NY - 1)) * plotW;
+    const Y = rk => mt + (Math.log(Math.max(1, rk)) / L) * plotH;
+    const halo = css('--surface');
+    const M = METRICS[state.metric];
+
+    const all = series();
+    const shown = state.sector == null ? all : all.filter(s => s.row.s === state.sector);
+    const kids = [];
+
+    [1, 3, 10, 30, 100, 300].filter(t => t <= scaleMax).forEach(t => {
+      kids.push(svg('line', { class: 'gridline', x1: ml, x2: ml + plotW, y1: Y(t), y2: Y(t) }));
+      kids.push(svg('text', { class: 'axis', x: ml - 7, y: Y(t) + 3, 'text-anchor': 'end' }, ['#' + t]));
+    });
+    YEARS.forEach((y, i) => {
+      if (i % 2 && i !== NY - 1) return;
+      kids.push(svg('text', { class: 'axis', x: X(i), y: H - 12, 'text-anchor': 'middle' }, [String(y)]));
+    });
+    kids.push(svg('line', { class: 'gridline', x1: ml, x2: ml + plotW, y1: bottom, y2: bottom, 'stroke-width': 1.5 }));
+    kids.push(svg('text', { class: 'axis', x: ml, y: mt - 5 }, ['rank: 1 at the top, bottom edge = below #' + scaleMax]));
+
+    const lineGs = [];
+    const colourOf = s => (state.colour === 'growth' ? rampColour(s.g) : colour(s.row.s));
+    shown.forEach(s => {
+      const col = colourOf(s);
+      let d = '', pen = false, seen = false, prevYi = -2;
+      const edges = [];
+      for (const p of s.pts) {
+        const x = X(p.yi);
+        if (prevYi !== p.yi - 1) pen = false; // a year with no report breaks the line
+        prevYi = p.yi;
+        if (p.rank > scaleMax) {
+          if (pen) { d += 'L' + x.toFixed(1) + ' ' + bottom + ' '; pen = false; edges.push({ x, dir: -1 }); }
+          seen = true; continue;
+        }
+        const y = Y(p.rank);
+        if (!pen) {
+          if (seen) { d += 'M' + x.toFixed(1) + ' ' + bottom + 'L' + x.toFixed(1) + ' ' + y.toFixed(1) + ' '; edges.push({ x, dir: 1 }); }
+          else d += 'M' + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+          pen = true;
+        } else d += 'L' + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+        seen = true;
+      }
+      if (!d) return;
+      const g = svg('g');
+      g.appendChild(svg('path', { class: 'flowline', d, stroke: col, 'stroke-width': 2, 'stroke-opacity': .85 }));
+      if (s.first > 0 && s.fv === 0) { // first reported after 2001
+        const p0 = s.pts[0];
+        g.appendChild(svg('circle', { cx: X(p0.yi), cy: Y(p0.rank), r: 3.4, fill: halo, stroke: col, 'stroke-width': 2 }));
+      }
+      edges.forEach(e => g.appendChild(svg('path', { fill: col, d: e.dir > 0
+        ? 'M' + e.x + ' ' + (bottom - 7) + 'l4.5 7h-9z' : 'M' + e.x + ' ' + (bottom + 7) + 'l4.5 -7h-9z' })));
+      const hit = svg('path', { class: 'flowhit', d });
+      hit.addEventListener('mousemove', ev => {
+        const rk0 = s.pts[0].rank, rk1 = s.pts[s.pts.length - 1].rank, vBest = val(s.row, state.metric, s.bestYi);
+        let html = '<b>' + esc(s.row.n) + '</b><br>' + esc(s.row.c) + ' · ' + esc(D.sectors[s.row.s]);
+        html += '<br>' + M.label + ' ' + M.fmt(s.v0) + ' in ' + YEARS[s.first] + ' → ' + M.fmt(s.v1) + ' in ' + YEARS[s.last];
+        if (s.g != null) html += '<br><b>' + signed(s.g) + '% a year</b> over the run';
+        html += '<br>rank #' + rk0 + ' in ' + YEARS[s.first] + ' → #' + rk1 + ' in ' + YEARS[s.last];
+        html += '<br>peaked at <b>#' + s.best + '</b>' + (vBest != null ? ' (' + M.fmt(vBest) + ')' : '') + ' in ' + YEARS[s.bestYi];
+        if (s.roseIn) html += '<br>rose into view from below';
+        if (s.fellOut) html += '<br>fell out of view';
+        if (s.row.d) html += '<div class="tip-idea"><b>What they do:</b> ' + esc(s.row.d) + '</div>';
+        showTip(html, ev.clientX, ev.clientY);
+        lineGs.forEach(o => { o.style.opacity = o === g ? '1' : '.12'; });
+      });
+      hit.addEventListener('mouseleave', () => { hideTip(); lineGs.forEach(o => { o.style.opacity = ''; }); });
+      g.appendChild(hit);
+      lineGs.push(g); kids.push(g);
+    });
+
+    // labels: right edge for lines still in view now, start point for late arrivals
+    const boxes = [], labelled = new Set();
+    function putLabel(s, x, y, anchor) {
+      const txt = s.row.n.length > 24 ? s.row.n.slice(0, 23) + '…' : s.row.n;
+      const half = Math.min(txt.length, 24) * 3.1 + 4;
+      let ly = y, ok = false;
+      for (let t = 0; t < 6; t++) {
+        if (!boxes.some(b => ly + 3 > b.y0 && ly - 10 < b.y1 && x + half > b.x0 && x - half < b.x1)) { ok = true; break; }
+        ly -= 12;
+      }
+      if (!ok) return;
+      boxes.push({ x0: x - half, x1: x + half, y0: ly - 10, y1: ly + 3 });
+      labelled.add(s);
+      kids.push(svg('text', { x, y: ly, 'text-anchor': anchor, 'font-size': 10.5, 'font-weight': 600, 'font-family': css('--font'),
+        fill: colourOf(s), 'paint-order': 'stroke', stroke: halo, 'stroke-width': 3 }, [txt]));
+    }
+    shown.filter(s => s.lv === s.pts.length - 1 && s.pts[s.lv].yi === NY - 1)
+      .sort((a, b) => a.pts[a.lv].rank - b.pts[b.lv].rank).slice(0, 16)
+      .forEach(s => { const p = s.pts[s.lv]; putLabel(s, X(p.yi) + 8, Y(p.rank) + 3, 'start'); });
+    shown.filter(s => s.first >= 3 && s.fv === 0 && !labelled.has(s))
+      .sort((a, b) => a.best - b.best).slice(0, 6)
+      .forEach(s => { const p = s.pts[0]; putLabel(s, X(p.yi), Y(p.rank) - 10, 'middle'); });
+
+    const host = document.getElementById('flowChart');
+    host.innerHTML = '';
+    host.appendChild(svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img',
+      'aria-label': 'Rank of each company by ' + M.label.toLowerCase() + ', ' + YEARS[0] + ' to ' + YEARS[NY - 1] }, kids));
+
+    const withG = shown.filter(s => s.g != null);
+    ATLAS.tiles('tiles', [
+      { v: shown.length, l: 'companies ever in the top ' + state.cutoff, s: M.label.toLowerCase() + ', ' + YEARS[0] + '–' + YEARS[NY - 1] },
+      { v: shown.filter(s => s.roseIn).length, l: 'rose into view from below', s: 'climbed up through rank #' + scaleMax },
+      { v: shown.filter(s => s.fellOut).length, l: 'sank out of view', s: 'dropped below rank #' + scaleMax + ' mid-run' },
+      { v: shown.filter(s => s.first > 0).length, l: 'first reported after ' + YEARS[0], s: withG.filter(s => s.g > 0).length + ' of ' + withG.length + ' grew over their run' },
+    ]);
+
+    const leg = document.getElementById('flowLegend');
+    if (state.colour === 'growth') {
+      leg.innerHTML = RAMP().slice().reverse().map(b => '<span><i style="background:' + b.col + '"></i>' + b.name + '</span>').join('') +
+        '<span><i style="background:' + css('--text-3') + '"></i>too little data</span>';
+    } else {
+      leg.innerHTML = '';
+      [...new Set(shown.map(s => s.row.s).concat(state.sector == null ? [] : [state.sector]))]
+        .sort((a, b) => D.sectors[a].localeCompare(D.sectors[b])).forEach(si => {
+          const b = document.createElement('button');
+          b.innerHTML = '<i style="background:' + colour(si) + '"></i>' + esc(D.sectors[si]);
+          if (state.sector != null && state.sector !== si) b.className = 'off';
+          b.onclick = () => { state.sector = state.sector === si ? null : si; render(); };
+          leg.appendChild(b);
+        });
+      if (state.sector != null) {
+        const b = document.createElement('button'); b.textContent = 'clear filter';
+        b.onclick = () => { state.sector = null; render(); }; leg.appendChild(b);
+      }
+    }
+
+    document.getElementById('flowSub').textContent = 'Each line is one company, ranked among everyone reporting ' +
+      M.label.toLowerCase() + ' that year. Up is better; the bottom edge is rank #' + scaleMax + '. ' +
+      (state.colour === 'growth' ? 'Colour is compound annual growth over the company’s own run.' : 'Colour is the business idea. Click a legend entry to show only that one.');
+    document.getElementById('flowSrc').textContent = 'Source: Forbes Global 2000 (2026), with every edition back to 2011 stitched into one history (fiscal ' +
+      YEARS[0] + '–' + YEARS[NY - 1] + '). Firms reporting: ' + coverage(state.metric, 0).toLocaleString() + ' in ' + YEARS[0] + ' → ' +
+      coverage(state.metric, NY - 1).toLocaleString() + ' in ' + YEARS[NY - 1] + '. Ranks are recomputed each year' +
+      (shown.length !== all.length ? '; filtered to ' + shown.length + ' lines' : '') + '.';
+
+    renderIdeas();
+  }
+
+  // ---- ideas behind the lines ----
+  function ideaShares(m) {
+    const acc = YEARS.map(() => new Array(D.sectors.length).fill(0)), tot = YEARS.map(() => 0);
+    for (const row of D.rows) for (let yi = 0; yi < NY; yi++) {
+      const v = val(row, m, yi);
+      if (v != null) { acc[yi][row.s] += v; tot[yi] += v; }
+    }
+    return D.sectors.map((s, si) => {
+      const shares = YEARS.map((_, yi) => (tot[yi] ? 100 * acc[yi][si] / tot[yi] : 0));
+      return { si, sector: s, idea: D.ideas[si] || '', shares, first: shares[0], last: shares[NY - 1], delta: shares[NY - 1] - shares[0] };
+    }).filter(d => d.sector !== 'Unclassified');
+  }
+
+  function renderIdeas() {
+    const M = METRICS[state.metric];
+    const ideas = ideaShares(state.metric).sort((a, b) => b.delta - a.delta);
+    const hi = Math.ceil(Math.max(...ideas.flatMap(d => d.shares)) / 5) * 5 || 5;
+    const W = 1160, H = 420, ml = 46, mr = 230, mt = 18, mb = 38;
+    const plotW = W - ml - mr, plotH = H - mt - mb, bottom = mt + plotH;
+    const X = yi => ml + (yi / (NY - 1)) * plotW;
+    const Y = v => mt + (1 - v / hi) * plotH;
+    const kids = [];
+    for (let v = 0; v <= hi; v += 5) {
+      kids.push(svg('line', { class: 'gridline', x1: ml, x2: ml + plotW, y1: Y(v), y2: Y(v) }));
+      kids.push(svg('text', { class: 'axis', x: ml - 7, y: Y(v) + 3, 'text-anchor': 'end' }, [v + '%']));
+    }
+    YEARS.forEach((y, i) => {
+      if (i % 2 && i !== NY - 1) return;
+      kids.push(svg('text', { class: 'axis', x: X(i), y: H - 12, 'text-anchor': 'middle' }, [String(y)]));
+    });
+    kids.push(svg('text', { class: 'axis', x: ml, y: mt - 5 }, ['share of tracked ' + M.label.toLowerCase() + ', %']));
+
+    const lineGs = [];
+    ideas.forEach(d => {
+      const path = 'M' + d.shares.map((v, i) => X(i).toFixed(1) + ' ' + Y(v).toFixed(1)).join('L');
+      const g = svg('g');
+      g.appendChild(svg('path', { class: 'flowline', d: path, stroke: colour(d.si), 'stroke-width': 2.2, 'stroke-opacity': .9 }));
+      const hit = svg('path', { class: 'flowhit', d: path });
+      hit.addEventListener('mousemove', ev => {
+        showTip('<b>' + esc(d.sector) + '</b><br>' + esc(d.idea) + '<br>' + ATLAS.fmtPct(d.first) + ' in ' + YEARS[0] + ' → ' +
+          ATLAS.fmtPct(d.last) + ' in ' + YEARS[NY - 1] + '<br><b>' + signed(d.delta) + ' pts</b>', ev.clientX, ev.clientY);
+        lineGs.forEach(o => { o.style.opacity = o === g ? '1' : '.12'; });
+      });
+      hit.addEventListener('mouseleave', () => { hideTip(); lineGs.forEach(o => { o.style.opacity = ''; }); });
+      g.appendChild(hit);
+      lineGs.push(g); kids.push(g);
+    });
+
+    // right-edge labels: push down to clear each other, then back up so none fall below the plot
+    const lab = ideas.slice().sort((a, b) => b.last - a.last).map(d => ({ d, y: Y(d.last) }));
+    for (let i = 1; i < lab.length; i++) lab[i].y = Math.max(lab[i].y, lab[i - 1].y + 13);
+    if (lab.length) lab[lab.length - 1].y = Math.min(lab[lab.length - 1].y, bottom);
+    for (let i = lab.length - 2; i >= 0; i--) lab[i].y = Math.min(lab[i].y, lab[i + 1].y - 13);
+    lab.forEach(({ d, y }) => kids.push(svg('text', { x: X(NY - 1) + 8, y: y + 3, 'font-size': 11, 'font-weight': 600,
+      'font-family': css('--font'), fill: colour(d.si) }, [d.sector + '  ' + ATLAS.fmtPct(d.last)])));
+
+    const host = document.getElementById('ideaChart');
+    host.innerHTML = '';
+    host.appendChild(svg('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img',
+      'aria-label': 'Share of tracked ' + M.label.toLowerCase() + ' by business idea, ' + YEARS[0] + ' to ' + YEARS[NY - 1] }, kids));
+
+    document.getElementById('ideaSub').textContent = 'Share of the year\'s tracked ' + M.label.toLowerCase() +
+      ', by business idea. Follows the Measure buttons above.';
+    document.getElementById('ideaSrc').textContent = 'Shares are among the firms reporting that year (' +
+      coverage(state.metric, 0).toLocaleString() + ' in ' + YEARS[0] + ', ' + coverage(state.metric, NY - 1).toLocaleString() + ' in ' + YEARS[NY - 1] + ').';
+
+    ATLAS.table('ideaTbl', ideas.map(d => ({ sector: d.sector, si: d.si, idea: d.idea, first: d.first, last: d.last, delta: d.delta })), [
+      { key: 'sector', label: 'The idea', fmt: (v, r) => '<span style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:' + colour(r.si) + '"></span>' + esc(v) },
+      { key: 'idea', label: 'What it is', fmt: v => '<span style="white-space:normal;display:inline-block;min-width:260px">' + esc(v) + '</span>' },
+      { key: 'first', label: String(YEARS[0]), num: true, fmt: v => ATLAS.fmtPct(v) },
+      { key: 'last', label: String(YEARS[NY - 1]), num: true, fmt: v => ATLAS.fmtPct(v) },
+      { key: 'delta', label: 'Change, pts', num: true, fmt: v => signed(v) },
+      { key: 'delta', label: '', fmt: v => (Math.abs(v) < 0.3 ? '<span class="pill">flat</span>' : v > 0 ? '<span class="pill up">scaled</span>' : '<span class="pill down">faded</span>') },
+    ]);
+  }
+
+  function wire(id, key, cast) {
+    const btns = document.querySelectorAll('#' + id + ' button');
+    btns.forEach(b => b.addEventListener('click', () => {
+      state[key] = cast(b.dataset.v);
+      btns.forEach(x => x.classList.toggle('on', x === b));
+      render();
+    }));
+  }
+  wire('metricBtns', 'metric', String);
+  wire('colourBtns', 'colour', String);
+  wire('cutoffBtns', 'cutoff', Number);
+  render();
+
+  ATLAS.notes('n-cav', { title: 'Caveats', caveat: true, items: [
+    'Survivorship: every company here is on the 2026 list. Firms that failed, were taken over or dropped off are missing entirely, so the picture leans toward winners.',
+    'The history is stitched from the Forbes editions 2011–2026. Each edition carries ten years of figures, and firms are joined by Forbes\' stable company id, so Facebook and Meta Platforms are one line. Where Forbes restated a year, an older edition can differ from a newer one.',
+    'Coverage thins going back: about 980 firms report revenue for 2001, against 1,999 for 2025. Ranks in the early years are among fewer firms.',
+    'Years are approximate fiscal years. Retailers end in January and many Indian and Japanese firms in March, so a company can shift by a year between editions. Read single-year wiggles with care.',
+    'Nominal US dollars, no inflation adjustment. Currency swings move non-US firms.',
+  ]});
+})();
+</script>
+</body>
+</html>
