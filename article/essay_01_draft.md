@@ -17,7 +17,7 @@ But it got me asking a simpler question, one I couldn't find a straight answer t
 
 **How much business is there on Earth? Who does it, and what do they actually do?**
 
-I thought it would take a weekend. It took weeks. I pulled every serious list I could find: the Forbes Global 2000, the Fortune Global 500, sixty stock exchanges, the World Bank, the International Labour Organization, the unicorn trackers, venture capital and IPO reports. Then I matched them into one dataset of about 15,000 companies. (All of it is browsable on [the live site](https://abhijitdalal26.github.io/big-business-map/). Hover over any company in any chart and it tells you what that company actually does.)
+I thought it would take a weekend. It took weeks. I pulled every serious list I could find: the Forbes Global 2000, the Fortune Global 500, sixty stock exchanges, the World Bank, the International Labour Organization, the unicorn trackers, venture capital and IPO reports. Then I matched them into one dataset of about 15,000 companies. (All of it is browsable on [the live site](https://abhijitdalal26.github.io/earth-economy/). Hover over any company in any chart and it tells you what that company actually does.)
 
 Here's what I learned. Every list answers the question. And every list is hiding something. This essay is the story of following those hidden parts down, one layer at a time.
 
@@ -69,7 +69,7 @@ Strip away the logos and every company is an **idea about how to make money**:
 - **Nvidia:** design the chips the AI boom runs on, and let someone else (TSMC) build the factories.
 - **McKesson:** buy medicines in bulk from drugmakers and deliver them to every pharmacy in America. That idea brings in $403 billion a year, and almost nobody has heard of it.
 
-I collected a one-line "what they actually do" for more than 2,000 of the biggest companies on Earth, listed and unlisted. Then I grouped them into the same kinds of business the [site's treemap](https://abhijitdalal26.github.io/big-business-map/) uses. Here are the ideas that won:
+I collected a one-line "what they actually do" for more than 2,000 of the biggest companies on Earth, listed and unlisted. Then I grouped them into the same kinds of business the [site's treemap](https://abhijitdalal26.github.io/earth-economy/) uses. Here are the ideas that won:
 
 | The idea | How the money is made | Giants | Share of revenue | Share of value | Firms over $100B |
 |---|---|---|---|---|---|
@@ -254,7 +254,7 @@ The Forbes 2000 isn't wrong. It measures exactly what it says it measures. The m
 - **Matching:** about 18,000 rows were reconciled into one universe of **about 15,000 companies**.
 - **Business ideas:** one-line descriptions for over 2,000 of the largest companies, extracted from Forbes and Wikipedia text, with ~80 written by hand. Sectors follow the site's 13-sector taxonomy.
 - **Rules I followed:** revenue, market value and private valuations are never added together; they're different things measured on different dates. Ownership labels are curated by hand and approximate.
-- **Everything is open:** [live site](https://abhijitdalal26.github.io/big-business-map/), including a searchable directory of all of them.
+- **Everything is open:** [live site](https://abhijitdalal26.github.io/earth-economy/), including a searchable directory of all of them.
 
 ---
 ---

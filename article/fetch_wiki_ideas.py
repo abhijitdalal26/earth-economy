@@ -18,7 +18,7 @@ import requests
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / "article/data/wiki_ideas.csv"
 API = "https://en.wikipedia.org/w/api.php"
-HEAD = {"User-Agent": "big-business-map research (github.com/abhijitdalal26)"}
+HEAD = {"User-Agent": "earth-economy research (github.com/abhijitdalal26)"}
 BUSINESSY = re.compile(r"\b(company|companies|corporation|conglomerate|group|firm|enterprise|"
                        r"cooperative|co-operative|insurer|bank|retailer|manufacturer|operator|"
                        r"utility|producer|business|chain|partnership|holding|supermarket|"

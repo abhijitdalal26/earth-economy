@@ -1,6 +1,6 @@
 # Earth Economy — data pack for a Substack piece
 
-**Live site: https://abhijitdalal26.github.io/big-business-map/**
+**Live site: https://abhijitdalal26.github.io/earth-economy/**
 
 > **Frozen as a one-time 2026 snapshot (November 2026).** The data is not refreshed any
 > more: the "Monthly data update" workflow is disabled, and the site and essay describe the
