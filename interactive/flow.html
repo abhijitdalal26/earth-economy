@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>One picture: twenty-five years of the Forbes 2000 — Earth Economy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Source+Serif+4:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .flowline { transition: opacity .15s; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+  .flowhit { fill: none; stroke: transparent; stroke-width: 12; cursor: pointer; }
+  .ramp-key i { width: 22px; height: 11px; border-radius: 3px; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="navstrip">
+    <a class="brand" href="../site/index.html">Earth <b>Economy</b></a>
+    <a href="index.html">Year by year</a>
+    <a href="ideas.html">Ideas that scaled</a>
+    <a href="flow.html" class="active">One picture</a>
+    <span class="spacer"></span>
+    <a href="https://abhijitdalal26.github.io/earth-economy/" target="_blank" rel="noopener">Live site</a>
+  </div>
+
+  <p class="kicker">Interactive · not part of the main site</p>
+  <h1>Twenty-five years, one picture</h1>
+  <p class="dek">Every company a line. Time runs left to right, rank runs up the side — up is better.
+  Lines rise into the top of the map, sink out of the bottom edge, and new lines appear when a company
+  first has reported figures. And because each company is, in a sense, the idea it works in, the lines
+  below the picture show which ideas have been in trend and which have faded.</p>
+
+  <div class="caveat">
+    <b>How to read it.</b> The vertical axis is rank within the firms that reported that measure that year
+    (1 at the top, on a log scale). A line stops at the bottom edge when the company drops below the
+    visible band, and climbs back in from the edge when it returns. Hover any line to see what the
+    company actually does, when it grew and when it fell.<br><br>
+    The history runs back to 2001 by stitching the Forbes Global 2000 editions (2011–2026): each edition
+    carries ten years of financials, and firms are joined by a stable company id, so Facebook and Meta
+    Platforms are the same line. Coverage thins in the early years (978 firms in 2001 → 1,999 in 2025).
+    Every company here is a survivor on the 2026 list, so the firms that failed are missing entirely,
+    and a year read from an older edition can differ from the same year in a newer one where Forbes
+    restated it.
+  </div>
+
+  <!-- ---------- controls ---------- -->
+  <div class="controls">
+    <div>
+      <div class="ctl-label">Measure</div>
+      <div class="seg-group" id="metricBtns">
+        <button data-m="r" class="on">Revenue</button>
+        <button data-m="p">Profit</button>
+        <button data-m="e">Employees</button>
+      </div>
+    </div>
+    <div>
+      <div class="ctl-label">Colour by</div>
+      <div class="seg-group" id="colourBtns">
+        <button data-c="sector" class="on">Business idea</button>
+        <button data-c="growth">Growth</button>
+      </div>
+    </div>
+    <div>
+      <div class="ctl-label">Show</div>
+      <div class="seg-group" id="cutoffBtns">
+        <button data-n="25">Top 25 ever</button>
+        <button data-n="50" class="on">Top 50 ever</button>
+        <button data-n="100">Top 100 ever</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="card">
+    <h2 id="flowTitle">Who rose, who fell, who arrived</h2>
+    <p class="sub" id="flowSub"></p>
+    <div class="chart" id="flowChart"></div>
+    <div class="legend" id="flowLegend"></div>
+    <p class="src" id="flowSrc"></p>
+  </div>
+
+  <!-- ---------- ideas behind the lines ---------- -->
+  <div class="card" style="margin-top:18px">
+    <h2>The ideas behind the lines</h2>
+    <p class="sub" id="ideaSub">Each line is a business idea — a domain many companies share. The chart shows
+    that idea's share of the tracked revenue, year by year: lines that climb are the ideas in trend, lines
+    that sink are the ones that faded.</p>
+    <div class="chart" id="ideaChart"></div>
+    <p class="src" id="ideaSrc"></p>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2>The ideas, in words</h2>
+    <p class="sub">What each idea is, and what it did to its share of the map over the quarter century.</p>
+    <div class="tbl-wrap"><table id="ideaTbl"></table></div>
+    <p class="src" id="ideaTblSrc"></p>
+  </div>
+
+  <footer>
+    <b>How this was built.</b> The 2,000 companies of the Forbes Global 2000 (2026) list, with revenue,
+    profit and headcount for fiscal years 2001 to 2025 stitched from the Forbes editions 2011–2026
+    (<code>data/global2000_2026_history_panel.csv</code>). Ranks are recomputed every year against every
+    firm reporting that measure. Growth colouring is compound annual growth between a firm's first and last
+    reported year. "What they do" comes from <code>article/data/business_ideas.csv</code>; the 13-sector
+    taxonomy and the one-line idea for each sector are used across the site.<br><br>
+    <b>Companion pages:</b> <a href="index.html">the Forbes 2000, year by year</a> ·
+    <a href="ideas.html">the ideas that scaled and the ideas that faded</a>.
+  </footer>
+</div>
+
+<script src="data_flow.js"></script>
+<script>window.ATLAS_TIME = window.ATLAS_FLOW;</script>
+<script src="common.js"></script>
+<script>
+(function () {
+  const T = window.T, D = T.D;
+  const YEARS = D.years;
+  const IDEAS = D.ideas || [];
+  const state = { metric: 'r', colour: 'sector', cutoff: 50, sector: null };
+  const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  const RAMP = [
+    { min: -Infinity, col: '#E34948', name: 'shrinking' },
+    { min: 0,         col: '#E07A4F', name: '0–5% a year' },
+    { min: 5,         col: '#B8860B', name: '5–15%' },
+    { min: 15,        col: '#2E8B74', name: '15–30%' },
+    { min: 30,        col: '#0B2545', name: '30%+' },
+  ];
+  function rampColour(g) {
+    if (g == null) return '#9AA5B1';
+    let c = RAMP[0].col;
+    for (const b of RAMP) if (g >= b.min) c = b.col;
+    return c;
+  }
+
+  // ---- series: every firm ever inside the visible band --------------------
+  function series() {
+    const metric = state.metric, cutoff = state.cutoff;
+    const maps = YEARS.map((_, yi) => T.rankMap(metric, yi));
+    const out = [];
+    for (const row of D.rows) {
+      const pts = [];
+      let best = Infinity, bestYi = -1;
+      for (let yi = 0; yi < YEARS.length; yi++) {
+        const rk = maps[yi].get(row);
+        if (rk == null) continue;
+        pts.push({ yi: yi, rank: rk });
+        if (rk < best) { best = rk; bestYi = yi; }
+      }
+      if (!pts.length || best > cutoff) continue;
+      const a = pts[0], z = pts[pts.length - 1];
+      const v0 = T.val(row, metric, a.yi), v1 = T.val(row, metric, z.yi);
+      const span = z.yi - a.yi;
+      let g = null;
+      if (v0 != null && v1 != null && v0 > 0 && v1 > 0 && span > 0)
+        g = (Math.pow(v1 / v0, 1 / span) - 1) * 100;
+      let fv = -1, lv = -1;
+      for (let i = 0; i < pts.length; i++) {
+        if (pts[i].rank <= cutoff * 4) { if (fv < 0) fv = i; lv = i; }
+      }
+      out.push({
+        row: row, pts: pts, best: best, bestYi: bestYi, g: g, v0: v0, v1: v1,
+        first: a.yi, last: z.yi, fv: fv, lv: lv,
+        roseIn: fv > 0, fellOut: lv >= 0 && lv < pts.length - 1,
+      });
+    }
+    out.sort((a, b) => b.best - a.best); // best rank drawn last, on top
+    return out;
+  }
+
+  // ---- the one chart ------------------------------------------------------
+  function render() {
+    const W = 1160, H = 680, ml = 46, mr = 170, mt = 18, mb = 38;
+    const plotW = W - ml - mr, plotH = H - mt - mb, bottom = mt + plotH;
+    const scaleMax = state.cutoff * 4;
+    const L = Math.log(scaleMax);
+    const X = (yi) => ml + (yi / (YEARS.length - 1)) * plotW;
+    const Y = (rk) => mt + (Math.log(Math.max(1, rk)) / L) * plotH;
+
+    const all = series();
+    const shown = state.sector == null ? all : all.filter((s) => s.row.s === state.sector);
+
+    const kids = [];
+
+    // gridlines + rank ticks
+    const ticks = [1, 3, 10, 30, 100, 300, 1000, 3000].filter((t) => t <= scaleMax);
+    ticks.forEach((t) => {
+      const y = Y(t);
+      kids.push(T.svg('line', { class: 'gridline', x1: ml, x2: ml + plotW, y1: y, y2: y }));
+      kids.push(T.svg('text', { class: 'axis', x: ml - 7, y: y + 3, 'text-anchor': 'end' },
+        [document.createTextNode('#' + t)]));
+    });
+    // year labels (thin out when long)
+    const step = YEARS.length > 14 ? 2 : 1;
+    YEARS.forEach((y, i) => {
+      if (i % step !== 0 && i !== YEARS.length - 1) return;
+      kids.push(T.svg('text', { class: 'axis', x: X(i), y: H - 12, 'text-anchor': 'middle' },
+        [document.createTextNode(y)]));
+    });
+    kids.push(T.svg('line', { class: 'gridline', x1: ml, x2: ml + plotW, y1: bottom, y2: bottom, 'stroke-width': 1.5 }));
+    kids.push(T.svg('text', { class: 'axis', x: ml, y: mt - 5, 'font-size': 10.5 },
+      [document.createTextNode('rank — 1 at the top, bottom edge = below #' + scaleMax)]));
+
+    // ---- lines ----
+    const lineGs = [];
+    const colourOf = (s) => state.colour === 'growth' ? rampColour(s.g) : T.colour(s.row.s);
+    shown.forEach((s) => {
+      const col = colourOf(s);
+      let d = '', pen = false, seen = false, prevYi = -2;
+      const edges = []; // {x, dir} where the line touches the bottom edge
+      for (const p of s.pts) {
+        const out = p.rank > scaleMax;
+        const x = X(p.yi);
+        if (prevYi !== p.yi - 1) pen = false; // a year with no report breaks the line
+        prevYi = p.yi;
+        if (out) {
+          if (pen) { d += 'L' + x.toFixed(1) + ' ' + bottom + ' '; pen = false; edges.push({ x: x, dir: -1 }); }
+          seen = true;
+          continue;
+        }
+        const y = Y(p.rank);
+        if (!pen) {
+          if (seen) { d += 'M' + x.toFixed(1) + ' ' + bottom + 'L' + x.toFixed(1) + ' ' + y.toFixed(1) + ' '; edges.push({ x: x, dir: 1 }); }
+          else d += 'M' + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+          pen = true;
+        } else d += 'L' + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+        seen = true;
+      }
+      if (!d) return;
+      const g = T.svg('g', { class: 'line' });
+      g.appendChild(T.svg('path', { class: 'flowline', d: d, stroke: col, 'stroke-width': 2, 'stroke-opacity': .85 }));
+      // arrival marker: firm's data starts later than the first year shown
+      if (s.first > 0 && s.fv === 0) {
+        const p0 = s.pts[0];
+        g.appendChild(T.svg('circle', {
+          cx: X(p0.yi), cy: Y(p0.rank), r: 3.4, fill: '#fff', stroke: col, 'stroke-width': 2,
+        }));
+      }
+      // edge triangles: rose in / fell out
+      edges.forEach((e) => {
+        const tri = e.dir > 0
+          ? 'M' + e.x + ' ' + (bottom - 7) + 'l4.5 7h-9z'
+          : 'M' + e.x + ' ' + (bottom + 7) + 'l4.5 -7h-9z';
+        g.appendChild(T.svg('path', { d: tri, fill: col }));
+      });
+      // hover target
+      const hit = T.svg('path', { class: 'flowhit', d: d });
+      hit.addEventListener('mousemove', (ev) => {
+        const rk0 = s.pts[0].rank, rk1 = s.pts[s.pts.length - 1].rank;
+        const vBest = T.val(s.row, state.metric, s.bestYi);
+        let html = '<b>' + esc(s.row.n) + '</b><br>' + esc(s.row.c) + ' · ' + esc(T.sectorName(s.row.s));
+        if (s.row.d) html += '<br><i>' + esc(s.row.d) + '</i>';
+        html += '<br>' + T.METRICS[state.metric].label + ' ' + T.METRICS[state.metric].fmt(s.v0) +
+          ' in ' + YEARS[s.first] + ' → ' + T.METRICS[state.metric].fmt(s.v1) + ' in ' + YEARS[s.last];
+        if (s.g != null) html += '<br><b>' + T.fmtSigned(s.g) + '% a year</b> over the run';
+        html += '<br>rank #' + rk0 + ' in ' + YEARS[s.first] + ' → #' + rk1 + ' in ' + YEARS[s.last];
+        if (s.bestYi >= 0) html += '<br>peaked at <b>#' + s.best + '</b>' +
+          (vBest != null ? ' (' + T.METRICS[state.metric].fmt(vBest) + ')' : '') + ' in ' + YEARS[s.bestYi];
+        if (s.roseIn) html += '<br>rose into the top ' + state.cutoff;
+        if (s.fellOut) html += '<br>fell out of the top ' + state.cutoff;
+        T.showTip(html, ev.clientX, ev.clientY);
+        lineGs.forEach((o) => { o.style.opacity = o === g ? '1' : '.12'; });
+      });
+      hit.addEventListener('mouseleave', () => {
+        T.hideTip();
+        lineGs.forEach((o) => { o.style.opacity = ''; });
+      });
+      g.appendChild(hit);
+      lineGs.push(g);
+      kids.push(g);
+    });
+
+    // ---- labels: right edge for lines still visible now, start for arrivals ----
+    const boxes = [];
+    function putLabel(x, y, txt, col, anchor) {
+      const half = Math.min(txt.length, 24) * 3.1 + 4;
+      let ly = y, ok = false;
+      for (let t = 0; t < 6; t++) {
+        const hitBox = boxes.some((b) => ly + 3 > b.y0 && ly - 10 < b.y1 &&
+          x + half > b.x0 && x - half < b.x1);
+        if (!hitBox) { ok = true; break; }
+        ly -= 12;
+      }
+      if (!ok) return;
+      boxes.push({ x0: x - half, x1: x + half, y0: ly - 10, y1: ly + 3 });
+      kids.push(T.svg('text', {
+        x: x, y: ly, 'text-anchor': anchor, 'font-size': 10.5, 'font-weight': 600,
+        fill: col, 'paint-order': 'stroke', stroke: '#fcfcfb', 'stroke-width': 3,
+      }, [document.createTextNode(txt)]));
+    }
+    const enders = shown.filter((s) => s.lv === s.pts.length - 1 && s.pts[s.lv].yi === YEARS.length - 1)
+      .sort((a, b) => a.pts[a.lv].rank - b.pts[b.lv].rank).slice(0, 16);
+    enders.forEach((s) => {
+      const p = s.pts[s.lv];
+      putLabel(X(p.yi) + 8, Y(p.rank) + 3, s.row.n.length > 24 ? s.row.n.slice(0, 23) + '…' : s.row.n, colourOf(s), 'start');
+    });
+    const arrivals = shown.filter((s) => s.first >= 3 && s.fv === 0)
+      .sort((a, b) => a.best - b.best).slice(0, 6);
+    arrivals.forEach((s) => {
+      const p = s.pts[0];
+      putLabel(X(p.yi), Y(p.rank) - 10, s.row.n.length > 24 ? s.row.n.slice(0, 23) + '…' : s.row.n, colourOf(s), 'middle');
+    });
+
+    const svg = T.svg('svg', { viewBox: '0 0 ' + W + ' ' + H }, kids);
+    const host = document.getElementById('flowChart');
+    host.innerHTML = '';
+    host.appendChild(svg);
+
+    // ---- tiles ----
+    const rose = shown.filter((s) => s.roseIn).length;
+    const fell = shown.filter((s) => s.fellOut).length;
+    const arrived = shown.filter((s) => s.first > 0).length;
+    const grew = shown.filter((s) => s.g != null && s.g > 0).length;
+    const withG = shown.filter((s) => s.g != null).length;
+    const tiles = [
+      { v: String(shown.length), l: 'companies ever in the top ' + state.cutoff, s: T.METRICS[state.metric].label.toLowerCase() + ', ' + YEARS[0] + '–' + YEARS[YEARS.length - 1] },
+      { v: String(rose), l: 'rose into view from below', s: 'crossed up through rank #' + state.cutoff * 4 },
+      { v: String(fell), l: 'sank out of view', s: 'dropped below rank #' + state.cutoff * 4 + ' mid-run' },
+      { v: String(arrived), l: 'reported for the first time after ' + YEARS[0], s: grew + ' of ' + withG + ' grew over their run' },
+    ];
+    document.getElementById('tiles').innerHTML = tiles.map((t) =>
+      '<div class="tile"><div class="v">' + t.v + '</div><div class="l">' + t.l + '</div><div class="s">' + t.s + '</div></div>'
+    ).join('');
+
+    // ---- legend ----
+    const leg = document.getElementById('flowLegend');
+    leg.innerHTML = '';
+    if (state.colour === 'growth') {
+      leg.className = 'legend ramp-key';
+      RAMP.slice().reverse().forEach((b) => {
+        leg.appendChild(T.h('span', {}, [
+          T.h('i', { style: 'background:' + b.col }),
+          document.createTextNode(' ' + b.name),
+        ]));
+      });
+      leg.appendChild(T.h('span', { style: 'color:#7a7973' }, ['grey = not enough data to grow']));
+    } else {
+      leg.className = 'legend';
+      const present = [...new Set(shown.map((s) => s.row.s))].sort((a, b) => D.sectors[a].localeCompare(D.sectors[b]));
+      present.forEach((si) => {
+        const b = T.h('button', { onclick: () => { state.sector = state.sector === si ? null : si; render(); } }, [
+          T.h('i', { style: 'background:' + T.colour(si) }),
+          document.createTextNode(' ' + D.sectors[si]),
+        ]);
+        if (state.sector != null && state.sector !== si) b.className = 'off';
+        if (state.sector === si) b.style.fontWeight = '700';
+        leg.appendChild(b);
+      });
+      if (state.sector != null)
+        leg.appendChild(T.h('button', { onclick: () => { state.sector = null; render(); } }, ['clear filter']));
+    }
+
+    document.getElementById('flowSub').textContent =
+      'Each line is one company, ranked among everyone reporting ' + T.METRICS[state.metric].label.toLowerCase() +
+      ' that year. Up is better; the bottom edge is rank #' + scaleMax + '. ' +
+      (state.colour === 'growth' ? 'Colour is compound annual growth over the company\u2019s own run.' :
+        'Colour is the business idea. Click a legend entry to isolate one.');
+    const cov0 = T.totals(state.metric, 0).n, cov1 = T.totals(state.metric, YEARS.length - 1).n;
+    document.getElementById('flowSrc').textContent =
+      'Source: Forbes Global 2000 (2026) list, with every edition back to 2011 stitched into one history (fiscal ' +
+      YEARS[0] + '–' + YEARS[YEARS.length - 1] + '). ' +
+      'Coverage: ' + cov0 + ' firms in ' + YEARS[0] + ' → ' + cov1 + ' in ' + YEARS[YEARS.length - 1] + '. ' +
+      'Ranks recomputed each year among firms reporting that measure' +
+      (shown.length !== all.length ? '; filtered to ' + shown.length + ' lines' : '') + '.';
+
+    renderIdeas();
+  }
+
+  // ---- ideas behind the lines --------------------------------------------
+  function ideaShares(metric) {
+    const acc = YEARS.map(() => new Array(D.sectors.length).fill(0));
+    const tot = YEARS.map(() => 0);
+    for (const row of D.rows) {
+      for (let yi = 0; yi < YEARS.length; yi++) {
+        const v = T.val(row, metric, yi);
+        if (v == null) continue;
+        acc[yi][row.s] += v; tot[yi] += v;
+      }
+    }
+    return D.sectors.map((s, si) => {
+      const shares = YEARS.map((_, yi) => tot[yi] ? 100 * acc[yi][si] / tot[yi] : 0);
+      const first = shares[0], last = shares[shares.length - 1];
+      return { si: si, sector: s, idea: IDEAS[si] || '', shares: shares, first: first, last: last, delta: last - first };
+    });
+  }
+
+  function renderIdeas() {
+    const ideas = ideaShares(state.metric).sort((a, b) => b.delta - a.delta);
+    const maxShare = Math.max.apply(null, ideas.flatMap((d) => d.shares));
+    const hi = Math.ceil(maxShare / 5) * 5 || 5;
+
+    // ---- trend chart: one line per idea over the years ----
+    const W = 1160, H = 400, ml = 46, mr = 220, mt = 18, mb = 38;
+    const plotW = W - ml - mr, plotH = H - mt - mb;
+    const X = (yi) => ml + (yi / (YEARS.length - 1)) * plotW;
+    const Y = (v) => mt + (1 - v / hi) * plotH;
+    const kids = [];
+
+    for (let v = 0; v <= hi; v += 5) {
+      kids.push(T.svg('line', { class: 'gridline', x1: ml, x2: ml + plotW, y1: Y(v), y2: Y(v) }));
+      kids.push(T.svg('text', { class: 'axis', x: ml - 7, y: Y(v) + 3, 'text-anchor': 'end' }, [document.createTextNode(v + '%')]));
+    }
+    const step = YEARS.length > 14 ? 2 : 1;
+    YEARS.forEach((y, i) => {
+      if (i % step !== 0 && i !== YEARS.length - 1) return;
+      kids.push(T.svg('text', { class: 'axis', x: X(i), y: H - 12, 'text-anchor': 'middle' }, [document.createTextNode(y)]));
+    });
+    kids.push(T.svg('text', { class: 'axis', x: ml, y: mt - 5, 'font-size': 10.5 }, [document.createTextNode('share of tracked ' + T.METRICS[state.metric].label.toLowerCase() + ', %')]));
+
+    const lineGs = [];
+    ideas.forEach((d) => {
+      const pts = d.shares.map((v, i) => X(i).toFixed(1) + ' ' + Y(v).toFixed(1)).join('L');
+      const g = T.svg('g');
+      g.appendChild(T.svg('path', { class: 'flowline', d: 'M' + pts, stroke: T.colour(d.si), 'stroke-width': 2.2, 'stroke-opacity': .9 }));
+      const hit = T.svg('path', { class: 'flowhit', d: 'M' + pts });
+      hit.addEventListener('mousemove', (ev) => {
+        T.showTip(
+          '<b>' + esc(d.sector) + '</b><br>' + esc(d.idea) + '<br>' +
+          T.fmtPct(d.first) + ' in ' + YEARS[0] + ' → ' + T.fmtPct(d.last) + ' in ' + YEARS[YEARS.length - 1] +
+          '<br><b>' + (d.delta > 0 ? '+' : '') + d.delta.toFixed(1) + ' pts</b>',
+          ev.clientX, ev.clientY);
+        lineGs.forEach((o) => { o.style.opacity = o === g ? '1' : '.12'; });
+      });
+      hit.addEventListener('mouseleave', () => { T.hideTip(); lineGs.forEach((o) => { o.style.opacity = ''; }); });
+      g.appendChild(hit);
+      lineGs.push(g);
+      kids.push(g);
+    });
+
+    // labels at the right edge, placed by end value and de-collided
+    const boxes = [];
+    ideas.slice().sort((a, b) => b.last - a.last).forEach((d) => {
+      let y = Y(d.last);
+      for (let t = 0; t < 12; t++) {
+        const hitB = boxes.some((b) => Math.abs(b - y) < 13);
+        if (!hitB) break; y += 13;
+      }
+      boxes.push(y);
+      kids.push(T.svg('text', { x: X(YEARS.length - 1) + 8, y: y + 3, 'font-size': 11, 'font-weight': 600, fill: T.colour(d.si) },
+        [document.createTextNode(d.sector + '  ' + T.fmtPct(d.last))]));
+    });
+
+    const svg = T.svg('svg', { viewBox: '0 0 ' + W + ' ' + H }, kids);
+    const host = document.getElementById('ideaChart');
+    host.innerHTML = '';
+    host.appendChild(svg);
+
+    const cov0 = T.totals(state.metric, 0).n, cov1 = T.totals(state.metric, YEARS.length - 1).n;
+    document.getElementById('ideaSrc').textContent =
+      'Source: Forbes Global 2000 (2026) list, stitched editions 2011–2026. Each line is a sector\'s share of tracked ' +
+      T.METRICS[state.metric].label.toLowerCase() + ' among firms reporting that year (' + cov0 + ' in ' + YEARS[0] + ', ' + cov1 + ' in ' + YEARS[YEARS.length - 1] + ').';
+
+    // ---- table ----
+    const rows = ideas.map((d) => {
+      const tag = Math.abs(d.delta) < 0.3 ? '<span class="pill">flat</span>'
+        : d.delta > 0 ? '<span class="pill up">scaled</span>' : '<span class="pill down">faded</span>';
+      return '<tr>' +
+        '<td class="l"><span class="swatch" style="background:' + T.colour(d.si) + '"></span>' + esc(d.sector) + '</td>' +
+        '<td class="l">' + esc(d.idea) + '</td>' +
+        '<td>' + T.fmtPct(d.first) + '</td>' +
+        '<td>' + T.fmtPct(d.last) + '</td>' +
+        '<td>' + (d.delta > 0 ? '+' : '') + d.delta.toFixed(1) + '</td>' +
+        '<td class="l">' + tag + '</td></tr>';
+    }).join('');
+    document.getElementById('ideaTbl').innerHTML =
+      '<thead><tr><th class="l">The idea</th><th class="l">What it is</th><th>' + YEARS[0] + '</th><th>' +
+      YEARS[YEARS.length - 1] + '</th><th>pts</th><th class="l"></th></tr></thead><tbody>' + rows + '</tbody>';
+    document.getElementById('ideaTblSrc').textContent =
+      'Share of tracked ' + T.METRICS[state.metric].label.toLowerCase() + '. The one-line "what it is" comes from article/data/idea_sectors.csv.';
+  }
+
+  // ---- controls -----------------------------------------------------------
+  function wire(id, key, cast) {
+    document.querySelectorAll('#' + id + ' button').forEach((b) => {
+      b.addEventListener('click', () => {
+        state[key] = cast(b.dataset[Object.keys(b.dataset)[0]]);
+        document.querySelectorAll('#' + id + ' button').forEach((x) => x.classList.toggle('on', x === b));
+        render();
+      });
+    });
+  }
+  wire('metricBtns', 'metric', String);
+  wire('colourBtns', 'colour', String);
+  wire('cutoffBtns', 'cutoff', Number);
+
+  render();
+})();
+</script>
+</body>
+</html>

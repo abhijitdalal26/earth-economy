@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Forbes 2000, year by year — Earth Economy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Source+Serif+4:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .bar { transition: width .45s cubic-bezier(.4,0,.2,1), x .45s cubic-bezier(.4,0,.2,1), opacity .2s; }
+  .rowg { transition: transform .45s cubic-bezier(.4,0,.2,1), opacity .25s; }
+  .fadein { animation: fade .35s ease both; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="navstrip">
+    <a class="brand" href="../site/index.html">Earth <b>Economy</b></a>
+    <a href="index.html" class="active">Year by year</a>
+    <a href="ideas.html">Ideas that scaled</a>
+    <a href="flow.html">One picture</a>
+    <span class="spacer"></span>
+    <a href="https://abhijitdalal26.github.io/earth-economy/" target="_blank" rel="noopener">Live site</a>
+  </div>
+
+  <p class="kicker">Interactive · not part of the main site</p>
+  <h1>The Forbes 2000, year by year</h1>
+  <p class="dek">Ten years of the biggest listed companies on earth, scrubbable. Drag the year
+  and watch the list change under you: who is on top, which business ideas are growing, how much
+  of the revenue a handful of firms hold, and which companies climbed.</p>
+
+  <div class="caveat">
+    <b>Read this before quoting anything here.</b> These are today's survivors: the 2,000 companies
+    on the Forbes Global 2000 (2026) list, each with up to ten years of reported financials.
+    Firms that collapsed — Credit Suisse, Evergrande, Wirecard — are absent from the start, so every
+    growth rate on this page is flattered. Figures are the companies' own reported fiscal years
+    (revenue and profit in USD; headcount is patchy before 2019). Market value is a single 2026
+    snapshot, so it is not shown over time.
+  </div>
+
+  <!-- ---------- controls ---------- -->
+  <div class="controls">
+    <button id="play" title="Play through the decade">▶ Play</button>
+    <div class="year-read"><span id="yearBig">2025</span><small id="metricLabel">REVENUE</small></div>
+    <div class="slider-box">
+      <input type="range" id="year" min="0" max="9" step="1" value="9">
+      <div class="year-ticks" id="ticks"></div>
+    </div>
+    <div>
+      <div class="ctl-label">Measure</div>
+      <div class="seg-group" id="metricBtns">
+        <button data-m="r" class="on">Revenue</button>
+        <button data-m="p">Profit</button>
+        <button data-m="e">Employees</button>
+      </div>
+    </div>
+    <div>
+      <div class="ctl-label">Show</div>
+      <div class="seg-group" id="topBtns">
+        <button data-n="15">15</button>
+        <button data-n="25" class="on">25</button>
+        <button data-n="50">50</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <h2 id="mainTitle">Top 25 by revenue, 2025</h2>
+        <p class="sub" id="mainSub">Bars are sized by the measure you pick. The arrow is the change in rank
+        against the previous year. Hover a bar for the company's ten-year record.</p>
+        <div class="chart" id="mainChart"></div>
+        <p class="src" id="mainSrc"></p>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h3>The mix in <span id="mixYear">2025</span></h3>
+        <p class="sub">Share of the year's total, by business idea. Click one to filter the chart.</p>
+        <div class="chart" id="mixChart"></div>
+        <div class="legend" id="mixLegend"></div>
+      </div>
+      <div class="card">
+        <h3 id="moversTitle">Biggest movers, 2025</h3>
+        <p class="sub" id="moversSub">Rank change against the previous year. Click a name to pull it into the chart.</p>
+        <ul class="movers" id="moversUp"></ul>
+        <p class="sub" style="margin:14px 0 2px">Falling</p>
+        <ul class="movers" id="moversDown"></ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-top:18px">
+    <div class="card">
+      <h3>How the business mix moved</h3>
+      <p class="sub">Share of the year's total, by idea. The dashed line is the year on screen.</p>
+      <div class="chart" id="sectorArea"></div>
+      <p class="src" id="sectorAreaSrc"></p>
+    </div>
+    <div class="card">
+      <h3>Where the revenue sits</h3>
+      <p class="sub">Country share of the year's total, top eight.</p>
+      <div class="chart" id="countryChart"></div>
+      <p class="src" id="countrySrc"></p>
+    </div>
+    <div class="card">
+      <h3>How concentrated</h3>
+      <p class="sub">How many firms it takes to make up half the year's total.</p>
+      <div class="chart" id="concChart"></div>
+      <p class="src" id="concSrc"></p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h2 id="tblTitle">The table, 2025</h2>
+    <p class="sub">Top 30 of the year. Click a row to highlight the company in the chart above.</p>
+    <div class="tbl-wrap"><table id="tbl"></table></div>
+    <p class="src" id="tblSrc"></p>
+  </div>
+
+  <footer>
+    <b>How this was built.</b> The companies are the Forbes Global 2000 (2026) list; the history is each
+    firm's own reported revenue, profit and headcount for fiscal years 2016 to 2025
+    (<code>data/global2000_2026_history.csv</code>). Ranks are computed against every firm that reported
+    that metric that year, so early years rank fewer companies. Sectors follow the 13-sector taxonomy used
+    across the site. Figures are snapshots of reported accounts, not a like-for-like index.<br><br>
+    <b>Companion pages:</b> <a href="ideas.html">the ideas that scaled and the ideas that faded</a> ·
+    <a href="flow.html">ten years in one picture</a>.
+  </footer>
+</div>
+
+<script src="data.js"></script>
+<script src="common.js"></script>
+<script>
+(function () {
+  const T = window.T, D = T.D, S = T.S;
+  const YEARS = D.years;
+
+  // ---------- controls ----------
+  const yearEl = document.getElementById('year');
+  const yearBig = document.getElementById('yearBig');
+  const metricLabel = document.getElementById('metricLabel');
+  const ticks = document.getElementById('ticks');
+  ticks.innerHTML = YEARS.map((y) => '<span>' + y + '</span>').join('');
+  yearEl.max = String(YEARS.length - 1);
+
+  document.getElementById('metricBtns').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-m]');
+    if (!b) return;
+    [...e.currentTarget.children].forEach((x) => x.classList.toggle('on', x === b));
+    T.set({ metric: b.dataset.m });
+  });
+  document.getElementById('topBtns').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-n]');
+    if (!b) return;
+    [...e.currentTarget.children].forEach((x) => x.classList.toggle('on', x === b));
+    T.set({ topN: +b.dataset.n });
+  });
+  yearEl.addEventListener('input', () => T.set({ yi: +yearEl.value }));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') T.set({ yi: Math.min(YEARS.length - 1, S.yi + 1) });
+    if (e.key === 'ArrowLeft') T.set({ yi: Math.max(0, S.yi - 1) });
+  });
+
+  // play / pause
+  let timer = null;
+  const playBtn = document.getElementById('play');
+  function stop() { clearInterval(timer); timer = null; playBtn.textContent = '▶ Play'; }
+  playBtn.addEventListener('click', () => {
+    if (timer) return stop();
+    if (S.yi >= YEARS.length - 1) T.set({ yi: 0 });
+    playBtn.textContent = '❚❚ Pause';
+    timer = setInterval(() => {
+      if (S.yi >= YEARS.length - 1) return stop();
+      T.set({ yi: S.yi + 1 });
+    }, 1400);
+  });
+
+  // ---------- tiles ----------
+  function renderTiles() {
+    const m = T.METRICS[S.metric];
+    const year = YEARS[S.yi];
+    const tot = T.totals(S.metric, S.yi);
+    const base = T.totals(S.metric, 0);
+    const mult = base.sum ? tot.sum / base.sum : null;
+    const prof = T.totals('p', S.yi);
+    const rev = T.totals('r', S.yi);
+    const margin = rev.sum ? 100 * prof.sum / rev.sum : null;
+    const half = T.halfCount(S.metric, S.yi);
+    const halfBase = T.halfCount(S.metric, 0);
+
+    const d = (v, invert) => {
+      if (v == null) return '<div class="d flat">no comparison</div>';
+      const good = invert ? v < 0 : v > 0;
+      const cls = Math.abs(v) < 0.001 ? 'flat' : good ? 'up' : 'down';
+      const sign = v > 0 ? '+' : '';
+      return '<div class="d ' + cls + '">' + sign + v.toFixed(1) + '% since 2016</div>';
+    };
+    const sharePct = (n, t) => t ? (100 * n / t).toFixed(1) + '% of the total' : '—';
+
+    document.getElementById('tiles').innerHTML = [
+      tile(T.fmtUSD(tot.sum), m.label + ' of the tracked firms',
+        mult ? '<div class="d ' + (mult > 1 ? 'up' : 'down') + '">×' + mult.toFixed(2) + ' vs 2016</div>' : ''),
+      tile(T.fmtUSD(prof.sum), 'Profit in the same year',
+        margin != null ? '<div class="d flat">blended margin ' + margin.toFixed(1) + '%</div>' : ''),
+      tile(String(tot.n), 'of 2,000 firms reported this measure',
+        '<div class="d flat">' + (tot.n === 2000 ? 'the whole list' : (100 * tot.n / 2000).toFixed(1) + '% of the list') + '</div>'),
+      tile(String(half), 'firms make half the ' + m.label.toLowerCase(),
+        '<div class="d ' + (half < halfBase ? 'up' : 'down') + '">' +
+        (halfBase - half >= 0 ? halfBase - half + ' fewer than in 2016' : half - halfBase + ' more than in 2016') + '</div>'),
+    ].join('');
+  }
+  function tile(v, l, d) {
+    return '<div class="tile"><div class="v">' + v + '</div><div class="l">' + l + '</div>' + (d || '') + '</div>';
+  }
+
+  // ---------- main bar chart (keyed, animated) ----------
+  const W = 700, ROW = 30, BAR_X = 218, BAR_MAX = 300, VAL_X = BAR_X + BAR_MAX + 10, DELTA_X = W - 4;
+  const nodes = new Map();
+
+  function mainChart() {
+    const m = T.METRICS[S.metric];
+    const year = YEARS[S.yi];
+    const list = T.ranked(S.metric, S.yi).slice(0, S.topN);
+    const max = list.length ? list[0].v : 1;
+    const prev = S.yi > 0 ? T.rankMap(S.metric, S.yi - 1) : null;
+
+    document.getElementById('mainTitle').textContent =
+      'Top ' + S.topN + ' by ' + m.label.toLowerCase() + ', ' + year;
+    document.getElementById('mainSrc').textContent =
+      'Source: Forbes Global 2000 (2026) list with reported financials, ' +
+      (YEARS[0]) + '–' + year + '. Ranked against every firm reporting ' + m.label.toLowerCase() +
+      ' that year (' + T.totals(S.metric, S.yi).n + ' firms).';
+
+    let svg = document.querySelector('#mainChart svg');
+    if (!svg) {
+      svg = T.svg('svg', { viewBox: '0 0 ' + W + ' 100', id: 'mainSvg' });
+      document.getElementById('mainChart').innerHTML = '';
+      document.getElementById('mainChart').appendChild(svg);
+    }
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + (list.length * ROW + 34));
+
+    // axis line at zero
+    let zero = svg.querySelector('#zeroLine');
+    if (!zero) {
+      zero = T.svg('line', { x1: BAR_X, x2: BAR_X, y1: 6, y2: list.length * ROW + 6, stroke: '#e2e0d8' });
+      zero.setAttribute('id', 'zeroLine');
+      svg.appendChild(zero);
+    }
+    zero.setAttribute('y2', list.length * ROW + 6);
+
+    const seen = new Set();
+    list.forEach((entry, i) => {
+      const name = entry.row.n;
+      seen.add(name);
+      const y = 8 + i * ROW;
+      const w = Math.max(1, (entry.v / max) * BAR_MAX);
+      let node = nodes.get(name);
+      if (!node) {
+        const g = T.svg('g', { class: 'rowg hit' });
+        const rect = T.svg('rect', { class: 'bar', x: BAR_X, y: 0, width: 0, height: 17, rx: 3, fill: T.colour(entry.row.s) });
+        const hit = T.svg('rect', { x: 0, y: 0, width: W, height: ROW, fill: 'transparent' });
+        const rank = T.svg('text', { class: 'rank-no', x: 0, y: 12 });
+        const nameT = T.svg('text', { class: 'bar-label', x: BAR_X - 10, y: 12, 'text-anchor': 'end' });
+        const val = T.svg('text', { class: 'bar-value', x: 0, y: 12 });
+        const delta = T.svg('text', { class: 'delta', x: DELTA_X, y: 12, 'text-anchor': 'end' });
+        g.appendChild(rect); g.appendChild(hit); g.appendChild(rank); g.appendChild(nameT);
+        g.appendChild(val); g.appendChild(delta);
+        svg.appendChild(g);
+        node = { g: g, rect: rect, rank: rank, name: nameT, val: val, delta: delta };
+        nodes.set(name, node);
+        g.classList.add('fadein');
+        hit.addEventListener('mousemove', (e) => tipFor(entry.row, e));
+        hit.addEventListener('mouseleave', () => T.hideTip());
+        hit.addEventListener('click', () => {
+          T.set({ selected: T.S.selected === name ? null : name });
+        });
+      }
+      node.g.setAttribute('transform', 'translate(0,' + y + ')');
+      node.rect.setAttribute('width', w);
+      node.rect.setAttribute('fill', T.colour(entry.row.s));
+      node.rank.textContent = entry.rank;
+      node.name.textContent = name;
+      node.val.setAttribute('x', BAR_X + w + 8);
+      node.val.textContent = m.fmt(entry.v);
+
+      const pr = prev ? prev.get(entry.row) : null;
+      let dTxt = '', dCls = 'delta', dCol = '#7a7973';
+      if (pr) {
+        const d = pr - entry.rank;
+        if (d > 0) { dTxt = '▲ ' + d; dCol = '#2E8B74'; }
+        else if (d < 0) { dTxt = '▼ ' + (-d); dCol = '#E34948'; }
+        else dTxt = '—';
+      } else if (prev) {
+        dTxt = 'new'; dCol = '#b3261e';
+      } else {
+        dTxt = 'first year';
+      }
+      node.delta.textContent = dTxt;
+      node.delta.setAttribute('fill', dCol);
+      node.delta.setAttribute('class', 'delta');
+      node.g.classList.toggle('dim', S.sector != null && entry.row.s !== S.sector);
+    });
+
+    // rows that fell out of the top N
+    nodes.forEach((node, name) => {
+      if (!seen.has(name)) {
+        node.g.style.opacity = '0';
+        setTimeout(() => {
+          if (nodes.get(name) === node) { node.g.remove(); nodes.delete(name); }
+        }, 400);
+      }
+    });
+    // re-insert order so the bars sit in rank order
+    list.forEach((entry) => svg.appendChild(nodes.get(entry.row.n).g));
+  }
+
+  function tipFor(row, e) {
+    const m = T.METRICS[S.metric];
+    const year = YEARS[S.yi];
+    const rk = T.rankMap(S.metric, S.yi);
+    const rank = rk.get(row);
+    const v = T.val(row, S.metric, S.yi);
+    const hist = row[S.metric] || [];
+    const pts = hist.map((x, i) => x == null ? null : [i, x]).filter(Boolean);
+    let spark = '';
+    if (pts.length > 1) {
+      const max = Math.max.apply(null, pts.map((p) => p[1]));
+      const min = Math.min.apply(null, pts.map((p) => p[1]));
+      const w = 150, h = 34;
+      const d = pts.map((p, i) => {
+        const x = 4 + (p[0] / (YEARS.length - 1)) * (w - 8);
+        const y = 4 + (1 - (p[1] - min) / ((max - min) || 1)) * (h - 8);
+        return (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+      }).join(' ');
+      spark = '<div class="t" style="margin-top:6px">' + YEARS[0] + '–' + YEARS[YEARS.length - 1] + '</div>' +
+        '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">' +
+        '<path d="' + d + '" fill="none" stroke="' + T.colour(row.s) + '" stroke-width="1.6"/>' +
+        '<circle cx="' + (4 + (S.yi / (YEARS.length - 1)) * (w - 8)).toFixed(1) + '" cy="' +
+        (4 + (1 - (v - min) / ((max - min) || 1)) * (h - 8)).toFixed(1) + '" r="2.6" fill="' + T.colour(row.s) + '"/></svg>';
+    }
+    T.showTip(
+      '<b>' + row.n + '</b><br>' + row.c + ' · ' + T.sectorName(row.s) +
+      (rank ? '<br>Rank ' + rank + ' of ' + T.totals(S.metric, S.yi).n + ' in ' + year : '') +
+      '<br><b>' + m.fmt(v) + '</b> ' + m.label.toLowerCase() + ' in ' + year + spark,
+      e.clientX, e.clientY);
+  }
+
+  // ---------- mix (100% stacked bar + legend) ----------
+  function mixChart() {
+    const year = YEARS[S.yi];
+    const g = T.groupBySector(S.metric, S.yi).filter((x) => x.rev > 0);
+    const W2 = 340, H = 54, barY = 14, barH = 26;
+    let x = 0;
+    const kids = [];
+    g.forEach((s) => {
+      const w = (s.share / 100) * W2;
+      const rect = T.svg('rect', {
+        x: x, y: barY, width: Math.max(0, w), height: barH,
+        fill: T.colour(s.si), class: 'bar', 'data-si': s.si,
+        style: 'cursor:pointer',
+      });
+      rect.addEventListener('click', () => T.set({ sector: S.sector === s.si ? null : s.si }));
+      rect.addEventListener('mousemove', (e) => T.showTip(
+        '<b>' + s.sector + '</b><br>' + s.share.toFixed(1) + '% of the year\'s ' +
+        T.METRICS[S.metric].label.toLowerCase() + '<br>' + s.n + ' firms', e.clientX, e.clientY));
+      rect.addEventListener('mouseleave', () => T.hideTip());
+      kids.push(rect);
+      if (w > 34) {
+        kids.push(T.svg('text', {
+          x: x + w / 2, y: barY + 17, 'text-anchor': 'middle', fill: '#fff',
+          'font-size': 10.5, 'font-weight': 700,
+        }, [document.createTextNode(Math.round(s.share) + '%')]));
+      }
+      x += w;
+    });
+    const svg = T.svg('svg', { viewBox: '0 0 ' + W2 + ' ' + H }, kids);
+    document.getElementById('mixChart').innerHTML = '';
+    document.getElementById('mixChart').appendChild(svg);
+    document.getElementById('mixYear').textContent = year;
+
+    const legend = document.getElementById('mixLegend');
+    legend.innerHTML = '';
+    g.sort((a, b) => b.share - a.share).forEach((s) => {
+      const b = T.h('button', {
+        class: S.sector === s.si ? '' : (S.sector == null ? '' : 'off'),
+        onclick: () => T.set({ sector: S.sector === s.si ? null : s.si }),
+      }, [
+        T.h('i', { style: 'background:' + T.colour(s.si) }),
+        document.createTextNode(s.sector + ' ' + s.share.toFixed(1) + '%'),
+      ]);
+      legend.appendChild(b);
+    });
+  }
+
+  // ---------- movers ----------
+  function moversChart() {
+    const year = YEARS[S.yi];
+    const up = document.getElementById('moversUp');
+    const down = document.getElementById('moversDown');
+    up.innerHTML = ''; down.innerHTML = '';
+    document.getElementById('moversTitle').textContent = 'Biggest movers, ' + year;
+    const bad = T.implausibleCount(S.metric, S.yi);
+    const note = bad ? ' (' + bad + ' firm' + (bad === 1 ? '' : 's') +
+      ' with reported profit above revenue left out of the profit ranks)' : '';
+    if (S.yi === 0) {
+      document.getElementById('moversSub').textContent = 'First year in the data, so there is nothing to compare against yet.';
+      up.appendChild(T.h('li', { style: 'cursor:default;color:#7a7973' }, ['No earlier year to compare']));
+      return;
+    }
+    document.getElementById('moversSub').innerHTML = 'Rank change against ' + YEARS[S.yi - 1] +
+      '. Click a name to pull it into the chart.' + note;
+    const now = T.rankMap(S.metric, S.yi);
+    const before = T.rankMap(S.metric, S.yi - 1);
+    const moves = [];
+    now.forEach((rank, row) => {
+      const prev = before.get(row);
+      moves.push({ row: row, d: prev ? prev - rank : Infinity, rank: rank });
+    });
+    const fresh = moves.filter((x) => x.d === Infinity);
+    const upList = moves.filter((x) => x.d !== Infinity && x.d > 0).sort((a, b) => b.d - a.d).slice(0, 6);
+    const downList = moves.filter((x) => x.d !== Infinity && x.d < 0).sort((a, b) => a.d - b.d).slice(0, 6);
+
+    upList.forEach((x) => up.appendChild(moverRow(x, x.d)));
+    downList.forEach((x) => down.appendChild(moverRow(x, x.d)));
+    if (fresh.length) {
+      up.appendChild(T.h('li', { style: 'cursor:default' }, [
+        T.h('span', { class: 'rk' }, [document.createTextNode(String(fresh.length))]),
+        T.h('span', { class: 'nm' }, [document.createTextNode(
+          fresh.slice(0, 3).map((f) => f.row.n).join(', ') + (fresh.length > 3 ? ' and others' : '') +
+          ' had no ' + YEARS[S.yi - 1] + ' figure')]),
+      ]));
+    }
+    if (!upList.length && !downList.length) {
+      up.appendChild(T.h('li', { style: 'cursor:default;color:#7a7973' }, ['No rank changes']));
+    }
+  }
+  function moverRow(x, d) {
+    const li = T.h('li', { onclick: () => T.set({ selected: x.row.n }) }, [
+      T.h('span', { class: 'rk' }, [document.createTextNode('#' + x.rank)]),
+      T.h('span', { class: 'nm' }, [document.createTextNode(x.row.n)]),
+      T.h('span', { class: 'ch ' + (d > 0 ? 'up' : 'down') }, [document.createTextNode((d > 0 ? '▲' : '▼') + Math.abs(d))]),
+    ]);
+    li.addEventListener('mousemove', (e) => tipFor(x.row, e));
+    li.addEventListener('mouseleave', () => T.hideTip());
+    return li;
+  }
+
+  // ---------- bottom charts ----------
+  function sectorArea() {
+    const W3 = 430, H3 = 230, ml = 34, mr = 8, mt = 10, mb = 26;
+    const years = YEARS.length;
+    const data = YEARS.map((_, yi) => T.groupBySector(S.metric, yi));
+    // stack order: biggest sector in the last year on the bottom
+    const order = data[years - 1].slice().sort((a, b) => b.share - a.share).map((d) => d.si);
+    const kids = [];
+
+    for (let p = 0; p <= 4; p++) {
+      const y = mt + (H3 - mt - mb) * (p / 4);
+      kids.push(T.svg('line', { class: 'gridline', x1: ml, x2: W3 - mr, y1: y, y2: y }));
+      kids.push(T.svg('text', { class: 'axis', x: ml - 6, y: y + 3, 'text-anchor': 'end' },
+        [document.createTextNode((100 - p * 25) + '%')]));
+    }
+
+    const cum = YEARS.map((_, yi) => {
+      let below = 0;
+      const c = {};
+      for (const si of order) {
+        const row = data[yi].find((d) => d.si === si);
+        const sh = row ? row.share : 0;
+        c[si] = [below, below + sh];
+        below += sh;
+      }
+      return c;
+    });
+
+    order.forEach((si) => {
+      const lower = [], upper = [];
+      YEARS.forEach((y, i) => {
+        const x = ml + (i / (years - 1)) * (W3 - ml - mr);
+        const a = cum[i][si][0], b = cum[i][si][1];
+        lower.push([x, mt + (1 - a / 100) * (H3 - mt - mb)]);
+        upper.push([x, mt + (1 - b / 100) * (H3 - mt - mb)]);
+      });
+      const d = 'M' + lower.map((p) => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L') +
+        ' L' + upper.slice().reverse().map((p) => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L') + ' Z';
+      kids.push(T.svg('path', { d: d, fill: T.colour(si), opacity: 0.88 }));
+    });
+
+    YEARS.forEach((y, i) => {
+      const x = ml + (i / (years - 1)) * (W3 - ml - mr);
+      kids.push(T.svg('text', { class: 'axis', x: x, y: H3 - 8, 'text-anchor': 'middle' }, [document.createTextNode(y)]));
+    });
+    const px = ml + (S.yi / (years - 1)) * (W3 - ml - mr);
+    kids.push(T.svg('line', { class: 'playhead', x1: px, x2: px, y1: mt - 4, y2: H3 - mb + 4 }));
+    const svg = T.svg('svg', { viewBox: '0 0 ' + W3 + ' ' + H3 }, kids);
+    document.getElementById('sectorArea').innerHTML = '';
+    document.getElementById('sectorArea').appendChild(svg);
+    document.getElementById('sectorAreaSrc').textContent =
+      'Source: Forbes Global 2000 (2026) list, reported financials. Share of the year\'s ' +
+      T.METRICS[S.metric].label.toLowerCase() + ' by sector.';
+  }
+
+  function countryChart() {
+    const W3 = 430, H3 = 230, ml = 34, mr = 8, mt = 10, mb = 26;
+    const years = YEARS.length;
+    const top = T.groupByCountry(S.metric, S.yi, 8);
+    const names = top.map((c) => c.c);
+    const PAL = ['#0B2545', '#1B6CA8', '#E07A4F', '#2E8B74', '#8A6FB0', '#B8860B', '#E34948', '#4A5563'];
+    const kids = [];
+    const max = Math.max.apply(null, YEARS.map((_, yi) => {
+      const g = T.groupByCountry(S.metric, yi);
+      return Math.max.apply(null, g.map((c) => c.share));
+    }));
+    for (let p = 0; p <= 4; p++) {
+      const y = mt + (H3 - mt - mb) * (p / 4);
+      kids.push(T.svg('line', { class: 'gridline', x1: ml, x2: W3 - mr, y1: y, y2: y }));
+      kids.push(T.svg('text', { class: 'axis', x: ml - 6, y: y + 3, 'text-anchor': 'end' },
+        [document.createTextNode((max * (1 - p / 4)).toFixed(0) + '%')]));
+    }
+    names.forEach((nm, i) => {
+      const pts = YEARS.map((yy, yi) => {
+        const g = T.groupByCountry(S.metric, yi);
+        const row = g.find((c) => c.c === nm);
+        return row ? row.share : 0;
+      });
+      const d = 'M' + pts.map((v, j) => {
+        const x = ml + (j / (years - 1)) * (W3 - ml - mr);
+        const y = mt + (1 - v / max) * (H3 - mt - mb);
+        return (j ? 'L' : '') + x.toFixed(1) + ' ' + y.toFixed(1);
+      }).join(' ');
+      kids.push(T.svg('path', { d: d, fill: 'none', stroke: PAL[i], 'stroke-width': 2 }));
+      const last = pts[pts.length - 1];
+      const y = mt + (1 - last / max) * (H3 - mt - mb);
+      kids.push(T.svg('circle', { cx: W3 - mr, cy: y, r: 3, fill: PAL[i] }));
+      kids.push(T.svg('text', { class: 'axis', x: W3 - mr + 5, y: y + 3, 'font-size': 10, fill: PAL[i] },
+        [document.createTextNode(nm === 'United States' ? 'US' : nm.slice(0, 10))]));
+    });
+    YEARS.forEach((y, i) => {
+      const x = ml + (i / (years - 1)) * (W3 - ml - mr);
+      kids.push(T.svg('text', { class: 'axis', x: x, y: H3 - 8, 'text-anchor': 'middle' }, [document.createTextNode(y)]));
+    });
+    const px = ml + (S.yi / (years - 1)) * (W3 - ml - mr);
+    kids.push(T.svg('line', { class: 'playhead', x1: px, x2: px, y1: mt - 4, y2: H3 - mb + 4 }));
+    const svg = T.svg('svg', { viewBox: '0 0 ' + (W3 + 60) + ' ' + H3 }, kids);
+    document.getElementById('countryChart').innerHTML = '';
+    document.getElementById('countryChart').appendChild(svg);
+    document.getElementById('countrySrc').textContent =
+      'Source: Forbes Global 2000 (2026) list, reported financials. Country is where the firm is domiciled.';
+  }
+
+  function concChart() {
+    const W3 = 430, H3 = 230, ml = 34, mr = 8, mt = 10, mb = 26;
+    const years = YEARS.length;
+    const counts = YEARS.map((_, yi) => T.halfCount(S.metric, yi));
+    const totals = YEARS.map((_, yi) => T.totals(S.metric, yi).sum);
+    const maxC = Math.max.apply(null, counts) * 1.15;
+    const maxT = Math.max.apply(null, totals);
+    const kids = [];
+    for (let p = 0; p <= 4; p++) {
+      const y = mt + (H3 - mt - mb) * (p / 4);
+      kids.push(T.svg('line', { class: 'gridline', x1: ml, x2: W3 - mr, y1: y, y2: y }));
+      kids.push(T.svg('text', { class: 'axis', x: ml - 6, y: y + 3, 'text-anchor': 'end' },
+        [document.createTextNode(Math.round(maxC * (1 - p / 4)))]));
+    }
+    // area: total of the measure (light)
+    const area = 'M' + totals.map((v, j) => {
+      const x = ml + (j / (years - 1)) * (W3 - ml - mr);
+      const y = mt + (1 - v / maxT) * (H3 - mt - mb) * 0.92;
+      return (j ? 'L' : '') + x.toFixed(1) + ' ' + y.toFixed(1);
+    }).join(' ') + ' L' + (W3 - mr) + ' ' + (H3 - mb) + ' L' + ml + ' ' + (H3 - mb) + ' Z';
+    kids.push(T.svg('path', { d: area, fill: '#e8e6df', opacity: .75 }));
+    // line: firms needed for half
+    const d = 'M' + counts.map((v, j) => {
+      const x = ml + (j / (years - 1)) * (W3 - ml - mr);
+      const y = mt + (1 - v / maxC) * (H3 - mt - mb);
+      return (j ? 'L' : '') + x.toFixed(1) + ' ' + y.toFixed(1);
+    }).join(' ');
+    kids.push(T.svg('path', { d: d, fill: 'none', stroke: '#0B2545', 'stroke-width': 2.2 }));
+    counts.forEach((v, j) => {
+      const x = ml + (j / (years - 1)) * (W3 - ml - mr);
+      const y = mt + (1 - v / maxC) * (H3 - mt - mb);
+      const isNow = j === S.yi;
+      const c = T.svg('circle', { cx: x, cy: y, r: isNow ? 5 : 3, fill: isNow ? '#b3261e' : '#0B2545' });
+      c.addEventListener('mousemove', (e) => T.showTip(
+        '<b>' + YEARS[j] + '</b><br>' + v + ' firms made half the year\'s ' +
+        T.METRICS[S.metric].label.toLowerCase() + '<br>Total ' + T.METRICS[S.metric].fmt(totals[j]), e.clientX, e.clientY));
+      c.addEventListener('mouseleave', () => T.hideTip());
+      kids.push(c);
+    });
+    YEARS.forEach((y, i) => {
+      const x = ml + (i / (years - 1)) * (W3 - ml - mr);
+      kids.push(T.svg('text', { class: 'axis', x: x, y: H3 - 8, 'text-anchor': 'middle' }, [document.createTextNode(y)]));
+    });
+    const px = ml + (S.yi / (years - 1)) * (W3 - ml - mr);
+    kids.push(T.svg('line', { class: 'playhead', x1: px, x2: px, y1: mt - 4, y2: H3 - mb + 4 }));
+    const svg = T.svg('svg', { viewBox: '0 0 ' + W3 + ' ' + H3 }, kids);
+    document.getElementById('concChart').innerHTML = '';
+    document.getElementById('concChart').appendChild(svg);
+    document.getElementById('concSrc').textContent =
+      'Grey area: the year\'s total ' + T.METRICS[S.metric].label.toLowerCase() + '. Line: firms needed for half of it.';
+  }
+
+  // ---------- table ----------
+  function table() {
+    const year = YEARS[S.yi];
+    const list = T.ranked(S.metric, S.yi).slice(0, 30);
+    const first = T.rankMap(S.metric, 0);
+    const now = T.rankMap(S.metric, S.yi);
+    const rows = list.map((e) => {
+      const rev = T.val(e.row, 'r', S.yi), prof = T.val(e.row, 'p', S.yi);
+      const margin = rev ? 100 * prof / rev : null;
+      const r16 = first.get(e.row);
+      const mult = (r16 && T.val(e.row, 'r', 0)) ? rev / T.val(e.row, 'r', 0) : null;
+      return '<tr data-n="' + e.row.n + '">' +
+        '<td>' + e.rank + '</td>' +
+        '<td class="l"><span class="swatch" style="background:' + T.colour(e.row.s) + '"></span>' + e.row.n + '</td>' +
+        '<td class="l">' + e.row.c + '</td>' +
+        '<td class="l">' + T.sectorName(e.row.s) + '</td>' +
+        '<td>' + T.fmtUSD(rev) + '</td>' +
+        '<td>' + T.fmtUSD(prof) + '</td>' +
+        '<td>' + (margin == null ? '—' : margin.toFixed(1) + '%') + '</td>' +
+        '<td>' + (r16 ? r16 : '—') + '</td>' +
+        '<td>' + (mult == null ? '—' : '×' + mult.toFixed(mult < 10 ? 2 : 1)) + '</td>' +
+        '<td>' + e.rank + '</td></tr>';
+    }).join('');
+    document.getElementById('tblTitle').textContent = 'The table, ' + year;
+    document.getElementById('tbl').innerHTML =
+      '<thead><tr><th>Rank</th><th class="l">Company</th><th class="l">Country</th><th class="l">Sector</th>' +
+      '<th>Revenue</th><th>Profit</th><th>Margin</th><th>Rank ' + YEARS[0] + '</th><th>Revenue × ' + YEARS[0] + '</th></tr></thead>' +
+      '<tbody>' + rows + '</tbody>';
+    document.querySelectorAll('#tbl tbody tr').forEach((tr) => {
+      tr.addEventListener('click', () => {
+        const n = tr.getAttribute('data-n');
+        T.set({ selected: S.selected === n ? null : n });
+      });
+      tr.addEventListener('mousemove', (e) => {
+        const row = D.rows.find((r) => r.n === tr.getAttribute('data-n'));
+        if (row) tipFor(row, e);
+      });
+      tr.addEventListener('mouseleave', () => T.hideTip());
+    });
+    document.getElementById('tblSrc').textContent =
+      'Source: Forbes Global 2000 (2026) list with reported financials, fiscal year ' + year +
+      '. "Revenue then" is the same firm\'s revenue in ' + YEARS[0] + '.';
+  }
+
+  // ---------- render ----------
+  function render() {
+    yearEl.value = String(S.yi);
+    yearBig.textContent = YEARS[S.yi];
+    metricLabel.textContent = T.METRICS[S.metric].label.toUpperCase();
+    renderTiles();
+    mainChart();
+    mixChart();
+    moversChart();
+    sectorArea();
+    countryChart();
+    concChart();
+    table();
+  }
+  T.onRender(render);
+  render();
+})();
+</script>
+</body>
+</html>

@@ -12,3 +12,4 @@ listed_universe/data/raw_sector/
 .bak_build/
 data/raw_2026/fortune/
 data/raw_2026/*.html
+data/raw_history/
