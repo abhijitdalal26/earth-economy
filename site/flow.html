@@ -178,9 +178,10 @@
   function render() {
     const W = 1160, H = 680, ml = 46, mr = 170, mt = 18, mb = 38;
     const plotW = W - ml - mr, plotH = H - mt - mb, bottom = mt + plotH;
-    const scaleMax = state.cutoff * 4, L = Math.log(scaleMax);
+    // log(rank + 2): still a log scale, but #1-#3 are not stretched apart, so near-ties at the top don't read as big jumps
+    const scaleMax = state.cutoff * 4, R0 = Math.log(3), L = Math.log(scaleMax + 2) - R0;
     const X = yi => ml + (yi / (NY - 1)) * plotW;
-    const Y = rk => mt + (Math.log(Math.max(1, rk)) / L) * plotH;
+    const Y = rk => mt + ((Math.log(Math.max(1, rk) + 2) - R0) / L) * plotH;
     const halo = css('--surface');
     const M = METRICS[state.metric];
 
@@ -407,9 +408,10 @@
 
   ATLAS.notes('n-cav', { title: 'Caveats', caveat: true, items: [
     'Survivorship: every company here is on the 2026 list. Firms that failed, were taken over or dropped off are missing entirely, so the picture leans toward winners.',
-    'The history is stitched from the Forbes editions 2011–2026. Each edition carries ten years of figures, and firms are joined by Forbes\' stable company id, so Facebook and Meta Platforms are one line. Where Forbes restated a year, an older edition can differ from a newer one.',
-    'Coverage thins going back: about 980 firms report revenue for 2001, against 1,999 for 2025. Ranks in the early years are among fewer firms.',
-    'Years are approximate fiscal years. Retailers end in January and many Indian and Japanese firms in March, so a company can shift by a year between editions. Read single-year wiggles with care.',
+    'The history is stitched from the Forbes editions 2011–2026. Each edition carries ten years of figures. Firms are joined by Forbes\' company id, and renamed firms by hand, so Facebook and Meta are one line and so are Google and Alphabet. Mergers and spin-offs are not joined.',
+    'Older editions are lined up with newer ones before they are used: some put a trailing-twelve-month figure first, which pushes a firm\'s years one slot along, and some measured revenue differently (oil companies once counted excise taxes). Each older edition is shifted and scaled to match the newest one where the two overlap.',
+    'Coverage thins going back: 900 firms report revenue for 2001, against 1,999 for 2025. Ranks in the early years are among fewer firms.',
+    'Years are approximate fiscal years. Retailers end in January and many Indian and Japanese firms in March, so a firm\'s year can sit up to a year off the calendar. Near the top, companies a few percent apart swap places with oil prices: those swaps are real.',
     'Nominal US dollars, no inflation adjustment. Currency swings move non-US firms.',
   ]});
 })();

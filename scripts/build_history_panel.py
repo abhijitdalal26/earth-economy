@@ -11,21 +11,38 @@ The panel
 ---------
 Only the 2,000 companies on the 2026 list are kept, so every line in the
 "one picture" chart is a firm that survived to 2026. Their history is read
-back out of whichever editions they appeared on:
+back out of whichever editions they appeared on. Each edition carries up to
+ten years of figures, newest first:
 
     fiscal year = edition year - 1 - index in the edition's list
 
-When two editions report the same fiscal year for the same company, the
-newest edition wins: Forbes restates old figures (currency, restatements,
-fiscal-year shifts) and the most recent edition is the one that matches the
-figures the rest of this project uses. `source_edition` records where each
-number came from, so any value can be traced back to the edition it was read
-from.
+Editions are worked through newest first, and each older edition only adds
+the years the newer ones do not have. Three things keep the joins honest:
+
+1. Alignment. Some editions put a trailing-twelve-month figure first for some
+   firms, which pushes every year in that firm's list one slot along (about
+   150-270 firms in the 2012, 2013 and 2015 editions). Before an older
+   edition is used, its list is lined up against the years already in the
+   panel: shifts of -1, 0 and +1 year are tried and the one with the most
+   identical values wins (no identical values: no shift).
+2. Level. Forbes changed definitions between editions (in 2015 it dropped
+   excise taxes from oil companies' revenue, for example), so the same year
+   can be ~10% apart in two editions. Each older edition is scaled to the
+   panel by the median ratio over the years both cover, so a definition
+   change does not show up as a jump. Profit takes the revenue scale.
+   An edition that needs a scale outside 0.5-2 is not used for that firm.
+3. Renamed companies. A firm that changed its Forbes id (Google became
+   Alphabet) is joined to its old id through PREDECESSORS below, a reviewed
+   list. Mergers and spin-offs are not joined: their history would show
+   growth that came from buying or losing a business.
+
+`source_edition`, `shift` and `scale` record where each number came from
+and what was done to it.
 
 Known limits
 ------------
-- Forbes restates between editions. A year read from an older edition can
-  differ from the same year in a newer one (median gap around 7% for 2015).
+- Values are only as consistent as Forbes' own restatements; scaling fixes
+  levels, not one-off errors inside a single edition.
 - A company only has history back to the first edition it appeared on, and
   only if Forbes gave it figures for the years before that.
 - The list itself starts in 2011, so nothing before fiscal 2001 exists.
@@ -34,8 +51,8 @@ Known limits
 from __future__ import annotations
 
 import json
+import statistics
 import sys
-from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
@@ -48,6 +65,9 @@ FIRST_EDITION = 2011
 LIST_YEAR = 2026
 EARLIEST_YEAR = 2001
 LATEST_YEAR = 2025
+# The 2019 edition carries two-year lists laid out differently from every other edition:
+# 1,801 of the 1,850 firms it shares with 2018 match it at no shift at all.
+SKIP_EDITIONS = {2019}
 
 FIELDS = {
     "revenue": "revenueList",
@@ -55,6 +75,25 @@ FIELDS = {
     "employees": "employeesList",
 }
 UNITS = {"revenue": "USD millions", "profits": "USD millions", "employees": "employees"}
+
+# 2026 company id -> the Forbes id it had before. Found by identical revenue and profit
+# under two ids, or by name, and checked by hand: renames and new holding companies only.
+PREDECESSORS = {
+    "103537": "1821",   # Alphabet <- Google (holding company, 2015)
+    "90907": "4166",    # Swiss Re <- Swiss Re Group
+    "102024": "241",    # American Airlines Group <- AMR (out of bankruptcy, 2013)
+    "102734": "3151",   # Eversource Energy <- Northeast Utilities (rename, 2015)
+    "103706": "1117",   # Cosmo Energy Holdings <- Cosmo Oil (holding company, 2015)
+    "118449": "5693",   # Hainan Airlines Holding <- Hainan Airlines
+    "118494": "3091",   # Nippon Express Holdings <- Nippon Express (holding company, 2022)
+    "105176": "3112",   # Nishi-Nippon Financial Holdings <- Nishi-Nippon City Bank (2016)
+    "125239": "3893",   # Shizuoka Financial Group <- Shizuoka Bank (holding company, 2022)
+    "102822": "4376",   # Tokyu Fudosan Holdings <- Tokyu Land (holding company, 2013)
+}
+
+SHIFTS = (0, -1, 1)
+SAME = 0.002          # values within 0.2% count as identical
+SCALE_OK = (0.5, 2.0)
 
 
 def company_id(row: dict) -> str | None:
@@ -71,45 +110,91 @@ def load_edition(year: int) -> list[dict]:
     return payload["organizationList"]["organizationsLists"]
 
 
+def by_year(row: dict, field: str, edition: int, shift: int) -> dict[int, float]:
+    out = {}
+    for i, value in enumerate(row.get(field) or []):
+        if value is not None:
+            out[edition - 1 - i + shift] = float(value)
+    return out
+
+
+def identical(a: dict[int, float], seen: dict[int, list[float]]) -> int:
+    """Years where a value in `a` equals one any newer edition reported for that year."""
+    return sum(1 for y, v in a.items() if v and any(w and abs(v / w - 1) < SAME for w in seen.get(y, ())))
+
+
+def scale_to(panel: dict[int, float], new: dict[int, float]) -> float | None:
+    """Median of panel / new over the years both have (positive values only)."""
+    ratios = [panel[y] / v for y, v in new.items() if y in panel and v > 0 and panel[y] > 0]
+    return statistics.median(ratios) if ratios else None
+
+
+def stitch(rows: list[tuple[int, dict]]) -> tuple[dict, dict]:
+    """rows: (edition, row) for one company, newest edition first.
+    Returns panel[metric][year] = value and meta[metric][year] = (edition, shift, scale)."""
+    panel = {m: {} for m in FIELDS}
+    meta = {m: {} for m in FIELDS}
+    seen = {m: {} for m in FIELDS}     # raw values, lined up, from every edition used so far
+    for n, (edition, row) in enumerate(rows):
+        if n == 0:
+            shift, scales = 0, {m: 1.0 for m in FIELDS}
+        else:
+            # 1. alignment: the shift with the most identical values (revenue, then profit)
+            def hits(s):
+                return (identical(by_year(row, "revenueList", edition, s), seen["revenue"]),
+                        identical(by_year(row, "profitList", edition, s), seen["profits"]))
+            score = {s: hits(s) for s in SHIFTS}
+            shift = max(SHIFTS, key=lambda s: (score[s], s == 0))
+            if score[shift] == (0, 0):
+                shift = 0
+            # 2. level: scale each metric to what the panel already holds
+            rev = scale_to(panel["revenue"], by_year(row, "revenueList", edition, shift))
+            emp = scale_to(panel["employees"], by_year(row, "employeesList", edition, shift))
+            scales = {"revenue": rev, "profits": rev, "employees": emp}
+            if rev is not None and not (SCALE_OK[0] <= rev <= SCALE_OK[1]):
+                continue          # too far from the panel to trust: skip this edition for this firm
+        for metric, field in FIELDS.items():
+            k = scales[metric] if scales[metric] is not None else 1.0
+            if metric == "employees" and not (SCALE_OK[0] <= k <= SCALE_OK[1]):
+                k = 1.0
+            for year, value in by_year(row, field, edition, shift).items():
+                seen[metric].setdefault(year, []).append(value)
+                if EARLIEST_YEAR <= year <= LATEST_YEAR and year not in panel[metric]:
+                    panel[metric][year] = value * k
+                    meta[metric][year] = (edition, shift, round(k, 4))
+    return panel, meta
+
+
 def main() -> None:
     editions = {}
     for year in range(FIRST_EDITION, LIST_YEAR + 1):
+        if year in SKIP_EDITIONS:
+            continue
         rows = load_edition(year)
         if rows:
-            editions[year] = rows
+            editions[year] = {company_id(r): r for r in rows if company_id(r)}
     if not editions:
         raise SystemExit(f"no editions found in {RAW}")
-    print(f"editions: {sorted(editions)}")
+    print(f"editions: {sorted(editions)} (skipped {sorted(SKIP_EDITIONS)})")
 
     current = editions[LIST_YEAR]
-    names = {company_id(r): r for r in current}
-    universe = {cid for cid in names if cid}
-    print(f"universe: {len(universe)} companies on the {LIST_YEAR} list")
-
-    # panel[company id][metric][fiscal year] = (value, edition)
-    panel: dict[str, dict[str, dict[int, tuple[float, int]]]] = defaultdict(
-        lambda: defaultdict(dict))
-    for year in sorted(editions, reverse=True):          # newest first, so it wins
-        for row in editions[year]:
-            cid = company_id(row)
-            if cid not in universe:
-                continue
-            for metric, field in FIELDS.items():
-                for i, value in enumerate(row.get(field) or []):
-                    if value is None:
-                        continue
-                    fy = year - 1 - i
-                    if not (EARLIEST_YEAR <= fy <= LATEST_YEAR):
-                        continue
-                    if fy not in panel[cid][metric]:
-                        panel[cid][metric][fy] = (float(value), year)
+    print(f"universe: {len(current)} companies on the {LIST_YEAR} list")
 
     records = []
-    for cid, row in names.items():
-        if cid not in universe:
-            continue
+    shifted = scaled = 0
+    for cid, row in current.items():
+        ids = [cid] + ([PREDECESSORS[cid]] if cid in PREDECESSORS else [])
+        rows = []
+        for year in sorted(editions, reverse=True):          # newest first
+            hit = next((editions[year][i] for i in ids if i in editions[year]), None)
+            if hit:
+                rows.append((year, hit))
+        panel, meta = stitch(rows)
         for metric in FIELDS:
-            for fy, (value, edition) in sorted(panel[cid][metric].items()):
+            for fy in sorted(panel[metric]):
+                edition, shift, k = meta[metric][fy]
+                shifted += metric == "revenue" and shift != 0
+                scaled += metric == "revenue" and abs(k - 1) > 0.01
                 records.append({
                     "company": row["organizationName"],
                     "forbes_id": cid,
@@ -117,9 +202,11 @@ def main() -> None:
                     "industry": row.get("industry"),
                     "metric": metric,
                     "approx_year": fy,
-                    "value": value,
+                    "value": panel[metric][fy],
                     "unit": UNITS[metric],
                     "source_edition": edition,
+                    "shift": shift,
+                    "scale": k,
                 })
 
     df = pd.DataFrame(records)
@@ -127,6 +214,7 @@ def main() -> None:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(OUT, index=False, encoding="utf-8-sig")
     print(f"wrote {OUT}  shape={df.shape}")
+    print(f"revenue values moved a year to line up: {shifted}; rescaled by more than 1%: {scaled}")
 
     # ---- coverage -------------------------------------------------------
     print("\ncoverage by fiscal year (firms reporting, of the 2,000):")
@@ -147,18 +235,12 @@ def main() -> None:
     gap = ((last[common] - listed[common]).abs() / listed[common].replace(0, pd.NA)).dropna()
     print(f"\n{LATEST_YEAR} revenue vs the list's own figure: {len(gap)} firms, "
           f"median gap {gap.median() * 100:.3f}%, exact {int((gap < 0.001).sum())}/{len(gap)}")
-
-    pre = rev[rev.approx_year < 2016].groupby("company").size()
-    print(f"companies with pre-2016 revenue: {len(pre)} of {listing.shape[0]}")
     firsts = rev.groupby("company").approx_year.min()
     print(f"earliest year any company reports: {int(firsts.min())}, "
           f"latest first year: {int(firsts.max())}")
-    editions_used = rev.groupby("approx_year").source_edition.agg(
-        lambda s: sorted(set(s))[0] if len(set(s)) == 1 else f"{len(set(s))} editions")
-    print("\nwhich edition supplies each year (revenue):")
-    for fy in range(EARLIEST_YEAR, LATEST_YEAR + 1):
-        used = rev[rev.approx_year == fy].source_edition
-        print(f"  {fy}: {dict(sorted(used.value_counts().items()))}")
+    for name in ("Alphabet", "American Airlines Group", "Swiss Re"):
+        if name in firsts.index:
+            print(f"  {name}: revenue from {int(firsts[name])}")
 
 
 if __name__ == "__main__":

@@ -38,11 +38,11 @@
     visible band, and climbs back in from the edge when it returns. Hover any line to see what the
     company actually does, when it grew and when it fell.<br><br>
     The history runs back to 2001 by stitching the Forbes Global 2000 editions (2011–2026): each edition
-    carries ten years of financials, and firms are joined by a stable company id, so Facebook and Meta
-    Platforms are the same line. Coverage thins in the early years (978 firms in 2001 → 1,999 in 2025).
+    carries ten years of financials, and firms are joined by company id (renamed firms by hand), so Facebook
+    and Meta, or Google and Alphabet, are one line. Older editions are lined up and scaled to the newest one
+    before they are used. Coverage thins in the early years (900 firms in 2001 → 1,999 in 2025).
     Every company here is a survivor on the 2026 list, so the firms that failed are missing entirely,
-    and a year read from an older edition can differ from the same year in a newer one where Forbes
-    restated it.
+    and one-off errors inside a single edition can remain.
   </div>
 
   <!-- ---------- controls ---------- -->
@@ -176,9 +176,10 @@
     const W = 1160, H = 680, ml = 46, mr = 170, mt = 18, mb = 38;
     const plotW = W - ml - mr, plotH = H - mt - mb, bottom = mt + plotH;
     const scaleMax = state.cutoff * 4;
-    const L = Math.log(scaleMax);
+    // log(rank + 2): still a log scale, but #1-#3 are not stretched apart, so near-ties at the top don't read as big jumps
+    const R0 = Math.log(3), L = Math.log(scaleMax + 2) - R0;
     const X = (yi) => ml + (yi / (YEARS.length - 1)) * plotW;
-    const Y = (rk) => mt + (Math.log(Math.max(1, rk)) / L) * plotH;
+    const Y = (rk) => mt + ((Math.log(Math.max(1, rk) + 2) - R0) / L) * plotH;
 
     const all = series();
     const shown = state.sector == null ? all : all.filter((s) => s.row.s === state.sector);
