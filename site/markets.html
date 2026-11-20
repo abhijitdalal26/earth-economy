@@ -785,7 +785,7 @@ ATLAS.tiles('india-tiles', [
   T('c-india', t, [{ key: 'name', label: 'Company' }, { key: 'sector', label: 'Sector' }, { key: 'mcap', label: 'Market value', num: true, fmt: v => U(v) },
     { key: 'rev', label: 'Revenue', num: true, fmt: v => U(v) }, { key: 'rank', label: 'World rank', num: true }]);
 })();
-ATLAS.notes('n-cav', { caveat: true, title: 'Caveats for this whole page', items: [
+ATLAS.notes('n-cav', { caveat: true, title: 'Caveats', items: [
   `<b>Two snapshots, two dates.</b> Company and exchange figures are CompaniesMarketCap prices from <b>October 2026</b>. Country totals and history are World Bank/WFE <b>end-2024</b> figures. Do not divide one by the other without saying so.`,
   `<b>Tracked ≠ total.</b> ${N(M.n_assigned)} companies on 60 exchanges (~$148T) against ~48,000 listings worldwide. The tracked value is close to the world total because the untracked companies are small. Company counts per exchange are much lower than the real number of listings.`,
   `<b>Double counting:</b> a few companies have more than one share class or listing (Alphabet A/C, Shell, Unilever historically). Exchange totals can overlap slightly, and ADRs were moved to home exchanges, which is a judgement call (Arm and Linde trade mainly in New York but are counted in London).`,

@@ -16,25 +16,24 @@
 <div class="wrap">
   <header class="page-head">
     <p class="kicker">Change over time</p>
-    <h1>In a decade, big-company profit almost doubled while revenue rose by half</h1>
-    <p class="dek">We follow the same 1,278 of today's Global 2000 companies from 2016 to 2025 to see who grew, who shrank, where the profit went,
-      and how fast the world economy and its stock markets moved around them.</p>
+    <h1>In a decade, big-company profit more than doubled while revenue rose by two-thirds</h1>
+    <p class="dek">We follow the same 1,252 of today's Global 2000 companies from 2016 to 2025 to see who grew, who shrank and where the profit went.</p>
   </header>
   <div id="tiles"></div>
   <div id="n-surv"></div>
 
   <h2>The constant cohort: revenue, profit, assets, staff</h2>
-  <p class="section-dek">The same companies every year, indexed to 2015 = 100, so different measures share one axis.</p>
+  <p class="section-dek">The same companies every year, indexed to 2016 = 100, so different measures share one axis.</p>
   <div class="grid">
     <div class="card two-third">
-      <h3>Profit (×1.97) has outrun revenue (×1.54) and world GDP (×1.47) since 2015</h3>
-      <p class="sub">Index, 2015 = 100. Toggle series in the legend. Employees indexed from 2017 (too few firms report 2015–16 headcount).</p>
+      <h3>Profit (×2.24) has outrun revenue (×1.64) since 2016</h3>
+      <p class="sub">Index, 2016 = 100. Toggle series in the legend. Employees indexed from 2018 (too few firms report headcount before then).</p>
       <div class="chart" id="c-idx"></div>
       <button class="tbl-toggle" id="c-idx-t"></button><div id="c-idx-tbl"></div>
       <p class="src">Source: Forbes Global 2000 (2026) 10-year history; World Bank GDP (current US$). Years are approximate fiscal years.</p>
     </div>
     <div class="card third">
-      <h3>Margins widened from 7.1% to 9.1%, with a dip in 2020</h3>
+      <h3>Margins widened from 7.3% to 10%, with a dip to 6.3% in 2020</h3>
       <p class="sub">Net margin of the cohort, %</p>
       <div class="chart" id="c-mgn"></div>
       <button class="tbl-toggle" id="c-mgn-t"></button><div id="c-mgn-tbl"></div>
@@ -44,7 +43,7 @@
   <div class="grid" style="margin-top:16px">
     <div class="card">
       <h3>Survivorship in one picture: the full list grows faster than the fixed cohort, because newcomers keep joining</h3>
-      <p class="sub">Revenue index, 2015 = 100: the fixed cohort vs everyone who reports that year (bars = companies with data)</p>
+      <p class="sub">Revenue index, 2016 = 100: the fixed cohort vs everyone who reports that year (bars = companies with data)</p>
       <div class="chart short" id="c-panel"></div>
       <p class="src">Source: Forbes Global 2000 (2026) history.</p>
     </div>
@@ -53,16 +52,16 @@
   <h2>Who grew fastest: countries, regions, sectors</h2>
   <div class="grid">
     <div class="card two-third">
-      <h3 id="grp-title">Compare groups: indexed growth, 2015 = 100</h3>
+      <h3 id="grp-title">Compare groups: indexed growth, 2016 = 100</h3>
       <div class="card-tools"><select id="grp-dim"><option value="sector">By sector</option><option value="region">By region</option><option value="country">By country</option></select>
         <select id="grp-m"><option value="rev">Revenue</option><option value="profit">Profit</option></select></div>
       <div class="chart" id="c-grp"></div>
       <button class="tbl-toggle" id="c-grp-t"></button><div id="c-grp-tbl"></div>
-      <p class="src">Cohort firms only, grouped by today's sector/HQ. Click legend entries to hide groups. Profit indices can be extreme where the 2015 base was small (e.g. energy, materials).</p>
+      <p class="src">Cohort firms only, grouped by today's sector/HQ. Click legend entries to hide groups. Profit indices can be extreme where the 2016 base was small (e.g. energy, materials).</p>
     </div>
     <div class="card third">
-      <h3>India's giants grew revenue 7.6% a year, third-fastest</h3>
-      <p class="sub">Revenue CAGR 2015–24, cohort firms, countries with ≥8 firms</p>
+      <h3>India's giants grew revenue 8.2% a year, fourth-fastest</h3>
+      <p class="sub">Revenue growth a year, 2016–25, cohort firms, countries with ≥8 firms</p>
       <div class="chart" id="c-cagr" style="height:560px"></div>
       <button class="tbl-toggle" id="c-cagr-t"></button><div id="c-cagr-tbl"></div>
     </div>
@@ -71,8 +70,8 @@
   <h2>Fastest growers and biggest decliners</h2>
   <div class="grid">
     <div class="card">
-      <h3>Nvidia's revenue grew 26× in nine years; Meta, Alibaba and BYD grew about 9×</h3>
-      <p class="sub">Companies with ≥$5B revenue in 2015. Pick a view and a sector.</p>
+      <h3>Nvidia's revenue grew 31× in nine years; Tesla's 14×, Meta's and BYD's about 7–8×</h3>
+      <p class="sub">Companies with ≥$5B revenue in 2016. Pick a view and a sector.</p>
       <div class="card-tools"><select id="mv-view"><option value="up">Fastest growth (%)</option><option value="abs">Biggest $ gain</option><option value="down">Biggest decline (%)</option></select>
         <select id="mv-sec"><option value="">All sectors</option></select></div>
       <div class="chart tall" id="c-mv"></div>
@@ -81,73 +80,44 @@
     </div>
   </div>
 
-  <h2>Rank mobility at the top</h2>
-  <div class="grid">
-    <div class="card">
-      <h3>Amazon (23rd → 1st), Alphabet (56th → 5th) and Microsoft (60th → 15th) climbed; Sinopec and Toyota slipped</h3>
-      <p class="sub">Rank within the cohort, each year (1 = largest). Today's top 20. Hover a line to highlight it.</p>
-      <div class="card-tools"><select id="bp-m"><option value="rev">By revenue</option><option value="profit">By profit</option></select></div>
-      <div class="chart tall" id="c-bump"></div>
-      <button class="tbl-toggle" id="c-bump-t"></button><div id="c-bump-tbl"></div>
-      <p class="src">Ranks are within the 1,278-firm cohort, not the full Forbes list.</p>
-    </div>
-  </div>
-  <div class="explainer"><b>Want the 25-year version?</b> <a href="flow.html">25 years</a> follows every company that has ever reached
+  <div class="explainer"><b>Who climbed to the top, and who slipped?</b> <a href="flow.html">25 years</a> follows every company that has ever reached
     the top 50 from 2001 to 2025: who rose into view, who sank out of it and who arrived, plus which business ideas gained or lost share.</div>
 
   <h2>Where the profit pool moved</h2>
   <div class="grid">
     <div class="card half">
-      <h3>Energy and tech gained profit share; telecoms, banks and healthcare lost</h3>
-      <p class="sub">Change in share of cohort profit, percentage points (avg 2015–16 → avg 2023–24)</p>
+      <h3>Tech gained by far the most profit share; telecoms, retail and food lost the most</h3>
+      <p class="sub">Change in share of cohort profit, percentage points (avg 2016–17 → avg 2024–25)</p>
       <div class="card-tools"><select id="pl-k"><option value="sector">Sectors</option><option value="industry">Industries</option></select>
         <select id="pl-m"><option value="pp">Profit share</option><option value="rpp">Revenue share</option></select></div>
       <div class="chart" id="c-pool" style="height:520px"></div>
       <button class="tbl-toggle" id="c-pool-t"></button><div id="c-pool-tbl"></div>
     </div>
     <div class="card half">
-      <h3>The tech takeover: tech's share of profit rose from 12% to 19%, on 9% of revenue</h3>
-      <p class="sub">Share of cohort total by sector, %. Today tech is 27% of Global 2000 market value.</p>
+      <h3>The tech takeover: tech's share of profit doubled, from 12% to 23%, on 10% of revenue</h3>
+      <p class="sub">Share of cohort total by sector, %. Today tech is 34% of Global 2000 market value.</p>
       <div class="card-tools"><select id="sh-m"><option value="profit">Share of profit</option><option value="rev">Share of revenue</option></select></div>
       <div class="chart" id="c-share" style="height:520px"></div>
       <button class="tbl-toggle" id="c-share-t"></button><div id="c-share-tbl"></div>
-      <p class="src">No historical market value in the source, so the tech share of market value can only be shown for 2025 (tile above).</p>
+      <p class="src">No historical market value in the source, so the tech share of market value can only be shown for today (tile above).</p>
     </div>
   </div>
 
   <h2>More revenue per worker</h2>
   <div class="grid">
     <div class="card half">
-      <h3>Revenue grew faster than headcount in almost every sector</h3>
-      <p class="sub">2017→2024 growth: employees (x) vs revenue (y), %. Bubble = 2024 revenue. Above the diagonal = productivity gain.</p>
+      <h3>Revenue grew faster than headcount in every sector</h3>
+      <p class="sub">2018→2025 growth: employees (x) vs revenue (y), %. Bubble = 2025 revenue. Above the diagonal = productivity gain.</p>
       <div class="chart" id="c-prod"></div>
       <button class="tbl-toggle" id="c-prod-t"></button><div id="c-prod-tbl"></div>
     </div>
     <div class="card half">
       <h3>Revenue per employee, cohort average</h3>
-      <p class="sub">US$ thousands per employee, firms with headcount every year 2017–24 (nominal)</p>
+      <p class="sub">US$ thousands per employee, firms with headcount every year 2018–25 (nominal)</p>
       <div class="chart" id="c-rpe"></div>
     </div>
   </div>
 
-  <h2>The big frame: world GDP, stock markets, number of listed companies</h2>
-  <div class="grid">
-    <div class="card half">
-      <h3>World market cap went from 100% of GDP in 2000 to 129% in 2024</h3>
-      <p class="sub">World stock market capitalisation, % of world GDP</p>
-      <div class="chart" id="c-mcap"></div>
-      <button class="tbl-toggle" id="c-mcap-t"></button><div id="c-mcap-tbl"></div>
-      <p class="src">Source: World Bank (CM.MKT.LCAP.GD.ZS, NY.GDP.MKTP.CD, CM.MKT.LDOM.NO).</p>
-    </div>
-    <div class="card half">
-      <h3>Listed companies: world count up a fifth, US count down by half since 1996</h3>
-      <p class="sub">Listed domestic companies. Choose a view.</p>
-      <div class="card-tools"><select id="ld-v"><option value="world">World vs GDP (index 2000=100)</option><option value="country">By country (count)</option></select></div>
-      <div class="chart" id="c-ld"></div>
-      <button class="tbl-toggle" id="c-ld-t"></button><div id="c-ld-tbl"></div>
-      <p class="src">Source: World Bank / WFE. Country coverage gaps show as breaks.</p>
-    </div>
-  </div>
   <div id="n-cav"></div>
 </div>
 <script>
@@ -160,21 +130,20 @@
   const tbl = (id, rows, cols) => ATLAS.tableToggle(id + '-t', id + '-tbl', rows, cols);
 
   ATLAS.tiles('tiles', [
-    { v: '×' + H.rev_x, l: 'Revenue of the fixed cohort, 2015→2024', s: `${H.rev_cagr}% a year; ${H.n} firms` },
+    { v: '×' + H.rev_x, l: 'Revenue of the fixed cohort, 2016→2025', s: `${H.rev_cagr}% a year; ${H.n} firms` },
     { v: '×' + H.prof_x, l: 'Profit of the same firms', s: `${H.prof_cagr}% a year` },
     { v: `${H.m15}% → ${H.m24}%`, l: 'Net margin, 2016 → 2025', s: `low ${H.m20}% in 2020` },
-    { v: '×' + H.gdp_x, l: 'World GDP (current US$), 2015→2024', s: 'big companies outgrew the economy' },
+    { v: '×' + H.gdp_x, l: 'World GDP (current US$), 2016→2024', s: 'big companies outgrew the economy' },
     { v: `${H.tech_p15}% → ${H.tech_p24}%`, l: "Tech sector's share of cohort profit", s: `${H.tech_mv_share}% of Global 2000 market value today` },
   ]);
   ATLAS.notes('n-surv', { title: 'Read this first: survivorship bias', caveat: true, items: [
-    `The cohort is <b>today's survivors</b>: companies in the 2025 Forbes Global 2000 that also have data back to 2015. Firms that went bankrupt, were taken over, delisted or fell out of the list (e.g. Credit Suisse, Evergrande, Russian giants after 2022) are <b>not in it</b>. Growth is therefore <b>biased upward</b>. It describes the winners' decade, not "big business" as a whole.`,
+    `The cohort is <b>today's survivors</b>: companies in the 2026 Forbes Global 2000 that also have data back to 2016. Firms that went bankrupt, were taken over, delisted or fell out of the list (e.g. Credit Suisse, Evergrande, Russian giants after 2022) are <b>not in it</b>. Growth is therefore <b>biased upward</b>. It describes the winners' decade, not "big business" as a whole.`,
     `${H.entrants} of today's 2,000 firms lack a full 10-year record (newer listings, spin-offs, data gaps) and are excluded. ${H.excluded} firms with obvious unit errors in the history (e.g. a 100× jump in one year) were also dropped.`,
-    `Safe phrasing: "Among today's largest companies, revenue grew ×${H.rev_x} between 2015 and 2024." Unsafe: "Big business grew ×${H.rev_x}."`,
     'All values are nominal US$. A strong dollar shrinks yen, euro, rupee and real revenue. Years are approximate fiscal years as Forbes reports them.',
   ]});
 
   // index chart
-  const ser = [['Revenue', T.rev], ['Profit', T.profit], ['Assets', T.assets], ['Employees (2017=100)', T.emp], ['World GDP', gdp]];
+  const ser = [['Revenue', T.rev], ['Profit', T.profit], ['Assets', T.assets], ['Employees (2018=100)', T.emp], ['World GDP', gdp]];
   ATLAS.chart('c-idx', {
     legend: { top: 0 }, grid: { top: 40 }, tooltip: { trigger: 'axis', valueFormatter: v => v == null ? '—' : v.toFixed(0) },
     xAxis: { type: 'category', data: Y }, yAxis: { type: 'value', min: 80, name: 'Index' },
@@ -208,15 +177,15 @@
     if (gd.value === 'country' && !top.includes('India')) { top.pop(); top.push('India'); }
     const opt = {
       legend: { top: 0, type: 'scroll' }, grid: { top: 40 }, tooltip: { trigger: 'axis', valueFormatter: v => v == null ? '—' : v.toFixed(0) },
-      xAxis: { type: 'category', data: Y }, yAxis: { type: 'value', name: 'Index 2015=100', type: m === 'profit' ? 'log' : 'value', min: m === 'profit' ? 10 : null },
+      xAxis: { type: 'category', data: Y }, yAxis: { type: 'value', name: 'Index 2016=100', type: m === 'profit' ? 'log' : 'value', min: m === 'profit' ? 10 : null },
       series: top.map((k, i) => ({ name: `${k} (${G[k].n})`, type: 'line', data: idx(G[k][m], 0).map(v => v != null && v <= 0 ? null : v), itemStyle: { color: P[i] }, lineStyle: { width: k === 'India' ? 4 : 2 } })),
     };
     if (gc) gc.setOption(opt, { replaceMerge: ['series', 'legend'] }); else gc = ATLAS.chart('c-grp', opt);
-    document.getElementById('grp-title').textContent = `${m === 'rev' ? 'Revenue' : 'Profit'} by ${gd.value}, indexed 2015 = 100 (top 8 by 2024 revenue${gd.value === 'country' ? ', India always shown' : ''})${m === 'profit' ? ' — log scale' : ''}`;
+    document.getElementById('grp-title').textContent = `${m === 'rev' ? 'Revenue' : 'Profit'} by ${gd.value}, indexed 2016 = 100 (top 8 by 2025 revenue${gd.value === 'country' ? ', India always shown' : ''})${m === 'profit' ? ' — log scale' : ''}`;
   }
   gd.onchange = gm.onchange = drawGrp; drawGrp();
   ATLAS.tableToggle('c-grp-t', 'c-grp-tbl', [].concat(...Object.entries(D.groups).map(([dim, G]) => Object.entries(G).map(([k, v]) => ({ dim, k, n: v.n, r15: v.rev[0], r24: v.rev.at(-1), p15: v.profit[0], p24: v.profit.at(-1) })))),
-    [{ key: 'dim', label: 'Dimension' }, { key: 'k', label: 'Group' }, { key: 'n', label: 'Firms', num: true }, { key: 'r15', label: 'Rev 2015', num: true, fmt: B }, { key: 'r24', label: 'Rev 2024', num: true, fmt: B }, { key: 'p15', label: 'Profit 2015', num: true, fmt: B }, { key: 'p24', label: 'Profit 2024', num: true, fmt: B }]);
+    [{ key: 'dim', label: 'Dimension' }, { key: 'k', label: 'Group' }, { key: 'n', label: 'Firms', num: true }, { key: 'r15', label: 'Rev 2016', num: true, fmt: B }, { key: 'r24', label: 'Rev 2025', num: true, fmt: B }, { key: 'p15', label: 'Profit 2016', num: true, fmt: B }, { key: 'p24', label: 'Profit 2025', num: true, fmt: B }]);
   const cc = D.cagr_country.slice().reverse();
   ATLAS.chart('c-cagr', {
     grid: { left: 8, right: 40, top: 10 }, xAxis: { type: 'value', axisLabel: { formatter: '{value}%' } },
@@ -224,7 +193,7 @@
     tooltip: { formatter: p => { const r = cc[p.dataIndex]; return `<b>${r.country}</b> (${r.n} firms)<br>Revenue ${B(r.rev15)} → ${B(r.rev24)}<br>Revenue CAGR ${pct(r.cagr)}<br>Profit CAGR ${r.pcagr == null ? '—' : pct(r.pcagr)}`; } },
     series: [{ type: 'bar', data: cc.map(r => ({ value: r.cagr, itemStyle: { color: r.country === 'India' ? P[1] : r.cagr < 0 ? ATLAS.diverging()[0] : P[0] } })), label: { show: true, position: 'right', formatter: '{c}%', fontSize: 10 } }],
   });
-  tbl('c-cagr', D.cagr_country, [{ key: 'country', label: 'Country' }, { key: 'n', label: 'Firms', num: true }, { key: 'rev15', label: 'Rev 2015', num: true, fmt: B }, { key: 'rev24', label: 'Rev 2024', num: true, fmt: B }, { key: 'cagr', label: 'Rev CAGR %', num: true }, { key: 'pcagr', label: 'Profit CAGR %', num: true }]);
+  tbl('c-cagr', D.cagr_country, [{ key: 'country', label: 'Country' }, { key: 'n', label: 'Firms', num: true }, { key: 'rev15', label: 'Rev 2016', num: true, fmt: B }, { key: 'rev24', label: 'Rev 2025', num: true, fmt: B }, { key: 'cagr', label: 'Rev CAGR %', num: true }, { key: 'pcagr', label: 'Profit CAGR %', num: true }]);
   const ind = D.cagr_country.find(r => r.country === 'India'), jp = D.cagr_country.find(r => r.country === 'Japan'), us = D.cagr_country.find(r => r.country === 'United States'), cn = D.cagr_country.find(r => r.country === 'China');
 
   // movers
@@ -246,25 +215,8 @@
     if (mc) mc.setOption(opt, { replaceMerge: ['series', 'yAxis'] }); else mc = ATLAS.chart('c-mv', opt);
   }
   secSel.onchange = view.onchange = drawMv; drawMv();
-  tbl('c-mv', D.movers.all, [{ key: 'company', label: 'Company' }, { key: 'country', label: 'Country' }, { key: 'sector', label: 'Sector' }, { key: 'rev15', label: 'Rev 2015', num: true, fmt: B }, { key: 'rev24', label: 'Rev 2024', num: true, fmt: B }, { key: 'growth', label: 'Growth %', num: true }, { key: 'abs', label: '$ change', num: true, fmt: B }]);
+  tbl('c-mv', D.movers.all, [{ key: 'company', label: 'Company' }, { key: 'country', label: 'Country' }, { key: 'sector', label: 'Sector' }, { key: 'rev15', label: 'Rev 2016', num: true, fmt: B }, { key: 'rev24', label: 'Rev 2025', num: true, fmt: B }, { key: 'growth', label: 'Growth %', num: true }, { key: 'abs', label: '$ change', num: true, fmt: B }]);
   const indM = D.movers.all.filter(r => r.country === 'India').sort((a, b) => b.growth - a.growth).slice(0, 3);
-
-  // bump
-  let bc;
-  function drawBump() {
-    const rows = D.bumps[document.getElementById('bp-m').value];
-    const opt = {
-      grid: { left: 8, right: 170, top: 20 }, tooltip: { trigger: 'item', formatter: p => { const r = rows[p.seriesIndex]; return `<b>${r.company}</b><br>${r.country} · ${r.sector}<br>${Y[p.dataIndex]}: rank ${p.value}, ${B(r.val[p.dataIndex])}`; } },
-      xAxis: { type: 'category', data: Y, boundaryGap: false }, yAxis: { type: 'value', inverse: true, min: 1, max: 60, name: 'Rank (capped at 60)' },
-      series: rows.map((r, i) => ({ name: r.company, type: 'line', data: r.rank.map(v => Math.min(v, 60)), symbolSize: 6,
-        itemStyle: { color: i < 8 ? P[i] : ATLAS.css('--text-3') }, lineStyle: { width: i < 8 ? 2.5 : 1.5 }, emphasis: { focus: 'series', lineStyle: { width: 4 } },
-        endLabel: { show: true, formatter: `${r.rank.at(-1)}. ${r.company}`, fontSize: 11, color: ATLAS.css('--text-2') } })),
-    };
-    if (bc) bc.setOption(opt, { replaceMerge: ['series'] }); else bc = ATLAS.chart('c-bump', opt);
-  }
-  document.getElementById('bp-m').onchange = drawBump; drawBump();
-  tbl('c-bump', D.bumps.rev.map(r => Object.assign({ company: r.company }, Object.fromEntries(Y.map((y, i) => ['y' + y, r.rank[i]])))),
-    [{ key: 'company', label: 'Company (revenue rank)' }].concat(Y.map(y => ({ key: 'y' + y, label: y, num: true }))));
 
   // pool
   let pc;
@@ -299,7 +251,7 @@
   }
   document.getElementById('sh-m').onchange = drawShare; drawShare();
   tbl('c-share', S.sectors.map(s => Object.assign({ s, mv: D.mv_share_now[s] }, Object.fromEntries(Y.map((y, i) => ['p' + y, S.profit[s][i]])))),
-    [{ key: 's', label: 'Sector' }, { key: 'mv', label: 'Mkt value share 2025 %', num: true }].concat(Y.map(y => ({ key: 'p' + y, label: 'Profit % ' + y, num: true }))));
+    [{ key: 's', label: 'Sector' }, { key: 'mv', label: 'Mkt value share 2026 %', num: true }].concat(Y.map(y => ({ key: 'p' + y, label: 'Profit % ' + y, num: true }))));
   const pl = D.pools.sector, en = pl.find(r => r.name === 'Energy & Utilities'), te = pl.find(r => r.name === 'Technology'), fi = pl.find(r => r.name === 'Financials'), tm = pl.find(r => r.name === 'Telecom & Media');
 
   // productivity
@@ -313,7 +265,7 @@
       label: { show: true, formatter: p => pr[p.dataIndex].sector, position: 'right', fontSize: 10, color: ATLAS.css('--text-2') },
       markLine: { silent: true, symbol: 'none', lineStyle: { type: 'dashed', color: ATLAS.css('--text-3') }, label: { formatter: 'revenue = headcount growth' }, data: [[{ coord: [-10, -10] }, { coord: [80, 80] }]] } }],
   });
-  tbl('c-prod', pr, [{ key: 'sector', label: 'Sector' }, { key: 'n', label: 'Firms', num: true }, { key: 'emp_g', label: 'Emp growth %', num: true }, { key: 'rev_g', label: 'Rev growth %', num: true }, { key: 'rpe17', label: 'Rev/emp 2017', num: true, fmt: v => '$' + (v / 1000).toFixed(0) + 'K' }, { key: 'rpe24', label: 'Rev/emp 2024', num: true, fmt: v => '$' + (v / 1000).toFixed(0) + 'K' }]);
+  tbl('c-prod', pr, [{ key: 'sector', label: 'Sector' }, { key: 'n', label: 'Firms', num: true }, { key: 'emp_g', label: 'Emp growth %', num: true }, { key: 'rev_g', label: 'Rev growth %', num: true }, { key: 'rpe17', label: 'Rev/emp 2018', num: true, fmt: v => '$' + (v / 1000).toFixed(0) + 'K' }, { key: 'rpe24', label: 'Rev/emp 2025', num: true, fmt: v => '$' + (v / 1000).toFixed(0) + 'K' }]);
   const rpeY = Y.filter((_, i) => T.rev_per_emp[i] != null);
   ATLAS.chart('c-rpe', {
     tooltip: { trigger: 'axis', valueFormatter: v => '$' + v + 'K' }, xAxis: { type: 'category', data: rpeY },
@@ -322,41 +274,11 @@
   });
   const tech = pr.find(r => r.sector === 'Technology'), ind2 = pr.find(r => r.sector === 'Industrials & Defense');
 
-  // macro
-  const my = M.year;
-  ATLAS.chart('c-mcap', {
-    tooltip: { trigger: 'axis', formatter: ps => { const i = ps[0].dataIndex; return `<b>${my[i]}</b><br>Market cap / GDP: ${pct(M.mcap_gdp[i], 0)}<br>World market cap: ${ATLAS.fmtUSD(M.mcap[i])}<br>World GDP: ${ATLAS.fmtUSD(M.gdp[i])}`; } },
-    xAxis: { type: 'category', data: my }, yAxis: { type: 'value', axisLabel: { formatter: '{value}%' } },
-    series: [{ type: 'line', data: M.mcap_gdp, areaStyle: { opacity: .15 }, lineStyle: { width: 3 }, itemStyle: { color: P[0] },
-      markPoint: { symbolSize: 40, label: { fontSize: 10 }, data: [{ name: '2008', coord: ['2008', M.mcap_gdp[8]], value: '2008' }] } }],
-  });
-  tbl('c-mcap', my.map((y, i) => ({ y, gdp: M.gdp[i], mcap: M.mcap[i], r: M.mcap_gdp[i], listed: M.listed[i] })),
-    [{ key: 'y', label: 'Year' }, { key: 'gdp', label: 'World GDP', num: true, fmt: v => ATLAS.fmtUSD(v) }, { key: 'mcap', label: 'Market cap', num: true, fmt: v => ATLAS.fmtUSD(v) }, { key: 'r', label: 'Cap/GDP %', num: true }, { key: 'listed', label: 'Listed cos', num: true, fmt: v => v?.toLocaleString() }]);
-  let lc;
-  function drawLd() {
-    const v = document.getElementById('ld-v').value;
-    const opt = v === 'world' ? {
-      legend: { top: 0 }, tooltip: { trigger: 'axis', valueFormatter: x => x == null ? '—' : x.toFixed(0) },
-      xAxis: { type: 'category', data: my }, yAxis: { type: 'value', name: 'Index 2000=100' },
-      series: [{ name: 'Listed companies', type: 'line', data: idx(M.listed, 0), lineStyle: { width: 3 }, itemStyle: { color: P[0] } },
-               { name: 'World GDP', type: 'line', data: idx(M.gdp, 0), itemStyle: { color: P[1] } },
-               { name: 'World market cap', type: 'line', data: idx(M.mcap, 0), itemStyle: { color: P[2] } }],
-    } : {
-      legend: { top: 0, type: 'scroll' }, tooltip: { trigger: 'axis', valueFormatter: x => x == null ? '—' : x.toLocaleString() },
-      xAxis: { type: 'category', data: M.listed_years }, yAxis: { type: 'value', name: 'Listed companies' },
-      series: Object.keys(M.listed_by).map((k, i) => ({ name: k, type: 'line', data: M.listed_by[k], connectNulls: false, itemStyle: { color: P[i] }, lineStyle: { width: k === 'India' || k === 'United States' ? 3 : 1.5 } })),
-    };
-    if (lc) lc.setOption(opt, { notMerge: true }); else lc = ATLAS.chart('c-ld', opt);
-  }
-  document.getElementById('ld-v').onchange = drawLd; drawLd();
-  const LB = M.listed_by, lyr = M.listed_years, at = (k, y) => LB[k] ? LB[k][lyr.indexOf(y)] : null;
-  tbl('c-ld', lyr.map(y => Object.assign({ y }, Object.fromEntries(Object.keys(LB).map(k => [k, at(k, y)])))), [{ key: 'y', label: 'Year' }].concat(Object.keys(LB).map(k => ({ key: k, label: k, num: true }))));
   ATLAS.notes('n-cav', { title: 'Caveats', caveat: true, items: [
     'Survivorship: the cohort is today\'s Global 2000 members with full histories. Failures, takeovers and dropouts are absent, so growth is biased upward.',
     'Nominal US dollars throughout: no inflation adjustment (US CPI rose ~32% from 2016 to 2025), and currency swings move non-US firms.',
     'Forbes "years ago" history is mapped to approximate calendar years; fiscal years differ (Indian firms end in March, Japanese mostly March, retailers January).',
-    'Ten firms with obvious unit errors were dropped (e.g. Nomura\'s 2015 revenue recorded ~100× too small). Other single-year oddities may remain, so check any company-level number in the original filing.',
-    'World Bank market cap and listed counts come from exchange (WFE) data with coverage gaps. Country series can jump when an exchange enters or leaves the data.',
+    `${H.excluded} firms with obvious unit errors were dropped (e.g. a revenue recorded ~100× too small). Other single-year oddities may remain, so check any company-level number in the original filing.`,
   ]});
 })();
 </script>

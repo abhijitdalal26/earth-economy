@@ -26,7 +26,7 @@
 <div class="wrap">
   <header class="page-head">
     <p class="kicker">Scale</p>
-    <h1>The world's 2,000 biggest listed firms sell $52.9 trillion a year, and the top 100 take more than a third of it</h1>
+    <h1>The world's 2,000 biggest listed firms sell $56.0 trillion a year, and the top 100 take more than a third of it</h1>
     <p class="dek">How big is big business? This page sizes the largest companies on earth by revenue, profit, market value, assets and staff, shows how steeply that size is concentrated, and translates the numbers into country-sized comparisons a reader can hold on to.</p>
   </header>
 
@@ -49,7 +49,7 @@
       </div>
       <div class="chart xtall" id="c-top"></div>
       <button class="tbl-toggle" id="c-top-t"></button><div id="c-top-tbl"></div>
-      <p class="src">Source: Forbes Global 2000 (2025 list; financials are latest fiscal year, mostly FY2025; market value as of May 2026).</p>
+      <p class="src">Source: Forbes Global 2000 (2026 list; financials are latest fiscal year, mostly FY2025; market value as of May 2026).</p>
     </div>
   </div>
 
@@ -126,18 +126,11 @@
       <button class="tbl-toggle" id="c-bands-t"></button><div id="c-bands-tbl"></div>
       <p class="src">Source: listed universe, market caps from CompaniesMarketCap (2026 snapshot). Magnificent 7 = Nvidia, Apple, Alphabet, Microsoft, Amazon, Meta, Tesla.</p>
     </div>
-    <div class="card">
-      <h3>15 companies are now worth more than $1 trillion — 12 of them American</h3>
-      <p class="sub">Market capitalisation, US$ trillions (2026 snapshot)</p>
-      <div class="chart" id="c-tril"></div>
-      <button class="tbl-toggle" id="c-tril-t"></button><div id="c-tril-tbl"></div>
-      <p class="src">Source: listed universe (CompaniesMarketCap snapshot, 2026). SpaceX appears as listed in the source; check its status before quoting.</p>
-    </div>
   </div>
 
   <!-- ============ 5. People ============ -->
   <h2>Who employs the world?</h2>
-  <p class="section-dek">The Global 2000 employ 92.6 million people — about 2.5% of the world's 3.7 billion workers. Size in staff and size in sales are only loosely related.</p>
+  <p class="section-dek">The Global 2000 employ 82.2 million people — about 2.2% of the world's 3.7 billion workers. Size in staff and size in sales are only loosely related.</p>
   <div class="grid">
     <div class="card">
       <h3>Walmart alone employs 2.1 million people — more than the population of many countries</h3>
@@ -188,15 +181,6 @@
       <div class="chart tall" id="c-marg"></div>
       <button class="tbl-toggle" id="c-marg-t"></button><div id="c-marg-tbl"></div>
       <p class="src">Source: Forbes Global 2000 (FY2025). Bank and insurer "revenue" is defined differently, which inflates financial-sector margins.</p>
-    </div>
-  </div>
-  <div class="grid one">
-    <div class="card">
-      <h3>Technology turns 17% of sales into profit; construction and real estate under 4%</h3>
-      <p class="sub">Blended net margin (sector profit ÷ sector revenue), %</p>
-      <div class="chart" id="c-secm"></div>
-      <button class="tbl-toggle" id="c-secm-t"></button><div id="c-secm-tbl"></div>
-      <p class="src">Source: Forbes Global 2000 (FY2025), sectors per the atlas taxonomy.</p>
     </div>
   </div>
 
@@ -424,16 +408,6 @@
   });
   ATLAS.tableToggle('c-bands-t', 'c-bands-tbl', D.mcap_bands, [{ key: 'b', label: 'Band' }, { key: 'v', label: 'Market cap $T', num: true }, { key: 'share', label: '% of total', num: true }]);
 
-  ATLAS.chart('c-tril', {
-    grid: { left: 8, right: 50, top: 10, bottom: 8, containLabel: true },
-    xAxis: { type: 'value', axisLabel: { formatter: v => '$' + v + 'T' } },
-    yAxis: { type: 'category', inverse: true, data: D.trillion.map(t => t.n), axisLabel: { fontSize: 11 } },
-    tooltip: { formatter: p => { const t = D.trillion[p.dataIndex]; return `<b>${esc(t.n)}</b> (${t.c})${t.mag ? '<br>Magnificent 7 member' : ''}<br>Market cap: <b>$${t.mc.toFixed(2)}T</b> — #${p.dataIndex + 1} on earth<br>${ATLAS.fmtPct(t.mc / D.listed_total_mc * 100, 2)} of all measured listed value<br>Revenue: ${usdB(t.rev)} → ${(t.mc * 1000 / t.rev).toFixed(1)}× sales`; } },
-    series: [{ type: 'bar', barMaxWidth: 16, data: D.trillion.map(t => ({ value: t.mc, itemStyle: { color: t.mag ? P[0] : MUTED } })),
-      label: { show: true, position: 'right', fontSize: 10, formatter: p => '$' + p.value.toFixed(2) + 'T' } }],
-  });
-  ATLAS.tableToggle('c-tril-t', 'c-tril-tbl', D.trillion.map((t, i) => Object.assign({ rk: i + 1, ps: +(t.mc * 1000 / t.rev).toFixed(1) }, t)),
-    [{ key: 'rk', label: '#', num: true }, { key: 'n', label: 'Company' }, { key: 'c', label: 'Country' }, { key: 'mc', label: 'Mkt cap $T', num: true }, { key: 'rev', label: 'Revenue $B', num: true }, { key: 'ps', label: 'Price/sales', num: true }]);
   const C = D.conc;
 
   // ---------------- 5. people ----------------
@@ -543,16 +517,6 @@
   }
   $('m-sector').onchange = drawM; drawM();
 
-  ATLAS.chart('c-secm', {
-    legend: { data: ['Blended margin (sector profit ÷ revenue)', 'Median company margin'] },
-    grid: { bottom: 8 },
-    xAxis: { type: 'category', data: D.sector_margin.map(s => s.s), axisLabel: { interval: 0, rotate: 30, fontSize: 11 } },
-    yAxis: { type: 'value', axisLabel: { formatter: '{value}%' } },
-    tooltip: { formatter: p => { const s = D.sector_margin[p.dataIndex]; return `<b>${s.s}</b> (${s.n} firms)<br>Blended margin: <b>${s.blended}%</b><br>Median company: ${s.median}%<br>Loss-makers: ${s.loss}`; } },
-    series: [{ name: 'Blended margin (sector profit ÷ revenue)', type: 'bar', data: D.sector_margin.map(s => s.blended) },
-             { name: 'Median company margin', type: 'bar', data: D.sector_margin.map(s => s.median) }],
-  });
-  ATLAS.tableToggle('c-secm-t', 'c-secm-tbl', D.sector_margin, [{ key: 's', label: 'Sector' }, { key: 'n', label: 'Firms', num: true }, { key: 'blended', label: 'Blended %', num: true }, { key: 'median', label: 'Median %', num: true }, { key: 'loss', label: 'Loss-makers', num: true }]);
   const PR = D.profit;
 
   // ---------------- 7. beeswarm ----------------
@@ -634,7 +598,7 @@
   const V = Object.fromEntries(D.vivid.map(v => [v.label.split(' ')[0] + '|' + v.kind, v]));
   const vv = (k) => D.vivid.find(v => v.label.startsWith(k));
   const wal = vv('Walmart'), rel = vv('Reliance Industries revenue'), sbi = vv('State Bank'), tcsV = vv('Tata Consultancy'), apl = vv('Apple'), nvd = vv('Nvidia'), msf = vv('Microsoft'), relM = vv('Reliance Industries market');
-  ATLAS.notes('n-cav', { title: 'Caveats before you quote', caveat: true, items: [
+  ATLAS.notes('n-cav', { title: 'Caveats', caveat: true, items: [
     `<b>Revenue is not GDP.</b> GDP counts <i>value added</i> — output minus inputs bought from others. A company's revenue includes everything it bought from suppliers, so it double-counts across supply chains. "Walmart is bigger than Belgium" is a comparison of scale, not of economic weight. Walmart's own value added (wages + profit + depreciation) is perhaps a fifth of its sales.`,
     `<b>Market value is a stock, GDP is a flow.</b> Apple's $5T is the price of owning all future Apple profits; India's $3.76T is one year's output. Use "worth more than India produces in a year" and say so.`,
     `<b>Dates differ.</b> Forbes financials are FY2025 with market value from May 2026; the listed-universe market caps are a 2026 snapshot; GDP is 2024. Forbes and the listed universe are never summed here.`,

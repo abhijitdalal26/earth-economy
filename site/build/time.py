@@ -134,7 +134,7 @@ macro = dict(year=my, gdp=[gdp.get(y) for y in my], listed=[ldom.get(y) for y in
 
 H = dict(n=len(cohort), rev_x=round(tot['rev'][-1] / tot['rev'][0], 2), prof_x=round(tot['profit'][-1] / tot['profit'][0], 2),
          rev_cagr=r1(((tot['rev'][-1] / tot['rev'][0]) ** (1 / 9) - 1) * 100), prof_cagr=r1(((tot['profit'][-1] / tot['profit'][0]) ** (1 / 9) - 1) * 100),
-         m15=tot['margin'][0], m24=tot['margin'][-1], m20=tot['margin'][5],
+         m15=tot['margin'][0], m24=tot['margin'][-1], m20=tot['margin'][YRS.index(2020)],
          gdp_x=round(gdp[2024] / gdp[2016], 2), tech_mv_share=tech_mv_share,
          tech_p15=shares['profit']['Technology'][0], tech_p24=shares['profit']['Technology'][-1],
          tech_r15=shares['rev']['Technology'][0], tech_r24=shares['rev']['Technology'][-1],

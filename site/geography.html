@@ -126,27 +126,13 @@
       <button class="tbl-toggle" id="c-isec-t"></button><div id="c-isec-tbl"></div>
       <p class="src">Source: Forbes Global 2000 (2026), 13-sector taxonomy.</p>
     </div>
-    <div class="card half">
+    <div class="card">
       <h3 id="c-peer-h">India vs peers</h3>
       <p class="sub" id="c-peer-sub"></p>
       <div class="card-tools"><select id="peer-metric"></select></div>
       <div class="chart" id="c-peer"></div>
       <button class="tbl-toggle" id="c-peer-t"></button><div id="c-peer-tbl"></div>
       <p class="src">Sources: Forbes Global 2000 (2026); CompaniesMarketCap; CB Insights; World Bank GDP 2024.</p>
-    </div>
-    <div class="card half">
-      <h3>India's 63 unicorns: a long tail behind the top few</h3>
-      <p class="sub">Latest private valuation, US$ billion, top 25</p>
-      <div class="chart tall" id="c-iuni"></div>
-      <button class="tbl-toggle" id="c-iuni-t"></button><div id="c-iuni-tbl"></div>
-      <p class="src">Source: CB Insights unicorn list (as scraped in 2026). Valuations are the last private round, not market prices. Firms that have listed (Zomato, Paytm, Nykaa…) leave the list.</p>
-    </div>
-    <div class="card half">
-      <h3>India's most valuable listed companies</h3>
-      <p class="sub">Market capitalisation, listed-universe snapshot (2026), top 25</p>
-      <div class="chart tall" id="c-ilist"></div>
-      <button class="tbl-toggle" id="c-ilist-t"></button><div id="c-ilist-tbl"></div>
-      <p class="src">Source: CompaniesMarketCap (2026 scrape), on a different date from Forbes' May 2026 values, so the two will not match.</p>
     </div>
   </div>
   <div id="n-cav"></div>
@@ -488,27 +474,6 @@ const REGIONS = ['North America', 'Asia-Pacific', 'Europe', 'Middle East & Centr
   ATLAS.tableToggle('c-peer-t', 'c-peer-tbl', G.peers, [{ key: 'name', label: 'Country' }, { key: 'gdp', label: 'GDP', num: true, fmt: v => F(v) },
     { key: 'rev_gdp', label: 'G2000 rev ÷ GDP', num: true, fmt: v => P(v * 100, 0) }, { key: 'mv_gdp', label: 'G2000 MV ÷ GDP', num: true, fmt: v => P(v * 100, 0) },
     { key: 'lmv_gdp', label: 'Listed cap ÷ GDP', num: true, fmt: v => P(v * 100, 0) }, { key: 'uni_per_t', label: 'Unicorns / $1T', num: true, fmt: v => v.toFixed(1) }, { key: 'g_per_t', label: 'G2000 firms / $1T', num: true, fmt: v => v.toFixed(1) }]);
-
-  // unicorns
-  const IU = G.india_unicorns.slice(0, 25);
-  ATLAS.chart('c-iuni', {
-    grid: { left: 8, right: 50, top: 8, bottom: 8 },
-    tooltip: { formatter: p => { const u = IU[p.dataIndex]; return `<b>${u.company}</b> · ${u.city}<br>${u.industry}<br>Valuation <b>${F(u.val)}</b> (#${p.dataIndex + 1} in India)<br>${P(u.val / ind.u_val * 100)} of India's unicorn value<br>Became a unicorn: ${u.joined}`; } },
-    xAxis: { type: 'value', axisLabel: { formatter: v => '$' + v + 'B' } },
-    yAxis: { type: 'category', inverse: true, data: IU.map(u => u.company), axisLabel: { interval: 0, fontSize: 11 } },
-    series: [{ type: 'bar', color: PAL[1], data: IU.map(u => +(u.val / 1e9).toFixed(2)), label: { show: true, position: 'right', fontSize: 10, formatter: p => '$' + p.value + 'B', color: ATLAS.css('--text-2') } }],
-  });
-  ATLAS.tableToggle('c-iuni-t', 'c-iuni-tbl', G.india_unicorns, [{ key: 'company', label: 'Company' }, { key: 'city', label: 'City' }, { key: 'industry', label: 'Industry' }, { key: 'val', label: 'Valuation', num: true, fmt: v => F(v) }, { key: 'joined', label: 'Joined' }]);
-  // listed
-  const IL = G.india_listed_top;
-  ATLAS.chart('c-ilist', {
-    grid: { left: 8, right: 50, top: 8, bottom: 8 },
-    tooltip: { formatter: p => { const c = IL[p.dataIndex]; return `<b>${c.company}</b><br>Market cap <b>${F(c.mv)}</b> (#${p.dataIndex + 1} in India)<br>${P(c.mv / ind.l_mv * 100)} of India's measured listed market cap${c.rev ? '<br>Revenue ' + F(c.rev) : ''}`; } },
-    xAxis: { type: 'value', axisLabel: { formatter: v => '$' + v + 'B' } },
-    yAxis: { type: 'category', inverse: true, data: IL.map(c => c.company), axisLabel: { interval: 0, fontSize: 11 } },
-    series: [{ type: 'bar', color: PAL[0], data: IL.map(c => +(c.mv / 1e9).toFixed(1)), label: { show: true, position: 'right', fontSize: 10, formatter: p => '$' + p.value + 'B', color: ATLAS.css('--text-2') } }],
-  });
-  ATLAS.tableToggle('c-ilist-t', 'c-ilist-tbl', IL, [{ key: 'company', label: 'Company' }, { key: 'mv', label: 'Market cap', num: true, fmt: v => F(v) }, { key: 'rev', label: 'Revenue', num: true, fmt: v => F(v) }]);
 
   const top5rev = F70.slice(0, 5).reduce((s, f) => s + f.rev, 0);
   const psu = ['Life Insurance Corp. of India', 'Indian Oil', 'Oil & Natural Gas', 'State Bank of India', 'Bharat Petroleum'];

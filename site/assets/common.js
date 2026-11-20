@@ -15,7 +15,6 @@ window.ATLAS = window.ATLAS || {};
     ['flow.html', '25 years'],
     ['context.html', 'Big picture'],
     ['directory.html', 'Company finder'],
-    ['notebook.html', "Writer's notebook"],
   ];
   // Top bar: a few items, with the rest in dropdowns. [href, label] is a link, [label, [[href, label], ...]] a group.
   const NAV = [
@@ -24,7 +23,6 @@ window.ATLAS = window.ATLAS || {};
     ['World', [['geography.html', 'Geography'], ['markets.html', 'Stock markets'], ['context.html', 'Big picture']]],
     ['startups.html', 'Startups & AI'],
     ['Over time', [['time.html', 'Last 10 years'], ['flow.html', '25 years']]],
-    ['notebook.html', 'Notebook'],
   ];
 
   // ---------- theme ----------
@@ -86,9 +84,10 @@ window.ATLAS = window.ATLAS || {};
       location.reload(); // simplest way to re-theme every chart
     };
     const f = document.createElement('footer');
-    f.innerHTML = `<div class="wrap">Earth Economy — research pack. Sources: Forbes Global 2000 (2026), Fortune Global 500 (2026),
+    f.innerHTML = `<div class="wrap">Earth Economy. Sources: Forbes Global 2000 (2026), Fortune Global 500 (2026),
       CompaniesMarketCap, SEC EDGAR, CB Insights unicorn list, Forbes Cloud 100, World Bank Open Data, and others named under each chart.
-      Figures are snapshots; check the "caveat" boxes before quoting.</div>`;
+      Figures are snapshots; check the "caveat" boxes before quoting.
+      <a href="notebook.html">Writer's notebook</a> collects the most quotable facts in one place.</div>`;
     document.body.append(f);
   }
 

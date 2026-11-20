@@ -15,7 +15,7 @@
 <body>
 <div class="wrap">
   <header class="page-head">
-    <p class="kicker">Research pack · Overview</p>
+    <p class="kicker">Overview</p>
     <h1>Every big business on earth, measured</h1>
     <p class="dek">The 2,000 largest listed companies book $56.0 trillion of revenue, a sum equal to half of world GDP, and they sit on $122 trillion of market value. Around them are 12,500 more listed firms, 1,442 private unicorns and 60 stock exchanges. This pack puts all of it in one place so you can check a number, see how it is spread and read the caveats before you write.</p>
   </header>
@@ -47,7 +47,7 @@
   <p class="section-dek">Each box is one company, grouped by sector, and its area is the metric you pick. Hover a box for the company's numbers, or click a sector to zoom in.</p>
   <div class="grid">
     <div class="card">
-      <h3 id="c-tree-h">Financials book 23.5% of the revenue</h3>
+      <h3 id="c-tree-h">Financials: 21.5% of the revenue</h3>
       <p class="sub" id="c-tree-sub">Forbes Global 2000 by sector and company, box area = revenue</p>
       <div class="card-tools">
         <span id="tree-tools"></span>
@@ -75,7 +75,7 @@
   <p class="section-dek">Each page takes one question. Every chart has hover detail, a data table and a source line.</p>
   <div class="hub" id="hub"></div>
 
-  <h2 id="method">How to read this pack: data sources and methodology</h2>
+  <h2 id="method">Data sources and methodology</h2>
   <p class="section-dek">There are four layers here, each kept on its own ledger. The Forbes list measures <b>revenue</b>, the listed universe measures <b>market value</b>, the unicorn board measures <b>private paper valuation</b>, and the World Bank gives the <b>frame</b> (GDP, workers, the count of listed firms). They cover different companies and different years, so they are never added into one pie.</p>
   <div id="n-rules"></div>
   <div class="grid">
@@ -193,11 +193,11 @@ document.getElementById('x-ledgers').className = 'explainer';
 // ---------- treemap ----------
 (function () {
   const MET = { rev_musd: ['Revenue', 'musd'], prof_musd: ['Profit', 'musd'], mv_musd: ['Market value', 'musd'], emp: ['Employees', 'n'] };
-  const HEAD = {
-    rev_musd: 'Financials book 23.5% of the revenue, ahead of consumer & retail (17%) and energy (13%)',
-    prof_musd: 'Financials earn a third (34%) of all profit; technology earns 17% on 9% of sales',
-    mv_musd: 'Technology is 9% of the revenue but 27% of the market value, the largest sector',
-    emp: 'Consumer & retail firms employ a quarter (25.5%) of the 92.6 million staff',
+  // headline from the data: the three biggest sectors on the chosen measure
+  const HEAD = data => {
+    const [a, b, c] = data.slice().sort((x, y) => y.value - x.value), p = d => P(d.share * 100);
+    const what = { rev_musd: 'of the revenue', prof_musd: 'of the profit', mv_musd: 'of the market value', emp: 'of the staff' }[met];
+    return `${a.name}: ${p(a)} ${what}, ahead of ${b.name} (${p(b)}) and ${c.name} (${p(c)})`;
   };
   const secRev = {}; C.forEach(c => secRev[c.sector] = (secRev[c.sector] || 0) + (c.rev_musd || 0));
   const sectors = Object.keys(secRev).sort((a, b) => secRev[b] - secRev[a]);
@@ -221,7 +221,7 @@ document.getElementById('x-ledgers').className = 'explainer';
       return { name: s, value: st, share: st / total, n: kids.length, itemStyle: { color: colorOf(s) },
         children: kids.map((c, i) => ({ name: c.company, value: c[met], c, share: c[met] / total, sshare: c[met] / st, srank: i + 1, itemStyle: { color: colorOf(s) } })) };
     });
-    document.getElementById('c-tree-h').textContent = ctry ? `${ctry}: ${list.length} Global 2000 firms by ${MET[met][0].toLowerCase()}` : HEAD[met];
+    document.getElementById('c-tree-h').textContent = ctry ? `${ctry}: ${list.length} Global 2000 firms by ${MET[met][0].toLowerCase()}` : HEAD(data);
     document.getElementById('c-tree-sub').textContent = `Forbes Global 2000${ctry ? ', ' + ctry : ''}, by sector and company. Box area = ${MET[met][0].toLowerCase()}. Total: ${fmtV(total)}`;
     const bc = ATLAS.css('--surface');
     const opt = {
@@ -303,7 +303,6 @@ const HUB = {
   'flow.html': 'Twenty-five years, 2001–2025, in one picture: every company that reached the top as a line that rises and falls, and which business ideas gained or lost share.',
   'context.html': 'The big picture: world GDP, workers, the sector split of output and jobs, and where company lists stop seeing the economy.',
   'directory.html': 'Search and filter about 15,500 companies, one row per company, and plot revenue against market value for any slice.',
-  'notebook.html': 'The writer\'s notebook: the most quotable facts from every page, plus caveats and story angles, in one place.',
 };
 document.getElementById('hub').innerHTML = ATLAS.PAGES.filter(([h]) => h !== 'index.html')
   .map(([h, t]) => `<a href="${h}"><div class="t">${t} →</div><div class="d">${HUB[h] || ''}</div></a>`).join('');
@@ -320,8 +319,8 @@ ATLAS.notes('n-rules', { title: 'Rules that keep this honest', items: [
 ATLAS.table('t-registry', D.registry, [{ key: 'dataset', label: 'Dataset' }, { key: 'kind', label: 'Kind' }, { key: 'trust', label: 'Trust' },
   { key: 'publisher', label: 'Publisher' }, { key: 'file', label: 'File' }, { key: 'notes', label: 'Notes', fmt: v => `<span style="white-space:normal;display:inline-block;min-width:320px">${v}</span>` }]);
 ATLAS.table('t-vint', D.vintages, [{ key: 'dataset', label: 'Dataset' }, { key: 'min_year', label: 'Earliest', num: true }, { key: 'max_year', label: 'Latest', num: true }, { key: 'mode_year', label: 'Most common', num: true }]);
-ATLAS.notes('n-cav', { title: 'Caveats before you quote', caveat: true, items: D.caveats.map(c => `<b>${c.topic}.</b> ${c.detail}`).concat([
-  'The listed universe is complete for the US and partial elsewhere. A country\'s count of listed firms in this pack measures coverage, not how many companies it really has.',
+ATLAS.notes('n-cav', { title: 'Caveats', caveat: true, items: D.caveats.map(c => `<b>${c.topic}.</b> ${c.detail}`).concat([
+  'The listed universe is complete for the US and partial elsewhere. A country\'s count of listed firms here measures coverage, not how many companies it really has.',
   'Unicorn valuations are the price at the last funding round, not market prices. Anthropic ($965B) and OpenAI ($840B) dominate the total.',
 ]) });
 </script>

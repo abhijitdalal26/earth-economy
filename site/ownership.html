@@ -434,7 +434,7 @@
     { key: 'rev', label: 'Revenue', num: true, fmt: B }, { key: 'mv', label: 'Market value', num: true, fmt: B }];
   const famT = ATLAS.table('fam-tbl', D.family, famCols);
   ft.onchange = () => famT.update(D.family.filter(r => !ft.value || r.type === ft.value));
-  ATLAS.notes('n-cav', { title: 'Caveats before you quote', caveat: true, items: [
+  ATLAS.notes('n-cav', { title: 'Caveats', caveat: true, items: [
     'Ownership labels (state-controlled / significant stake / private / mutual) are this atlas\'s curation from public shareholding information as of 2025. Stakes change (NatWest and AIB were fully re-privatised in 2025). Check any single company before quoting.',
     'Fortune ranks parent groups; Forbes ranks listed entities. CNPC ⊃ PetroChina, Sinopec Group ⊃ Sinopec Corp, China Mobile Communications ⊃ China Mobile. Never add the two lists together.',
     'Fortune reports many Chinese SOE parents as "Private" (meaning unlisted). They are relabelled here as state-owned. The study pack\'s mixed-universe figures (56 state firms, $4.1T) count only the 90 Fortune names outside Forbes, so they understate state ownership relative to this page.',

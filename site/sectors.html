@@ -17,7 +17,7 @@
 <div class="wrap">
   <header class="page-head">
     <p class="kicker">Sectors · what the world's business actually does</p>
-    <h1>Banks book a quarter of big-company revenue and a third of the profit; tech gets a quarter of the market value</h1>
+    <h1>Finance books a fifth of big-company revenue and a third of the profit; tech gets a third of the market value</h1>
     <p class="dek">The 2,000 largest listed companies, sorted into 13 sectors and 30 industries: where the revenue is, where the profit stays,
       what investors pay for it, how concentrated each industry is, and how little of it looks like the real economy most people work in.</p>
   </header>
@@ -43,8 +43,8 @@
   <p class="section-dek">The same sector can be big in one ledger and small in another. Compare each sector's share of the Global 2000's revenue, profit, market value and workforce.</p>
   <div class="grid">
     <div class="card">
-      <h3>Financials earn 34% of the profit but get 21% of the market value; Technology earns 17% and gets 27%</h3>
-      <p class="sub">Share of Global 2000 total, % — revenue $52.9T, profit $4.9T, market value $91.3T, employees 92.6M</p>
+      <h3>Financials earn 32% of the profit but get 17% of the market value; Technology earns 21% and gets 34%</h3>
+      <p class="sub">Share of Global 2000 total, % — revenue $56.0T, profit $5.5T, market value $121.9T, employees 82.2M</p>
       <div class="chart tall" id="c-share"></div>
       <button class="tbl-toggle" id="c-share-t"></button><div id="c-share-tbl"></div>
       <p class="src">Source: Forbes Global 2000 (2026); shares computed from company-level data.</p>
@@ -266,9 +266,9 @@
   let treeMetric = 'rev';
   const treeTitles = {
     rev: 'Financials is the biggest box by revenue — switch to market value and Technology takes over',
-    profit: 'By profit, Financials swallows a third of the map — banks alone earn more than all of tech',
-    mv: 'By market value, Technology is the biggest sector: a quarter of the $91T',
-    emp: 'By headcount, Consumer & Retail dominates: a quarter of the 92.6M jobs',
+    profit: 'By profit, Financials take a third of the map, half again as much as Technology',
+    mv: 'By market value, Technology is the biggest sector: a third of the $122T',
+    emp: 'By headcount, Consumer & Retail dominates: a quarter of the 82.2M jobs',
   };
   function treeData(m) {
     return SECT.map((sName, si) => {
@@ -627,7 +627,7 @@
     { key: 'top3_names', label: 'Largest 3', fmt: v => v.map(s => s.trim()).join(', ') }];
   const indTbl = ATLAS.table('ind-tbl', D.industries, IND_COLS);
   select('ind-tools', [['all', 'All sectors'], ...SECT.map(s => [s, s])], 'all', v => indTbl.update(v === 'all' ? D.industries : D.industries.filter(i => i.sector === v)), 'Filter by sector:');
-  ATLAS.notes('n-caveat', { caveat: true, title: 'Caveats for this whole page', items: [
+  ATLAS.notes('n-caveat', { caveat: true, title: 'Caveats', items: [
     'Sectors and industries are Forbes\' own classification, normalised into 13 sectors / 30 industries (data/industry_taxonomy.csv). Forbes classifies some firms oddly: UnitedHealth under Insurance, Elevance and Centene under Pharma &amp; Biotech, Fannie Mae/Freddie Mac under Business Services, BASF under Capital Goods, Amazon under Retail. Check the company before quoting an industry fact.',
     'Global 2000 = the 2,000 biggest <i>listed</i> companies by a composite of revenue, profit, assets and market value. Unlisted state-owned giants (State Grid, Chinese parent SOEs) and private firms (Cargill — the world\'s biggest agribusiness — Mars, Koch) are missing; see the Ownership page.',
     'Revenue is FY2025 (fiscal years end at different dates); market value is a spring-2025 snapshot. All in US$ at Forbes\' conversion rates — rupee, yen and yuan moves change ranks.',

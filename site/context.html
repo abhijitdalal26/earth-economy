@@ -145,40 +145,7 @@
 <div id="n5c"></div>
 
   <!-- 7 -->
-  <h2>7. The stock market: bigger, fewer, more American</h2>
-  <div class="grid">
-    <div class="card half">
-      <h3>The US holds 54% of world stock market value</h3>
-      <p class="sub">Market capitalization of listed domestic companies, US$ trillion, 1975–2024</p>
-      <div class="chart" id="c-mcap"></div>
-      <button class="tbl-toggle" id="c-mcap-t"></button><div id="c-mcap-tbl"></div>
-      <p class="src">Source: World Bank CM.MKT.LCAP.CD (WFE data). The series stops at 2024 because the 2025 values have a break (see caveat).</p>
-    </div>
-    <div class="card half">
-      <h3>US listings have fallen by half since 1996 while China's have multiplied</h3>
-      <p class="sub">Number of listed domestic companies, 1975–2024</p>
-      <div class="chart" id="c-listed"></div>
-      <button class="tbl-toggle" id="c-listed-t"></button><div id="c-listed-tbl"></div>
-      <p class="src">Source: World Bank CM.MKT.LDOM.NO (WFE data). Gaps are years with no data.</p>
-    </div>
-  </div>
-<div id="n7c"></div>
-
-  <!-- 8 -->
-  <h2>8. The trillion-dollar club</h2>
-  <div class="grid">
-    <div class="card">
-      <h3>The first $1T took 2018, the first $5T came seven years later, and 2026 added seven new members</h3>
-      <p class="sub">Date each company first crossed each market-value milestone (hover for details)</p>
-      <div class="chart tall" id="c-tri"></div>
-      <button class="tbl-toggle" id="c-tri-t"></button><div id="c-tri-tbl"></div>
-      <p class="src">Source: Wikipedia, "List of public corporations by market capitalization", trillion-dollar table (retrieved 27 Oct 2026). Aramco's $1T date is set to its listing day.</p>
-    </div>
-  </div>
-<div id="n8c"></div>
-
-  <!-- 9 -->
-  <h2>9. Other giant pools of capital</h2>
+  <h2>7. Other giant pools of capital</h2>
   <div class="grid">
     <div class="card half">
       <h3>BlackRock alone manages one-tenth as much as all the world's stock markets are worth</h3>
@@ -198,7 +165,7 @@
 <div id="n9c"></div>
 
   <!-- 10 -->
-  <h2>10. Co-operatives: the member-owned economy</h2>
+  <h2>8. Co-operatives: the member-owned economy</h2>
   <div class="grid">
     <div class="card half">
       <h3>The 10 biggest co-ops are European and US banks, insurers and grocers</h3>
@@ -218,7 +185,7 @@
 <div id="n10c"></div>
 
   <!-- 11 -->
-  <h2>11. Multinationals and globalization</h2>
+  <h2>9. Multinationals and globalization</h2>
   <div class="grid">
     <div class="card half">
       <h3>FDI peaked before 2008 and has not regained that level</h3>
@@ -450,49 +417,7 @@ ATLAS.notes('n5c', { title: 'Caveats', caveat: true, items: [
   'M&A totals differ by provider (LSEG, Dealogic, Mergermarket) by as much as $0.5T. The chart uses LSEG data, inflation-adjusted by XBMA.',
 ] });
 
-// ---------- 7. market cap
-const mc = D.mcap.filter(r => r.year <= 2024);
-const mcS = [['USA', 'United States'], ['CHN', 'China'], ['JPN', 'Japan'], ['IND', 'India']];
-ATLAS.chart('c-mcap', {
-  tooltip: { trigger: 'axis', formatter: ps => { const r = mc[ps[0].dataIndex]; return `<b>${r.year}</b> — world ${T(r.world / 1e12)}<br>` + ps.map(p => `${p.marker}${p.seriesName}: ${T(p.value)}`).join('<br>') + (r.USA ? `<br>US share: ${(100 * r.USA / r.world).toFixed(0)}%` : '') + `<br><span style="font-size:12px">Source: World Bank / WFE</span>`; } },
-  legend: { type: 'scroll' }, grid: { top: 40 },
-  xAxis: { type: 'category', data: mc.map(r => r.year) }, yAxis: { type: 'value', name: 'US$ tn' },
-  series: mcS.map(([k, n], i) => ({ name: n, type: 'line', stack: 'm', areaStyle: {}, showSymbol: false, data: mc.map(r => r[k] ? +(r[k] / 1e12).toFixed(2) : 0), color: P[i] }))
-    .concat([{ name: 'Rest of world', type: 'line', stack: 'm', areaStyle: {}, showSymbol: false, color: muted,
-      data: mc.map(r => +((r.world - mcS.reduce((s, [k]) => s + (r[k] || 0), 0)) / 1e12).toFixed(2)) }]),
-});
-ATLAS.tableToggle('c-mcap-t', 'c-mcap-tbl', mc, [{ key: 'year', label: 'Year' }, { key: 'world', label: 'World', num: true, fmt: v => ATLAS.fmtUSD(v) }].concat(mcS.map(([k, n]) => ({ key: k, label: n, num: true, fmt: v => ATLAS.fmtUSD(v) }))));
-const lS = [['n_WLD', 'World'], ['n_USA', 'United States'], ['n_CHN', 'China'], ['n_IND', 'India'], ['n_JPN', 'Japan']];
-ATLAS.chart('c-listed', {
-  tooltip: { trigger: 'axis', valueFormatter: v => v == null ? '—' : v.toLocaleString('en-US') }, legend: { type: 'scroll' }, grid: { top: 40 },
-  xAxis: { type: 'category', data: mc.map(r => r.year) }, yAxis: { type: 'value', name: 'companies' },
-  series: lS.map(([k, n], i) => ({ name: n, type: 'line', showSymbol: false, data: mc.map(r => r[k]), color: i === 0 ? muted : P[i - 1] })),
-});
-ATLAS.tableToggle('c-listed-t', 'c-listed-tbl', mc, [{ key: 'year', label: 'Year' }].concat(lS.map(([k, n]) => ({ key: k, label: n, num: true }))));
-const m2024 = mc[mc.length - 1];
-ATLAS.notes('n7c', { title: 'Caveats', caveat: true, items: [
-  'The 2025 World Bank values show a break: India jumps to 8,510 listed companies and $10.6T (probably NSE and BSE counted together), which inflates the world total to 53,087. The charts stop at 2024.',
-  'Counts are domestic listings on WFE-member exchanges; there are gaps for some countries and years (for example, UK after 2022).',
-  'India’s count has a series break: about 5,800 (mostly BSE) up to 2019, then about 2,000–2,700 from 2020, then 8,510 in 2025. Do not read the 2020 drop as delistings.',
-] });
-
-// ---------- 8. trillion club
-const tri = D.trillion, MS = ['t1', 't2', 't3', 't4', 't5'], ML = ['$1T', '$2T', '$3T', '$4T', '$5T'];
-const triRows = tri.filter(r => r.t1 && r.company !== 'PetroChina');
-ATLAS.chart('c-tri', {
-  grid: { left: 8, right: 24, top: 40, bottom: 20 },
-  tooltip: { formatter: p => { const r = triRows.find(x => x.company === p.value[1]); return `<b>${r.company}</b> first crossed ${p.seriesName} on ${p.value[0]}<br>Peak value: $${(r.peak_busd / 1000).toFixed(2)}T (${r.peak_date})${r.note ? '<br><i>' + r.note + '</i>' : ''}<br><span style="font-size:12px">Source: Wikipedia trillion-dollar table</span>`; } },
-  legend: {},
-  xAxis: { type: 'time', min: '2018-01-01' }, yAxis: { type: 'category', inverse: true, data: triRows.map(r => r.company) },
-  series: MS.map((k, i) => ({ name: ML[i], type: 'scatter', symbolSize: 12, color: P[i], data: triRows.filter(r => r[k]).map(r => [r[k], r.company]) })),
-});
-ATLAS.tableToggle('c-tri-t', 'c-tri-tbl', tri, [{ key: 'company', label: 'Company' }].concat(MS.map((k, i) => ({ key: k, label: 'First ' + ML[i] }))).concat([{ key: 'peak_busd', label: 'Peak $bn', num: true }, { key: 'peak_date', label: 'Peak date' }, { key: 'note', label: 'Note' }]));
-ATLAS.notes('n8c', { title: 'Caveats', caveat: true, items: [
-  'Dates are the first time a milestone was exceeded; Wikipedia mixes intraday and closing values. Eli Lilly and Samsung entries lack citations, so verify them against exchange data before quoting.',
-  'Saudi Aramco: Wikipedia lists 12 Dec 2018 for $1T, before its Dec 2019 IPO. This page uses the listing day. PetroChina\'s 2007 $1T (on Shanghai debut) is in the table but not in the chart.',
-] });
-
-// ---------- 9. pools
+// ---------- 7. pools
 const pools = D.pools;
 ATLAS.chart('c-pools', {
   grid: { left: 8, right: 60, top: 10, bottom: 10 },
@@ -515,7 +440,7 @@ ATLAS.notes('n9c', { title: 'Caveats', caveat: true, items: [
   'ADIA, GIC and SAFE do not publish AUM, so these figures are Global SWF estimates; other trackers differ by hundreds of billions.',
 ] });
 
-// ---------- 10. coops
+// ---------- 8. coops
 const ct = D.coop_turnover, cg = D.coop_gdppc;
 ATLAS.chart('c-coop', {
   grid: { left: 8, right: 50, top: 10, bottom: 10 },
@@ -537,7 +462,7 @@ ATLAS.notes('n10c', { title: 'Caveats', caveat: true, items: [
   'GCMMF\'s sales (₹73,450 crore) and the "Amul brand" turnover (₹1 lakh crore+, including member unions) are different measures.',
 ] });
 
-// ---------- 11. FDI & trade
+// ---------- 9. FDI & trade
 const fdi = D.fdi.filter(r => r.world != null);
 const fdiN = { world: 'World', india: 'India', china: 'China', usa: 'United States' };
 let fdiChart;
